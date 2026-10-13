@@ -94,3 +94,4 @@ python3 -c "import json; json.load(open('messages/en.json', encoding='utf-8'))"
 | `src/components/` | Reusable UI components (ProductCard, CatalogFilterPanel, CatalogButton, UserAvatar, LoginCodeForm, OtpInput, etc.) |
 | `src/lib/` | Typed API clients (`api.ts`, `cart-api.ts`, `auth-api.ts`, etc.) and server-only session helpers (`session.ts`) |
 | `messages/` | next-intl translation files (`en.json`, `ru.json`, `uz.json`) |
+# NutriZone-Frontend-Project
