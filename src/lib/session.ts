@@ -1,0 +1,63 @@
+/**
+ * Server-side session cookie helpers. Tokens live only in HttpOnly
+ * cookies, set exclusively by Route Handlers (never readable from
+ * client JS) -- this is the frontend's answer to "the backend
+ * returns tokens in JSON, not cookies" (confirmed by direct
+ * reconnaissance): the Next.js layer bridges that into a secure
+ * cookie architecture rather than falling back to localStorage.
+ */
+import { cookies } from "next/headers";
+import type { TokenPair } from "./auth-api";
+
+const ACCESS_COOKIE = "nz_access_token";
+const REFRESH_COOKIE = "nz_refresh_token";
+
+const isProd = process.env.NODE_ENV === "production";
+
+export async function setSessionCookies(tokens: TokenPair) {
+  const store = await cookies();
+  // Access token lifetime confirmed by decoding the real JWT captured
+  // during reconnaissance: exp - iat = exactly 900 seconds.
+  store.set(ACCESS_COOKIE, tokens.access_token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 15 });
+  // Refresh token lifetime confirmed the same way: exp - iat = exactly 30 days.
+  store.set(REFRESH_COOKIE, tokens.refresh_token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
+}
+
+export async function clearSessionCookies() {
+  const store = await cookies();
+  store.delete(ACCESS_COOKIE);
+  store.delete(REFRESH_COOKIE);
+}
+
+export async function getAccessToken(): Promise<string | null> {
+  const store = await cookies();
+  return store.get(ACCESS_COOKIE)?.value ?? null;
+}
+
+export async function getRefreshToken(): Promise<string | null> {
+  const store = await cookies();
+  return store.get(REFRESH_COOKIE)?.value ?? null;
+}
+
+const CART_CODE_COOKIE = "nz_cart_code";
+const CART_TOKEN_COOKIE = "nz_cart_token";
+
+export async function setCartCookies(code: string, token: string) {
+  const store = await cookies();
+  // Cart token is itself a security-sensitive credential (confirmed:
+  // it's the sole cart-ownership mechanism today -- customer_id is
+  // never populated on creation, see cart-api.ts's own module
+  // docstring) -- stored HttpOnly for the same reason as auth tokens.
+  store.set(CART_CODE_COOKIE, code, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
+  store.set(CART_TOKEN_COOKIE, token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
+}
+
+export async function getCartCode(): Promise<string | null> {
+  const store = await cookies();
+  return store.get(CART_CODE_COOKIE)?.value ?? null;
+}
+
+export async function getCartToken(): Promise<string | null> {
+  const store = await cookies();
+  return store.get(CART_TOKEN_COOKIE)?.value ?? null;
+}

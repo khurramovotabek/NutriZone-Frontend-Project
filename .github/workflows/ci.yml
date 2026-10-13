@@ -1,0 +1,49 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Typecheck, lint, test & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # --- Required gates: must pass on every PR ---
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Production build
+        run: npm run build
+
+      # --- Informational gate: not required yet. ESLint was only just
+      # introduced (no lint config previously existed at all) and the
+      # existing codebase currently has 22 real errors / 8 warnings,
+      # mostly React Compiler purity/set-state-in-effect rules from
+      # eslint-config-next's newer react-hooks rule set -- see the
+      # app-by-app frontend audit. Reported on every run so regressions
+      # are visible, but `continue-on-error` avoids blocking merges on
+      # pre-existing debt until a dedicated cleanup pass fixes it -- flip
+      # to a required gate then, not before.
+      - name: Lint
+        continue-on-error: true
+        run: npm run lint

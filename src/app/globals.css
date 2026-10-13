@@ -1,0 +1,1104 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+ * NutriZone "Liquid Glass" design system
+ * --------------------------------------------------------------------------
+ * A single, coherent premium visual language layered on top of Tailwind:
+ *   1. Semantic color tokens (--nz-*) that swap between :root and .dark,
+ *      exposed to Tailwind as real utilities (bg-surface, text-ink, ...)
+ *      via @theme inline -- so components read `bg-surface` once instead
+ *      of hand-pairing a light class with a dark: override forever.
+ *   2. A signature dual accent: a deep, confident cobalt blue in light
+ *      mode and an electric "liquid azure" in dark mode (dark is this
+ *      project's primary, reference-quality surface). Both are real CSS
+ *      variables, so `bg-primary` / `text-primary` / `border-primary`
+ *      always resolve to the correct one automatically -- change the
+ *      brand accent once, here, and every button/badge/focus-ring/glow
+ *      in the app follows, never a per-component color to hunt down.
+ *      Success/stock-positive states are a *separate* token
+ *      (--nz-success, still a restrained green in both modes) --
+ *      deliberately decoupled from the brand accent so "in stock" reads
+ *      as a real status signal, not just "the brand color again".
+ *   3. A small set of reusable "glass" primitives (.nz-glass and friends)
+ *      that give every panel/card/nav real depth: a saturated blur, a
+ *      hairline gradient border, an inset specular highlight along the
+ *      top edge (light catching a curved glass surface), and a soft
+ *      ambient shadow -- instead of a flat `bg-white/60 backdrop-blur`.
+ * ========================================================================== */
+
+:root {
+  /* Base surfaces */
+  --nz-bg: #f7faf8;
+  --nz-surface: #ffffff;
+  --nz-surface-2: #f3f6f4;
+  --nz-surface-3: #e7ece9;
+
+  --nz-border: #dfe6e2;
+  --nz-border-hover: #c6d1cb;
+
+  --nz-text: #0d1512;
+  --nz-text-muted: #5b6b64;
+  --nz-text-soft: #90a29a;
+
+  /* Signature accent -- deep, premium cobalt blue in light mode */
+  --nz-primary: #1d4ed8;
+  --nz-primary-hover: #1e40af;
+  --nz-primary-soft: rgba(29, 78, 216, 0.12);
+  --nz-primary-contrast: #ffffff;
+  --nz-primary-rgb: 29, 78, 216;
+
+  /* Success/stock-positive -- a restrained, independent green, never
+     re-derived from --nz-primary (see file header note). */
+  --nz-success: #0e9f5f;
+  --nz-warning: #d97706;
+  --nz-danger: #dc2626;
+  --nz-info: #2563eb;
+
+  --background: var(--nz-bg);
+  --foreground: var(--nz-text);
+
+  --nz-mesh-1: rgba(29, 78, 216, 0.08);
+  --nz-mesh-2: rgba(14, 159, 95, 0.05);
+
+  /* Glass surface recipe -- light mode: a bright, airy pane of frosted glass */
+  --nz-glass-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.46));
+  --nz-glass-bg-strong: linear-gradient(165deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
+  --nz-glass-border: rgba(13, 21, 18, 0.09);
+  --nz-glass-border-strong: rgba(13, 21, 18, 0.12);
+  --nz-glass-highlight: rgba(255, 255, 255, 0.85);
+  --nz-glass-shadow: 0 1px 2px rgba(15, 35, 25, 0.04), 0 12px 32px -12px rgba(15, 35, 25, 0.16);
+  --nz-glass-shadow-lg: 0 4px 10px rgba(15, 35, 25, 0.05), 0 28px 60px -18px rgba(15, 35, 25, 0.24);
+  --nz-blur: blur(20px) saturate(172%);
+  --nz-blur-strong: blur(32px) saturate(195%);
+}
+
+.dark {
+  --nz-bg: #060907;
+  --nz-surface: #0e1512;
+  --nz-surface-2: #141d19;
+  --nz-surface-3: #1c2722;
+
+  --nz-border: #202b25;
+  --nz-border-hover: #2c3a33;
+
+  --nz-text: #eef5f0;
+  --nz-text-muted: #94a39c;
+  --nz-text-soft: #5c6b64;
+
+  /* Signature accent -- electric "liquid azure" in dark mode, this project's
+     reference-quality identity color. White contrast text -- this blue sits
+     dark/saturated enough (unlike the old high-lightness lime) that it
+     never needed near-black text for legibility. */
+  --nz-primary: #3b82f6;
+  --nz-primary-hover: #60a5fa;
+  --nz-primary-soft: rgba(59, 130, 246, 0.16);
+  --nz-primary-contrast: #ffffff;
+  --nz-primary-rgb: 59, 130, 246;
+
+  /* Success/stock-positive -- a restrained, independent green, never
+     re-derived from --nz-primary (see file header note). */
+  --nz-success: #22c55e;
+  --nz-warning: #f5a623;
+  --nz-danger: #f87171;
+  --nz-info: #60a5fa;
+
+  --background: var(--nz-bg);
+  --foreground: var(--nz-text);
+
+  --nz-mesh-1: rgba(59, 130, 246, 0.06);
+  --nz-mesh-2: rgba(34, 197, 94, 0.05);
+
+  /* Glass surface recipe -- dark mode: smoked glass over a near-black void,
+     lit from above by a faint highlight, never a flat opaque panel. */
+  --nz-glass-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+  --nz-glass-bg-strong: linear-gradient(165deg, rgba(20, 29, 25, 0.92), rgba(10, 15, 12, 0.88));
+  --nz-glass-border: rgba(255, 255, 255, 0.08);
+  --nz-glass-border-strong: rgba(255, 255, 255, 0.1);
+  --nz-glass-highlight: rgba(255, 255, 255, 0.14);
+  --nz-glass-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 14px 36px -14px rgba(0, 0, 0, 0.65);
+  --nz-glass-shadow-lg: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 32px 70px -20px rgba(0, 0, 0, 0.75);
+  --nz-blur: blur(20px) saturate(172%);
+  --nz-blur-strong: blur(32px) saturate(195%);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Semantic tokens exposed as real Tailwind utilities: bg-surface,
+     text-ink, border-primary, etc. -- one class, both themes. */
+  --color-bg: var(--nz-bg);
+  --color-surface: var(--nz-surface);
+  --color-surface-2: var(--nz-surface-2);
+  --color-surface-3: var(--nz-surface-3);
+  --color-border: var(--nz-border);
+  --color-border-hover: var(--nz-border-hover);
+  --color-ink: var(--nz-text);
+  --color-ink-muted: var(--nz-text-muted);
+  --color-ink-soft: var(--nz-text-soft);
+  --color-primary: var(--nz-primary);
+  --color-primary-hover: var(--nz-primary-hover);
+  --color-primary-soft: var(--nz-primary-soft);
+  --color-primary-contrast: var(--nz-primary-contrast);
+  --color-success: var(--nz-success);
+  --color-warning: var(--nz-warning);
+  --color-danger: var(--nz-danger);
+  --color-info: var(--nz-info);
+}
+
+* {
+  border-color: var(--nz-border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background-image:
+    radial-gradient(circle at 15% 10%, var(--nz-mesh-1), transparent 40%),
+    radial-gradient(circle at 85% 90%, var(--nz-mesh-2), transparent 45%);
+  background-attachment: fixed;
+  background-size: 200% 200%;
+  animation: nz-storefront-mesh-drift 35s ease-in-out infinite alternate;
+  position: relative;
+}
+
+@keyframes nz-storefront-mesh-drift {
+  0% { background-position: 0% 0%, 100% 100%; }
+  100% { background-position: 12% 8%, 88% 92%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body { animation: none; }
+}
+
+/* Ultra-subtle film-grain layer over the whole app -- the difference
+   between a flat digital gradient and something that reads like real,
+   lit glass. Fixed, non-interactive, and nearly invisible by design. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dark body::before {
+  opacity: 0.05;
+}
+
+::selection {
+  background: var(--nz-primary);
+  color: var(--nz-primary-contrast);
+}
+
+/* Slim, glassy scrollbar -- consistent across browsers, never the
+   default chunky system bar on a premium surface. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--nz-border-hover) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--nz-border-hover);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.nz-top-loader {
+  animation: nz-top-loader-shift 1.2s linear infinite;
+}
+
+@keyframes nz-top-loader-shift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes nz-catalog-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-nz-catalog-in {
+  animation: nz-catalog-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes nz-drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-nz-drawer-in {
+  animation: nz-drawer-in 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes nz-sheet-up {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-nz-sheet-up {
+  animation: nz-sheet-up 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Header bell: one gentle swing when there are unread notifications. */
+@keyframes nz-bell {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-12deg); }
+  45% { transform: rotate(8deg); }
+  60% { transform: rotate(-5deg); }
+  75% { transform: rotate(2deg); }
+}
+@media (prefers-reduced-motion: reduce) { .animate-\[nz-bell_1\.2s_ease-in-out_1\] { animation: none !important; } }
+
+@keyframes nz-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-nz-fade-in {
+  animation: nz-fade-in 200ms ease-out;
+}
+
+.animate-nz-banner-fade-in {
+  animation: nz-fade-in 400ms ease-out;
+}
+
+/* POS PIN pad: a wrong PIN shakes the dots. */
+@keyframes nz-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-9px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+.animate-nz-shake {
+  animation: nz-shake 380ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-nz-catalog-in,
+  .animate-nz-drawer-in,
+  .animate-nz-sheet-up,
+  .animate-nz-fade-in,
+  .animate-nz-banner-fade-in,
+  .animate-nz-shake {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nz-top-loader { animation: none; }
+}
+
+/* HeroSlider's top progress indicator (BannerProgress) -- one linear
+   fill per banner, GPU-only (`transform: scaleX`, not `width`) so it
+   costs the compositor nothing over the full 45s run. Duration comes
+   from the component's own SLIDE_DURATION_MS via inline `animationDuration`,
+   never duplicated here. `animationend` on this exact animation name is
+   what HeroSlider listens to advance to the next slide -- the single
+   authoritative timing source, no separate JS countdown drifting
+   against it. Pausing (hover / tab hidden) sets `animationPlayState`
+   inline, which freezes and resumes the fill from its exact current
+   position for free, no manual elapsed-time bookkeeping needed. */
+@keyframes nz-banner-progress-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.nz-banner-progress-fill {
+  animation-name: nz-banner-progress-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  transform-origin: left;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* HeroSlider itself switches to a paused-aware JS timer and renders
+     the active segment as a static, non-animated state when this query
+     matches -- this rule is a pure safety net in case that class is
+     ever applied regardless. */
+  .nz-banner-progress-fill { animation: none; }
+}
+
+/* ==========================================================================
+ * Liquid glass surface primitives
+ * --------------------------------------------------------------------------
+ * Real, closed gap: this whole block used to be plain, unlayered CSS.
+ * Tailwind v4 (`@import "tailwindcss"` above) declares `@layer theme,
+ * base, components, utilities`, and *unlayered* author CSS outranks
+ * every one of those layers regardless of source order -- so this
+ * block's own `position: relative` on `.nz-glass`/`.nz-glass-strong`
+ * always beat a `.absolute`/`.fixed` utility applied on the same
+ * element in a `className`, no matter which came first in the class
+ * list. That silently broke every floating overlay built as
+ * `"nz-glass-strong absolute ..."` (or `fixed ...`) across the app --
+ * confirmed as the actual root cause of the Catalog mega-menu/mobile
+ * drawer, the mobile filter sheet, and the product gallery's zoom/
+ * prev/next controls all rendering in normal document flow instead of
+ * floating (each of those elements resolved to `position: relative`,
+ * not `absolute`/`fixed`, purely from CSS precedence). Wrapping this
+ * block in `@layer components` puts it below Tailwind's own
+ * `@layer utilities` in the cascade, so a utility class on the same
+ * element wins the way every component's `className` already assumes
+ * it does -- no per-component change needed.
+ * ========================================================================== */
+@layer components {
+
+/* .nz-glass -- the base pane used for cards, panels, headers, dropdowns.
+   Layers: saturated blur -> soft gradient tint -> hairline border ->
+   inset top specular line -> ambient drop shadow. Caller still supplies
+   border-radius (rounded-*) so it composes with existing Tailwind. */
+.nz-glass {
+  position: relative;
+  background-image: var(--nz-glass-bg);
+  -webkit-backdrop-filter: var(--nz-blur);
+  backdrop-filter: var(--nz-blur);
+  border: 1px solid var(--nz-glass-border);
+  box-shadow: var(--nz-glass-shadow);
+  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1), background-color 220ms ease;
+}
+.nz-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 1px 0 var(--nz-glass-highlight);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 60%);
+  mask-image: linear-gradient(to bottom, black, transparent 60%);
+  opacity: 0.55;
+}
+
+/* Heavier, more opaque pane for overlays that must sit clearly above
+   the page: modals, mega-menus, mobile drawers/sheets. */
+.nz-glass-strong {
+  position: relative;
+  background-image: var(--nz-glass-bg-strong);
+  -webkit-backdrop-filter: var(--nz-blur-strong);
+  backdrop-filter: var(--nz-blur-strong);
+  border: 1px solid var(--nz-glass-border-strong);
+  box-shadow: var(--nz-glass-shadow-lg);
+}
+.nz-glass-strong::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 1px 0 var(--nz-glass-highlight);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 50%);
+  mask-image: linear-gradient(to bottom, black, transparent 50%);
+  opacity: 0.6;
+}
+
+/* Interactive variant: cards/tiles that lift on hover (product cards,
+   blog cards, brand tiles). */
+.nz-glass-interactive {
+  cursor: pointer;
+}
+.nz-glass-interactive:hover {
+  transform: translateY(-3px);
+  border-color: var(--nz-primary);
+  box-shadow: var(--nz-glass-shadow-lg), 0 0 0 1px var(--nz-primary-soft);
+}
+
+/* Glass form fields. */
+.nz-glass-input {
+  background-image: var(--nz-glass-bg);
+  -webkit-backdrop-filter: var(--nz-blur);
+  backdrop-filter: var(--nz-blur);
+  border: 1px solid var(--nz-glass-border);
+  color: var(--nz-text);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+/* Native <select> popups: the control's text follows --nz-text (light in
+   dark mode) but the browser paints the option list with its own default
+   light background unless told otherwise -- which left dark-mode options
+   as white-on-white. `color-scheme` makes the popup itself follow the
+   theme, and the explicit option colors cover browsers that ignore it. */
+:root {
+  color-scheme: light;
+}
+.dark {
+  color-scheme: dark;
+}
+select.nz-glass-input option,
+select.nz-glass-input optgroup {
+  background-color: var(--nz-surface);
+  color: var(--nz-text);
+}
+select.nz-glass-input option:disabled {
+  color: var(--nz-text-soft);
+}
+
+.nz-glass-input::placeholder {
+  color: var(--nz-text-soft);
+}
+.nz-glass-input:focus {
+  outline: none;
+  border-color: var(--nz-primary);
+  box-shadow: 0 0 0 3px var(--nz-primary-soft);
+}
+
+/* Solid, gradient "liquid" call-to-action fill -- the one truly opaque,
+   saturated surface in the system, reserved for primary actions.
+   Cobalt-to-cobalt in light, azure-to-azure in dark, with a matching
+   ambient glow and white text on the fill in both modes. */
+.nz-cta {
+  background-image: linear-gradient(155deg, var(--nz-primary), color-mix(in srgb, var(--nz-primary) 78%, black));
+  color: var(--nz-primary-contrast);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset, 0 10px 24px -8px rgba(var(--nz-primary-rgb), 0.45);
+  transition: filter 200ms ease, box-shadow 200ms ease, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nz-cta:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 14px 32px -8px rgba(var(--nz-primary-rgb), 0.55);
+}
+.nz-cta:active {
+  filter: brightness(0.98);
+}
+.nz-cta:disabled {
+  filter: grayscale(0.3) brightness(0.9);
+  box-shadow: none;
+  opacity: 0.55;
+}
+
+/* Soft ambient glow blob -- sits behind hero art / primary CTAs to sell
+   the "light source behind glass" feeling. Purely decorative. */
+.nz-glow {
+  position: relative;
+  isolation: isolate;
+}
+.nz-glow::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -20%;
+  background: radial-gradient(closest-side, rgba(var(--nz-primary-rgb), 0.35), transparent 70%);
+  filter: blur(40px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/*
+ * Liquid glass shimmer -- a reusable, JS-free CSS effect for premium
+ * call-to-action buttons across the storefront. A soft diagonal light
+ * band sweeps across the button on hover, mimicking light passing
+ * through a curved glass surface. Pure CSS, GPU-accelerated, and fully
+ * disabled under prefers-reduced-motion.
+ */
+.nz-shimmer-btn {
+  position: relative;
+  overflow: hidden;
+}
+.nz-shimmer-btn::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: rotate(20deg);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+.nz-shimmer-btn:hover::after {
+  left: 130%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nz-shimmer-btn::after {
+    transition: none;
+  }
+}
+
+} /* end @layer components */
+
+/* ==========================================================================
+ * Auth loading transition -- the full-screen branded overlay shown while
+ * a real authentication request (Telegram code verification / Telegram
+ * auto-login) is in flight. Every animation here is transform/opacity/
+ * filter only (GPU-composited, no layout thrash), and every one has a
+ * prefers-reduced-motion fallback below. Timing is driven entirely by
+ * real request state in the calling component -- these are pure CSS
+ * loops with no fixed "done" duration baked in.
+ * ========================================================================== */
+.nz-auth-mark {
+  animation: nz-auth-mark-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.nz-auth-mark-breathe {
+  animation:
+    nz-auth-mark-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both,
+    nz-auth-breathe 3.2s ease-in-out 420ms infinite;
+}
+@keyframes nz-auth-mark-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes nz-auth-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+.nz-auth-mark-success {
+  animation: nz-auth-mark-success 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes nz-auth-mark-success {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* Minimal orbit: a static hairline ring plus one soft rotating light
+   sweep (a masked conic-gradient), never more than one moving element
+   -- the "secure connection" motif the design calls for, without a
+   generic spinner as the primary visual. */
+.nz-auth-orbit {
+  position: relative;
+}
+.nz-auth-orbit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1px solid var(--nz-glass-border-strong);
+}
+.nz-auth-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(var(--nz-primary-rgb), 0.85) 22deg, transparent 70deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  animation: nz-auth-orbit-spin 2.2s linear infinite;
+  transform-origin: center;
+}
+@keyframes nz-auth-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+.nz-auth-check {
+  animation: nz-auth-check-in 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes nz-auth-check-in {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.nz-auth-screen-in {
+  animation: nz-fade-in 240ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nz-auth-mark,
+  .nz-auth-mark-breathe,
+  .nz-auth-mark-success,
+  .nz-auth-check {
+    animation: nz-auth-fade-only 180ms ease-out both;
+  }
+  .nz-auth-orbit::after {
+    animation: none;
+  }
+}
+@keyframes nz-auth-fade-only {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Sold-out product card ───────────────────────────────────────────
+ * Stock 0 -> the whole card (photo, text, price, badges) drops into an
+ * old black-and-white print look: full desaturation, a faint vignette
+ * and film grain, and a rubber-stamp "Sold out" label over the photo.
+ * The card stays a link to the product page; only buying is blocked
+ * (see AddToCartButton's `outOfStock`). */
+.nz-soldout {
+  filter: grayscale(1) contrast(1.04) brightness(0.97);
+  transition: filter 300ms ease-out, transform 300ms ease-out;
+}
+.nz-soldout:hover {
+  filter: grayscale(1) contrast(1.08) brightness(1);
+}
+.nz-soldout::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.14) 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.35'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+.dark .nz-soldout::after {
+  mix-blend-mode: overlay;
+  opacity: 0.4;
+}
+.nz-soldout-stamp {
+  color: #111;
+  background: rgba(255, 255, 255, 0.82);
+  border: 2px solid #111;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+/* ── Contact page: liquid-glass surfaces ─────────────────────────────
+ * Built on the same tokens as .nz-glass, with a refracted rim (a
+ * gradient hairline masked to the border box) and a specular sheen that
+ * follows the pointer via --mx/--my (set by ContactSpotlight). Layered
+ * as components so Tailwind utilities still win on the same element. */
+@layer components {
+  .nz-liquid {
+    position: relative;
+    isolation: isolate;
+    background-image: var(--nz-glass-bg);
+    -webkit-backdrop-filter: blur(28px) saturate(185%);
+    backdrop-filter: blur(28px) saturate(185%);
+    box-shadow: var(--nz-glass-shadow-lg);
+  }
+  .nz-liquid::before {
+    /* refracted rim */
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.06) 35%, rgba(var(--nz-primary-rgb), 0.35) 70%, rgba(255, 255, 255, 0.18));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+  .dark .nz-liquid::before {
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.03) 35%, rgba(var(--nz-primary-rgb), 0.4) 70%, rgba(255, 255, 255, 0.08));
+  }
+  .nz-liquid::after {
+    /* pointer-tracking specular sheen */
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, -20%), rgba(var(--nz-primary-rgb), 0.14), transparent 60%);
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+  .nz-liquid:hover::after,
+  .nz-liquid:focus-within::after {
+    opacity: 1;
+  }
+
+  .nz-liquid-tile {
+    transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 260ms ease;
+  }
+  .nz-liquid-tile:hover {
+    transform: translateY(-3px);
+  }
+
+  .nz-liquid-icon {
+    background: linear-gradient(150deg, rgba(var(--nz-primary-rgb), 0.28), rgba(var(--nz-primary-rgb), 0.08));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 18px -8px rgba(var(--nz-primary-rgb), 0.55);
+    color: var(--nz-primary);
+  }
+
+  .nz-liquid-chip {
+    border: 1px solid var(--nz-glass-border);
+    background: var(--nz-glass-bg);
+    color: var(--nz-text-muted);
+    transition: all 180ms ease;
+  }
+  .nz-liquid-chip:hover {
+    color: var(--nz-text);
+    border-color: var(--nz-border-hover);
+  }
+  .nz-liquid-chip[aria-pressed="true"] {
+    color: var(--nz-primary);
+    border-color: rgba(var(--nz-primary-rgb), 0.5);
+    background: var(--nz-primary-soft);
+  }
+
+  .nz-gradient-text {
+    background: linear-gradient(120deg, var(--nz-text) 20%, var(--nz-primary) 60%, var(--nz-success) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.nz-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(70px);
+  pointer-events: none;
+  animation: nz-orb-float 18s ease-in-out infinite alternate;
+}
+@keyframes nz-orb-float {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(40px, -30px, 0) scale(1.12); }
+}
+.nz-pulse-dot {
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  animation: nz-pulse-dot 2s ease-out infinite;
+}
+@keyframes nz-pulse-dot {
+  to { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+}
+.nz-rise {
+  animation: nz-rise 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes nz-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nz-orb, .nz-pulse-dot, .nz-rise { animation: none; }
+  .nz-liquid-tile:hover { transform: none; }
+}
+
+/* ── Loyalty / wallet ─────────────────────────────────────────────── */
+@layer components {
+  .nz-gradient-gold {
+    background: linear-gradient(115deg, var(--nz-text) 10%, #d4a017 45%, #f5c542 60%, var(--nz-primary) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+.nz-coin-float {
+  animation: nz-coin-float 5s ease-in-out infinite;
+}
+@keyframes nz-coin-float {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-6px) rotate(4deg); }
+}
+.nz-progress-fill {
+  position: relative;
+  transition: width 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 12px rgba(212, 160, 23, 0.45);
+}
+.nz-progress-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-100%);
+  animation: nz-progress-sheen 2.4s ease-in-out infinite;
+}
+@keyframes nz-progress-sheen {
+  to { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nz-coin-float, .nz-progress-fill::after { animation: none; }
+}
+
+/* ── Membership card (account/loyalty) ────────────────────────────── */
+.nz-member-card-stage {
+  perspective: 1200px;
+}
+.nz-member-card {
+  --rx: 0deg;
+  --ry: 0deg;
+  --px: 50%;
+  --py: 30%;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--tier) 22%, #0b1016) 0%, #0a0e13 55%, color-mix(in srgb, var(--tier) 14%, #06080b) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 0 0 1px color-mix(in srgb, var(--tier) 35%, rgba(255, 255, 255, 0.08)),
+    0 30px 60px -20px rgba(0, 0, 0, 0.55),
+    0 18px 40px -24px color-mix(in srgb, var(--tier) 70%, transparent);
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transform-style: preserve-3d;
+  transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.nz-member-card-holo {
+  background:
+    radial-gradient(circle at var(--px) var(--py), rgba(255, 255, 255, 0.22), transparent 38%),
+    linear-gradient(115deg, transparent 20%, rgba(255, 110, 196, 0.12) 36%, rgba(120, 220, 255, 0.14) 46%, rgba(255, 236, 120, 0.12) 56%, transparent 72%);
+  background-size: 100% 100%, 220% 220%;
+  background-position: 0 0, var(--px) var(--py);
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nz-member-card { transform: none !important; }
+}
+
+.nz-ring-progress {
+  transition: stroke-dashoffset 1100ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nz-journey-fill {
+  transition: width 1100ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 12px rgba(212, 160, 23, 0.35);
+}
+.nz-journey-pulse {
+  animation: nz-journey-pulse 2.2s ease-out infinite;
+}
+@keyframes nz-journey-pulse {
+  0% { transform: scale(0.9); opacity: 0.9; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+.nz-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent) 0 var(--fill), var(--nz-surface-3) var(--fill) 100%);
+  outline: none;
+}
+.nz-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #fff6c9, #f5c542 55%, #b07a0a);
+  border: 2px solid #fff;
+  box-shadow: 0 4px 12px rgba(180, 120, 10, 0.5);
+  cursor: grab;
+}
+.nz-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #fff6c9, #f5c542 55%, #b07a0a);
+  border: 2px solid #fff;
+  cursor: grab;
+}
+.nz-range:focus-visible {
+  box-shadow: 0 0 0 3px var(--nz-primary-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nz-journey-pulse { animation: none; }
+}
+
+/* ── Rewards page: tier-tinted aurora, segmented glass tabs, KPI tiles ─
+ * --tier / --tier-next are set on .nz-rewards from the member's tier. */
+.nz-rewards-aurora {
+  /* kept inside the column horizontally (a negative inset caused page-wide horizontal scroll on phones); the blur still bleeds visually */
+  position: absolute;
+  inset: -48px 0 auto;
+  height: 620px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 46% at 18% 22%, color-mix(in srgb, var(--tier) 30%, transparent), transparent 70%),
+    radial-gradient(34% 42% at 82% 12%, color-mix(in srgb, var(--tier-next) 26%, transparent), transparent 70%),
+    radial-gradient(40% 40% at 55% 70%, rgba(var(--nz-primary-rgb), 0.12), transparent 70%);
+  filter: blur(36px);
+  opacity: 0.85;
+  animation: nz-aurora-drift 22s ease-in-out infinite alternate;
+}
+.dark .nz-rewards-aurora { opacity: 0.6; }
+@keyframes nz-aurora-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(24px, -18px, 0) scale(1.06); }
+}
+
+.nz-rewards-status::after {
+  /* tier-tinted glow in the corner of the status panel (replaces the pointer sheen) */
+  opacity: 1;
+  background: radial-gradient(70% 60% at 100% 0%, color-mix(in srgb, var(--tier-next) 22%, transparent), transparent 70%);
+}
+
+/* segmented control: a glass track with a raised glass "pill" on the active option */
+.nz-seg {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--nz-glass-border);
+  background-image: var(--nz-glass-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: var(--nz-glass-shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.nz-seg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--nz-text-muted);
+  transition: color 180ms ease, background 220ms ease, box-shadow 220ms ease;
+}
+.nz-seg-btn:hover { color: var(--nz-text); }
+.nz-seg-btn[aria-selected="true"] {
+  color: var(--nz-primary);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.55));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 6px 16px -6px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(var(--nz-primary-rgb), 0.18);
+}
+.dark .nz-seg-btn[aria-selected="true"] {
+  color: var(--nz-text);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 6px 16px -6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(var(--nz-primary-rgb), 0.35);
+}
+.nz-seg-btn:focus-visible { outline: 2px solid rgba(var(--nz-primary-rgb), 0.6); outline-offset: 2px; }
+.nz-seg-lg .nz-seg-btn { padding: 9px 18px; font-size: 13px; }
+
+/* KPI tile: a coloured glass icon chip and a soft tone glow */
+.nz-kpi-icon {
+  color: var(--kpi);
+  background: linear-gradient(150deg, color-mix(in srgb, var(--kpi) 26%, transparent), color-mix(in srgb, var(--kpi) 8%, transparent));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 6px 14px -8px var(--kpi);
+}
+.nz-kpi::after {
+  opacity: 1;
+  background: radial-gradient(60% 80% at 100% 0%, color-mix(in srgb, var(--kpi) 16%, transparent), transparent 70%);
+}
+
+/* wallet history icon tones */
+.nz-tx-icon { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+.nz-tx-in { color: var(--nz-success); background: linear-gradient(150deg, color-mix(in srgb, var(--nz-success) 22%, transparent), color-mix(in srgb, var(--nz-success) 6%, transparent)); }
+.nz-tx-out { color: #dc2626; background: linear-gradient(150deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.05)); }
+.dark .nz-tx-out { color: #f87171; }
+.nz-tx-burn { color: var(--nz-text-soft); background: var(--nz-surface-3); }
+
+/* tier journey: selectable nodes + the detail panel tinted by the picked tier */
+.nz-tier-node {
+  transition: background 220ms ease, box-shadow 220ms ease;
+}
+.nz-tier-node:hover { background: color-mix(in srgb, var(--tier) 8%, transparent); }
+.nz-tier-node.is-selected {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tier) 16%, transparent), color-mix(in srgb, var(--tier) 4%, transparent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tier) 40%, transparent);
+}
+.nz-tier-node:focus-visible { outline: 2px solid color-mix(in srgb, var(--tier) 70%, transparent); outline-offset: 2px; }
+.nz-tier-detail {
+  border: 1px solid color-mix(in srgb, var(--tier) 30%, var(--nz-glass-border));
+  background:
+    radial-gradient(80% 140% at 0% 50%, color-mix(in srgb, var(--tier) 16%, transparent), transparent 65%),
+    var(--nz-glass-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.nz-tier-pill {
+  color: color-mix(in srgb, var(--tier) 75%, var(--nz-text));
+  background: color-mix(in srgb, var(--tier) 18%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nz-rewards-aurora { animation: none; }
+}
+
+/* ── POS receipt printing ─────────────────────────────────────────────
+ * window.print() on the POS prints only the 80 mm receipt. */
+@media print {
+  body * { visibility: hidden !important; }
+  .nz-receipt, .nz-receipt * { visibility: visible !important; }
+  .nz-receipt {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    width: 80mm !important;
+    max-width: 80mm !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 4mm !important;
+  }
+  body::before { display: none !important; }
+  @page { size: 80mm auto; margin: 0; }
+}
+
+/* ---- Chat (Telegram-style): wallpaper behind the messages + bubbles ---- */
+.nz-chat-wallpaper {
+  background-color: color-mix(in srgb, var(--color-bg, #0b1220) 92%, #10b981);
+  background-image:
+    radial-gradient(circle at 20% 15%, color-mix(in srgb, #10b981 16%, transparent) 0, transparent 38%),
+    radial-gradient(circle at 85% 70%, color-mix(in srgb, #3b82f6 16%, transparent) 0, transparent 40%),
+    radial-gradient(circle at 50% 110%, color-mix(in srgb, #8b5cf6 12%, transparent) 0, transparent 45%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%2394a3b8' stroke-opacity='0.07' stroke-width='1.2'%3E%3Ccircle cx='20' cy='20' r='6'/%3E%3Cpath d='M70 15h20v10H70z'/%3E%3Cpath d='M15 80l10-10 10 10-10 10z'/%3E%3Ccircle cx='90' cy='90' r='9'/%3E%3Cpath d='M55 60c5-8 15-8 20 0'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: local;
+}
+.nz-bubble-mine { background: linear-gradient(135deg, #10b981, #0d9488); }
+.nz-bubble-theirs { background: color-mix(in srgb, var(--color-surface, #111827) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid color-mix(in srgb, #94a3b8 16%, transparent); }
+
+/* Rewards: "keep your level" banner -- an amber rim and a glow in the at-risk tier's colour. */
+.nz-tier-risk {
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.nz-tier-risk::after {
+  opacity: 1;
+  background:
+    radial-gradient(60% 120% at 0% 50%, color-mix(in srgb, var(--tier) 22%, transparent), transparent 70%),
+    radial-gradient(40% 100% at 100% 0%, rgba(245, 158, 11, 0.16), transparent 70%);
+}
+/* Product buy box: the "+N coins" row gets a faint gold wash. */
+.nz-coin-reward {
+  background: linear-gradient(90deg, rgba(245, 197, 66, 0.12), transparent 70%);
+}
+
+/* ── Login ─────────────────────────────────────────────────────────── */
+.nz-login-grid {
+  /* faint engineering grid that fades out towards the edges */
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+}
+.nz-login-card {
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.nz-login-card::after {
+  opacity: 1;
+  background: radial-gradient(80% 50% at 50% 0%, rgba(var(--nz-primary-rgb), 0.18), transparent 70%);
+}
+.nz-telegram-btn {
+  background: linear-gradient(135deg, #37bbfe 0%, #229ed9 55%, #1c8ac0 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 14px 30px -12px rgba(34, 158, 217, 0.75);
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease, filter 200ms ease;
+}
+.nz-telegram-btn:hover { transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 18px 36px -12px rgba(34, 158, 217, 0.85); }
+.nz-telegram-btn:active { transform: translateY(0); }
+.nz-telegram-btn:focus-visible { outline: 2px solid #7dd3fc; outline-offset: 3px; }
+
+/* Empty / error states: a soft glow behind the glass card */
+.nz-state::after { opacity: 1; background: radial-gradient(70% 60% at 50% 0%, rgba(var(--nz-primary-rgb), 0.12), transparent 70%); }
+.nz-state-error::after { background: radial-gradient(70% 60% at 50% 0%, rgba(244, 63, 94, 0.12), transparent 70%); }
+
+/* Inside the Telegram Mini App (TelegramMiniAppBridge sets html[data-tg]): an app, not a website -- no site footer,
+   no pull-to-refresh bounce, Telegram's own Back / Main buttons do the navigation. */
+html[data-tg="1"] .nz-site-footer { display: none; }
+html[data-tg="1"] body { overscroll-behavior-y: none; }
+
+/* ---------- Telegram Mini App: bottom tab bar (MiniAppTabBar) ---------- */
+html[data-tg="1"] .nz-tg-hide { display: none !important; }
+.nz-tg-tabbar {
+  position: fixed; inset: auto 0 0 0; z-index: 45; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--color-surface, #0b1220) 82%, transparent);
+  backdrop-filter: saturate(160%) blur(18px); -webkit-backdrop-filter: saturate(160%) blur(18px);
+  border-top: 1px solid color-mix(in srgb, var(--color-border, #1f2937) 80%, transparent);
+  box-shadow: 0 -10px 30px -18px rgb(0 0 0 / 0.55);
+}
+.nz-tg-tabbar a { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0 4px; border-radius: 14px; color: var(--color-ink-soft, #94a3b8); text-decoration: none; transition: color .15s, background .15s, transform .15s; -webkit-tap-highlight-color: transparent; }
+.nz-tg-tabbar a:active { transform: scale(.94); }
+.nz-tg-tabbar a.is-active { color: var(--color-primary, #3b82f6); background: color-mix(in srgb, var(--color-primary, #3b82f6) 12%, transparent); }
+.nz-tg-tab-icon { position: relative; display: grid; place-items: center; }
+.nz-tg-tab-label { font-size: 10.5px; font-weight: 650; letter-spacing: .01em; line-height: 1.1; }
+.nz-tg-badge { position: absolute; top: -6px; right: -10px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; display: grid; place-items: center; font-size: 10px; font-weight: 800; color: #fff; background: #ef4444; box-shadow: 0 0 0 2px var(--color-surface, #0b1220); }
+html[data-tg="1"] main { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
