@@ -2086,8 +2086,11 @@
         "counting_error": "Counting error",
         "packaging": "Packaging problem",
         "shipment_error": "Shipping error",
-        "other": "Other"
-      }
+        "other": "Other",
+        "unresolved": "Check later (skip)"
+      },
+      "duplicateUnit": "Duplicate scan",
+      "duplicateUnitText": "This unit (marking code) was already scanned — scan another one."
     }
   },
   "search": {

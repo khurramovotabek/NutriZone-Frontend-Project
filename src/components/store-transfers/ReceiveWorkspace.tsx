@@ -263,16 +263,26 @@ export default function ReceiveWorkspace({ transferId, onBack }: { transferId: s
     beep(!over);
   }, [fail, scheduleSave, t]);
 
+  const unitCodes = useRef<Set<string>>(new Set());
   const onScan = useCallback(async (raw: string) => {
-    const code = raw.trim();
+    // 2D scanners send GS1 DataMatrix ("Asl belgisi") with GS (\x1d) separators -- keep the printable part
+    const code = raw.replace(/[\u0000-\u001f\u007f]/g, "").trim();
     const cur = state.current.T;
     if (!code || !cur?.can_receive) return;
     const ts = Date.now();
     if (code === lastCode.current.code && ts - lastCode.current.at < DOUBLE_SCAN_MS) return; // one physical scan delivered twice
     lastCode.current = { code, at: ts };
-    if (code.length > 64 || /[\u0000-\u001f]/.test(code)) {
+    if (code.length > 160) {
       fail(t("badCode"), t("badCodeText"));
       return;
+    }
+    // a marked unit (GTIN + per-unit serial) counts once, however many times it is scanned
+    if (/^(\]d2)?01\d{14}21/.test(code) && code.length > 24) {
+      if (unitCodes.current.has(code)) {
+        fail(t("duplicateUnit"), t("duplicateUnitText"));
+        return;
+      }
+      unitCodes.current.add(code);
     }
     const n = mult;
     const local = cur.items.filter((i) => i.barcode === code || i.sku.toLowerCase() === code.toLowerCase());

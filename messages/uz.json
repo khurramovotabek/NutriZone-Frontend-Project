@@ -2086,8 +2086,11 @@
         "counting_error": "Sanashda xato",
         "packaging": "Qadoq muammosi",
         "shipment_error": "Jo'natishdagi xato",
-        "other": "Boshqa"
-      }
+        "other": "Boshqa",
+        "unresolved": "Keyin aniqlanadi (o'tkazib yuborish)"
+      },
+      "duplicateUnit": "Takroriy skan",
+      "duplicateUnitText": "Bu dona (markirovka kodi) allaqachon skanerlangan — boshqa donani skanerlang."
     }
   },
   "search": {
