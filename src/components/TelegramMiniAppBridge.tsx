@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { onCartUpdated } from "@/lib/cart-events";
-import { haptic, isMiniAppSession, loadTelegramScript, supports, type TelegramWebApp } from "@/lib/telegram-webapp";
+import { haptic, isMiniAppSession, loadTelegramScript, paintTelegramChrome, supports, type TelegramWebApp } from "@/lib/telegram-webapp";
 
 type CartSummary = { count: number; total: number };
 
@@ -79,6 +79,7 @@ export default function TelegramMiniAppBridge() {
       appRef.current = app;
       app.ready();
       document.documentElement.dataset.tg = "1";
+      paintTelegramChrome(app);
       if (supports(app, "7.7")) app.disableVerticalSwipes?.();
       app.BackButton?.onClick(back);
       if (pathRef.current === "/") app.BackButton?.hide();
@@ -94,6 +95,7 @@ export default function TelegramMiniAppBridge() {
     const onRoute = () => {
       const app = appRef.current;
       if (!app) return;
+      paintTelegramChrome(app); // the theme may have been switched on the previous page
       if (pathRef.current === "/") app.BackButton?.hide();
       else app.BackButton?.show();
       void syncMain();

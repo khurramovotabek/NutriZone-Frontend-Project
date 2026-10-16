@@ -87,6 +87,25 @@ export function loadTelegramScript(): Promise<TelegramWebApp | null> {
   });
 }
 
+/** First open inside Telegram: speak the shopper's Telegram language (uz / ru / en) unless they already chose one on the site. */
+export function adoptTelegramLanguage(app: TelegramWebApp): boolean {
+  if (document.cookie.split("; ").some((c) => c.startsWith("nz_locale="))) return false;
+  const code = (app.initDataUnsafe?.user?.language_code || "").toLowerCase().slice(0, 2);
+  const locale = code === "ru" || code === "en" || code === "uz" ? code : code === "kk" || code === "ky" || code === "tg" || code === "be" || code === "uk" ? "ru" : "uz";
+  document.cookie = `nz_locale=${locale}; path=/; max-age=31536000; SameSite=Lax`;
+  return true;
+}
+
+/** Telegram's header, background and bottom bar take the page's own background colour, so the app has no seams. */
+export function paintTelegramChrome(app: TelegramWebApp): void {
+  const rgb = getComputedStyle(document.body).backgroundColor.match(/\d+/g);
+  if (!rgb || rgb.length < 3) return;
+  const hex = "#" + rgb.slice(0, 3).map((n) => Number(n).toString(16).padStart(2, "0")).join("");
+  app.setHeaderColor?.(hex);
+  app.setBackgroundColor?.(hex);
+  if (supports(app, "7.10")) app.setBottomBarColor?.(hex);
+}
+
 export function haptic(kind: "success" | "error" | "light" | "select"): void {
   const h = telegramApp()?.HapticFeedback;
   if (!h) return;

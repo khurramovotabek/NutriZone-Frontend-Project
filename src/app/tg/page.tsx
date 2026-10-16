@@ -7,7 +7,7 @@ import { Coins, Loader2, MessageCircle, Phone, ShieldCheck, Zap } from "lucide-r
 import AuthLoadingScreen from "@/components/AuthLoadingScreen";
 import BrandMark from "@/components/BrandMark";
 import { safeRedirectPath } from "@/lib/safe-redirect";
-import { haptic, loadTelegramScript, markMiniApp, supports, type TelegramWebApp } from "@/lib/telegram-webapp";
+import { adoptTelegramLanguage, haptic, loadTelegramScript, markMiniApp, supports, type TelegramWebApp } from "@/lib/telegram-webapp";
 
 const BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME;
 const LINK_POLL_MS = 1500;
@@ -77,6 +77,7 @@ function MiniAppEntry() {
         return;
       }
       appRef.current = app;
+      adoptTelegramLanguage(app); // the storefront opens in the shopper's Telegram language (router.refresh in enter())
       app.ready();
       app.expand();
       app.setHeaderColor?.("#0b1220");

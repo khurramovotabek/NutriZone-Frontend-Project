@@ -114,10 +114,10 @@ export default async function HomePage() {
           <h1 className="mt-3 max-w-2xl text-4xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">{t("hero.title")}</h1>
           <p className="mt-4 max-w-xl text-base text-ink-muted sm:text-lg">{t("hero.subtitle")}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#featured-products">
-              <Button variant="primary">{t("hero.cta")}</Button>
-            </a>
             <Link href="/products">
+              <Button variant="primary">{t("hero.cta")}</Button>
+            </Link>
+            <Link href="/products?sale=1">
               <Button variant="secondary">{t("hero.secondaryCta")}</Button>
             </Link>
           </div>
