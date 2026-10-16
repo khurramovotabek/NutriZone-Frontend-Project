@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { BarChart3, Clock, ImageIcon, LayoutDashboard, MapPin, MessageCircle, MonitorSmartphone, PackageCheck, ShoppingBag, Store as StoreIcon, type LucideIcon } from "lucide-react";
+import { BarChart3, Clock, ImageIcon, LayoutDashboard, MapPin, MessageCircle, MonitorSmartphone, PackageCheck, ReceiptText, ShoppingBag, Store as StoreIcon, type LucideIcon } from "lucide-react";
 import { useIncomingTransfers } from "@/components/store-transfers/useIncomingTransfers";
 import { useChatUnread } from "@/hooks/useChatUnread";
 import { useStoreDashboard } from "./StoreDashboardContext";
@@ -16,6 +16,7 @@ const GROUPS: { titleKey: string; items: Item[] }[] = [
     { href: "/profile/store/orders", labelKey: "navOrders", icon: ShoppingBag, cashier: true },
     { href: "/profile/store/pos", labelKey: "navPos", icon: MonitorSmartphone, cashier: true },
     { href: "/profile/store/receiving", labelKey: "navReceiving", icon: PackageCheck, cashier: true },
+    { href: "/profile/store/receipts", labelKey: "navReceipts", icon: ReceiptText, cashier: true },
     { href: "/profile/store/report", labelKey: "navReport", icon: BarChart3 },
   ] },
   { titleKey: "navGroupStore", items: [

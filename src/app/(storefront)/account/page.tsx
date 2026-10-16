@@ -13,6 +13,7 @@ import ProgressRing from "@/components/loyalty/ProgressRing";
 import { DonutChart, TrendLine, chartColor } from "@/components/charts/Charts";
 import ActiveOrderCard from "@/components/account-dashboard/ActiveOrderCard";
 import RunningLowCard from "@/components/account-dashboard/RunningLowCard";
+import DailyPlanCard from "@/components/account-dashboard/DailyPlanCard";
 import DashboardHero from "@/components/account-dashboard/DashboardHero";
 import RecentOrders from "@/components/account-dashboard/RecentOrders";
 import { ACTIVE_STATUSES, computeMonthlySpend, computeSpendSummary, formatMoney, ordersByStatus } from "@/lib/account-insights";
@@ -193,6 +194,7 @@ export default function AccountDashboardPage() {
 
         <aside className="space-y-6">
           {activeOrders.length > 0 && <ActiveOrderCard order={activeOrders[0]} extraCount={activeOrders.length - 1} />}
+          {profile && <DailyPlanCard heightCm={profile.height_cm} weightKg={profile.weight_kg} goal={profile.goal} birthday={profile.birthday} />}
           <RunningLowCard />
 
           {completeness < 100 && (

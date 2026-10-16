@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ASSISTANT_OPEN_EVENT } from "@/lib/assistant-events";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowUp, Bot, LoaderCircle, Mic, MicOff, RotateCcw, Sparkles, Square, ThumbsDown, ThumbsUp, Volume2, VolumeX, X } from "lucide-react";
@@ -69,6 +70,25 @@ export default function AssistantWidget() {
       document.documentElement.style.overflow = "";
     };
   }, [open]);
+
+  // other pages open the advisor with a ready question: openAssistant("...") (src/lib/assistant-events.ts)
+  const aiRef = useRef(ai);
+  useEffect(() => {
+    aiRef.current = ai;
+  }, [ai]);
+  useEffect(() => {
+    const onOpen = async (e: Event) => {
+      const text = (e as CustomEvent<{ text?: string }>).detail?.text?.trim();
+      setOpen(true);
+      await aiRef.current.load(); // the saved history first, or it would replace the question sent below
+      window.setTimeout(() => {
+        if (text && !aiRef.current.busy) aiRef.current.send(text, { network: t("errNetwork"), busy: t("errBusy"), full: t("errFull"), limited: t("errLimited") });
+        inputRef.current?.focus();
+      }, 60);
+    };
+    window.addEventListener(ASSISTANT_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(ASSISTANT_OPEN_EVENT, onOpen);
+  }, [t]);
 
   if (!enabled || HIDDEN.some((re) => re.test(pathname))) return null;
 

@@ -1134,6 +1134,21 @@
         "delivered": "Yetkazildi",
         "readyForPickup": "Tayyor",
         "pickedUp": "Olib ketildi"
+      },
+      "plan": {
+        "title": "Shaxsiy kunlik reja",
+        "kcal": "kkal",
+        "protein": "g oqsil",
+        "water": "l suv",
+        "cta": "Menga to'plam tanlab ber",
+        "ask": "Profilimga mos sport ozuqa to'plamini tavsiya qiling",
+        "note": "Umumiy tavsiya, tibbiy maslahat emas.",
+        "fill": "Bo'y, vazn, tug'ilgan sana va maqsadni kiriting — kunlik kaloriya va oqsil ehtiyojingizni hisoblab beramiz.",
+        "goal": {
+          "muscle_gain": "Massa olish",
+          "fat_loss": "Ozish",
+          "healthy_lifestyle": "Sog'lom turmush"
+        }
       }
     },
     "addresses": "Manzillar kitobi",
@@ -1313,6 +1328,29 @@
         "servings": "porsiyalar soni bo'yicha",
         "default": "taxminan"
       }
+    },
+    "receipts": "Cheklarim",
+    "receiptsPage": {
+      "title": "Cheklarim",
+      "subtitle": "Barcha xaridlaringizning rasmiy QR cheklari — saytdan va do'kondan.",
+      "count": "ta chek",
+      "total": "so'm jami",
+      "currency": "so'm",
+      "refund": "Qaytarish",
+      "fiscal": "Fiskal",
+      "items": "{count} ta mahsulot",
+      "filter": {
+        "all": "Hammasi",
+        "online": "Onlayn buyurtma",
+        "pos": "Do'kon"
+      },
+      "filterEmpty": "Bu bo'limda chek yo'q.",
+      "emptyTitle": "Hozircha chek yo'q",
+      "emptyBody": "Xarid qilganingizda chek shu yerda saqlanadi — istalgan vaqt QR kod bilan ochasiz.",
+      "shop": "Xarid qilish",
+      "login": "Cheklaringizni ko'rish uchun hisobingizga kiring.",
+      "loginCta": "Kirish",
+      "loadError": "Cheklarni yuklab bo'lmadi."
     }
   },
   "footer": {
@@ -2091,6 +2129,33 @@
       },
       "duplicateUnit": "Takroriy skan",
       "duplicateUnitText": "Bu dona (markirovka kodi) allaqachon skanerlangan — boshqa donani skanerlang."
+    },
+    "navReceipts": "Cheklar",
+    "receipts": {
+      "title": "Filial cheklari",
+      "subtitle": "Kassa sotuvlari, qaytarishlar va onlayn buyurtmalar cheklari — QR bilan ochish yoki qayta chop etish.",
+      "period": "Davr",
+      "days": {
+        "1": "Bugun",
+        "7": "7 kun",
+        "30": "30 kun"
+      },
+      "todaySales": "Bugungi cheklar",
+      "todayRevenue": "Bugungi tushum, so'm",
+      "todayRefunds": "Bugungi qaytarishlar",
+      "fiscalShare": "Fiskal cheklar",
+      "search": "Chek raqami, buyurtma, mijoz yoki telefonning oxirgi raqamlari",
+      "loadError": "Cheklarni yuklab bo'lmadi.",
+      "emptyTitle": "Chek topilmadi",
+      "emptyBody": "Tanlangan davrda bu filialda chek yo'q.",
+      "fiscal": "Fiskal",
+      "print": "80 mm chop etish",
+      "items": "{count} ta",
+      "source": {
+        "pos": "Kassa",
+        "online": "Onlayn",
+        "manual": "Qo'lda"
+      }
     }
   },
   "search": {

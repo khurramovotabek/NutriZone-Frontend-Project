@@ -28,6 +28,8 @@ const STATUS_TONE: Record<string, "neutral" | "pending" | "success" | "error"> =
   coming_soon: "pending",
 };
 
+const CASHIER_PAGES = ["/profile/store/pos", "/profile/store/orders", "/profile/store/receiving", "/profile/store/receipts"];
+
 export default function StoreDashboardShell({ children }: { children: ReactNode }) {
   const t = useTranslations("myStore");
   const { store, setStore, loading, error, saveState } = useStoreDashboard();
@@ -35,9 +37,9 @@ export default function StoreDashboardShell({ children }: { children: ReactNode 
   const router = useRouter();
   const cashier = store?.my_role === "cashier";
 
-  // A cashier's store is the kassa: every owner-only page sends them to the POS terminal.
+  // A cashier's store is the kassa: every owner-only page sends them to the POS terminal (same pages as the nav's `cashier: true`).
   useEffect(() => {
-    if (cashier && !pathname.startsWith("/profile/store/pos") && !pathname.startsWith("/profile/store/orders")) router.replace("/profile/store/pos");
+    if (cashier && !CASHIER_PAGES.some((p) => pathname.startsWith(p))) router.replace("/profile/store/pos");
   }, [cashier, pathname, router]);
 
   const [logoUploading, setLogoUploading] = useState(false);

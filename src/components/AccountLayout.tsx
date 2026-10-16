@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Coins, LayoutDashboard, LogOut, Mail, MapPin, MessageCircle, Package, Settings, User } from "lucide-react";
+import { Bell, Coins, LayoutDashboard, LogOut, Mail, MapPin, MessageCircle, Package, ReceiptText, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: "/account", labelKey: "dashboard", icon: LayoutDashboard },
   { href: "/profile", labelKey: "profile", icon: User },
   { href: "/orders", labelKey: "orders", icon: Package },
+  { href: "/account/receipts", labelKey: "receipts", icon: ReceiptText },
   { href: "/account/loyalty", labelKey: "loyalty", icon: Coins },
   { href: "/account/addresses", labelKey: "addresses", icon: MapPin },
   { href: "/account/notifications", labelKey: "notifications", icon: Bell },

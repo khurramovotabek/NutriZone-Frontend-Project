@@ -1134,6 +1134,21 @@
         "delivered": "Delivered",
         "readyForPickup": "Ready",
         "pickedUp": "Picked up"
+      },
+      "plan": {
+        "title": "Your daily plan",
+        "kcal": "kcal",
+        "protein": "g protein",
+        "water": "l water",
+        "cta": "Pick a stack for me",
+        "ask": "Recommend a supplement stack for my profile",
+        "note": "General guidance, not medical advice.",
+        "fill": "Add your height, weight, birthday and goal — we'll work out your daily calories and protein.",
+        "goal": {
+          "muscle_gain": "Muscle gain",
+          "fat_loss": "Fat loss",
+          "healthy_lifestyle": "Healthy lifestyle"
+        }
       }
     },
     "addresses": "Address Book",
@@ -1313,6 +1328,29 @@
         "servings": "based on servings",
         "default": "estimate"
       }
+    },
+    "receipts": "My receipts",
+    "receiptsPage": {
+      "title": "My receipts",
+      "subtitle": "Official QR receipts for all your purchases — online and in store.",
+      "count": "receipts",
+      "total": "UZS total",
+      "currency": "UZS",
+      "refund": "Refund",
+      "fiscal": "Fiscal",
+      "items": "{count} item(s)",
+      "filter": {
+        "all": "All",
+        "online": "Online orders",
+        "pos": "In store"
+      },
+      "filterEmpty": "No receipts here.",
+      "emptyTitle": "No receipts yet",
+      "emptyBody": "Your receipts are kept here after each purchase — open any of them by its QR code.",
+      "shop": "Start shopping",
+      "login": "Sign in to see your receipts.",
+      "loginCta": "Sign in",
+      "loadError": "Could not load receipts."
     }
   },
   "footer": {
@@ -2091,6 +2129,33 @@
       },
       "duplicateUnit": "Duplicate scan",
       "duplicateUnitText": "This unit (marking code) was already scanned — scan another one."
+    },
+    "navReceipts": "Receipts",
+    "receipts": {
+      "title": "Branch receipts",
+      "subtitle": "Kassa sales, refunds and online-order receipts — open by QR or reprint.",
+      "period": "Period",
+      "days": {
+        "1": "Today",
+        "7": "7 days",
+        "30": "30 days"
+      },
+      "todaySales": "Receipts today",
+      "todayRevenue": "Revenue today, UZS",
+      "todayRefunds": "Refunds today",
+      "fiscalShare": "Fiscal receipts",
+      "search": "Receipt or order number, customer, or last phone digits",
+      "loadError": "Could not load receipts.",
+      "emptyTitle": "No receipts",
+      "emptyBody": "No receipts at this branch in the chosen period.",
+      "fiscal": "Fiscal",
+      "print": "Print 80 mm",
+      "items": "{count} pcs",
+      "source": {
+        "pos": "Kassa",
+        "online": "Online",
+        "manual": "Manual"
+      }
     }
   },
   "search": {
