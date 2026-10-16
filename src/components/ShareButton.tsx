@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { haptic, isMiniAppSession, telegramApp } from "@/lib/telegram-webapp";
 
 /**
  * Uses the real native Web Share API (the actual OS share sheet --
@@ -31,6 +32,14 @@ export default function ShareButton({ className = "", title, url, text, iconOnly
   }
 
   async function handleShare() {
+    // Inside the Telegram Mini App: Telegram's own "share to a chat" picker (the webview rarely has navigator.share).
+    const app = isMiniAppSession() ? telegramApp() : null;
+    if (app?.openTelegramLink) {
+      haptic("light");
+      const caption = [title, text].filter(Boolean).join(" — ");
+      app.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(target())}${caption ? `&text=${encodeURIComponent(caption)}` : ""}`);
+      return;
+    }
     if (typeof navigator.share === "function") {
       try {
         await navigator.share({ title, text, url: target() });

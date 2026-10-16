@@ -11,7 +11,7 @@ import MediaImage from "@/components/MediaImage";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   try {
-    const { data: post } = await getBlogPostBySlug(slug);
+    const { data: post } = await getBlogPostBySlug(slug, await getLocale());
     return { title: post.title, description: post.excerpt || undefined };
   } catch {
     return { title: (await getTranslations("meta"))("blog") };
@@ -36,7 +36,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   let post;
   try {
-    const result = await getBlogPostBySlug(slug);
+    const result = await getBlogPostBySlug(slug, locale);
     post = result.data;
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) {

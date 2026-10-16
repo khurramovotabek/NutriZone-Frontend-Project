@@ -463,19 +463,21 @@ export async function getNewsSubscriptionInfo(): Promise<ApiEnvelope<{ gift_coin
   return apiFetch("/api/v1/notifications/news");
 }
 
-export async function getBlogCategories(): Promise<ApiEnvelope<BlogCategory[]>> {
-  return apiFetch<BlogCategory[]>("/api/v1/content/categories");
+// Blog texts come in the shopper's language (Russian / English translations fall back to Uzbek per post).
+export async function getBlogCategories(locale?: string): Promise<ApiEnvelope<BlogCategory[]>> {
+  return apiFetch<BlogCategory[]>(`/api/v1/content/categories${locale ? `?locale=${encodeURIComponent(locale)}` : ""}`);
 }
 
-export async function getBlogPosts(pageSize = 4, page = 1, categorySlug?: string): Promise<ApiEnvelope<BlogPostCard[]>> {
+export async function getBlogPosts(pageSize = 4, page = 1, categorySlug?: string, locale?: string): Promise<ApiEnvelope<BlogPostCard[]>> {
   const categoryParam = categorySlug ? `&category=${encodeURIComponent(categorySlug)}` : "";
-  return apiFetch<BlogPostCard[]>(`/api/v1/content/posts?page_size=${pageSize}&page=${page}${categoryParam}`);
+  const localeParam = locale ? `&locale=${encodeURIComponent(locale)}` : "";
+  return apiFetch<BlogPostCard[]>(`/api/v1/content/posts?page_size=${pageSize}&page=${page}${categoryParam}${localeParam}`);
 }
 
 export interface BlogPostDetail extends BlogPostCard {
   body: string;
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<ApiEnvelope<BlogPostDetail>> {
-  return apiFetch<BlogPostDetail>(`/api/v1/content/posts/${encodeURIComponent(slug)}`);
+export async function getBlogPostBySlug(slug: string, locale?: string): Promise<ApiEnvelope<BlogPostDetail>> {
+  return apiFetch<BlogPostDetail>(`/api/v1/content/posts/${encodeURIComponent(slug)}${locale ? `?locale=${encodeURIComponent(locale)}` : ""}`);
 }

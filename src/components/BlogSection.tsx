@@ -45,7 +45,7 @@ export default async function BlogSection() {
 
   let posts: BlogPostCard[];
   try {
-    posts = (await getBlogPosts(4)).data;
+    posts = (await getBlogPosts(4, 1, undefined, await getLocale())).data;
   } catch {
     return null;
   }

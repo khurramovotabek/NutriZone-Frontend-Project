@@ -50,7 +50,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
   let loadError = false;
 
   try {
-    const [postsResult, categoriesResult] = await Promise.all([getBlogPosts(12, page, activeCategory), getBlogCategories().catch(() => ({ data: [] }))]);
+    const [postsResult, categoriesResult] = await Promise.all([getBlogPosts(12, page, activeCategory, locale), getBlogCategories(locale).catch(() => ({ data: [] }))]);
     data = postsResult;
     categories = categoriesResult.data;
   } catch {
