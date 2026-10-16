@@ -387,6 +387,8 @@ export interface Brand {
   description?: string;
   /** Published products of this brand. */
   product_count?: number;
+  /** The brand's home country (flag emoji + name in the requested locale). */
+  country?: { code: string; flag: string; name: string } | null;
 }
 
 /** `locale` only picks the description language (names are unaffected). */

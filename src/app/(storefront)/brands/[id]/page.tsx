@@ -113,6 +113,11 @@ export default async function BrandDetailPage({ params, searchParams }: Props) {
               {tBrands("officialBadge")}
             </p>
             <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">{brand.name}</h1>
+            {brand.country && (
+              <p className="mt-1 text-sm font-medium text-ink-muted">
+                <span aria-hidden="true">{brand.country.flag}</span> {brand.country.name}
+              </p>
+            )}
             {brand.description && (
               <details className="group mt-3 max-w-3xl">
                 <summary className="list-none text-sm leading-relaxed text-ink-muted [&::-webkit-details-marker]:hidden">
