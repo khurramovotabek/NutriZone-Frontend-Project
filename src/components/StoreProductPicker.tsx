@@ -99,7 +99,7 @@ export default function StoreProductPicker({
     setOpen(false);
     setResolvingVariants(true);
     try {
-      const detail = await getProductBySlug(product.slug);
+      const detail = await getProductBySlug(product.slug, locale);
       const activeVariants = (detail.data.variants ?? []).filter((v) => v.status === "active");
       if (activeVariants.length > 1) {
         setVariantChoices({ product: detail.data, variants: activeVariants });

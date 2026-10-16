@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LayoutGrid, List } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 interface Props {
   view: "grid" | "list";
@@ -14,7 +15,8 @@ interface Props {
  * state) so it works with JavaScript disabled and needs no extra
  * client bundle.
  */
-export default function CatalogViewToggle({ view, baseQuery }: Props) {
+export default async function CatalogViewToggle({ view, baseQuery }: Props) {
+  const t = await getTranslations("catalog");
   function hrefFor(target: "grid" | "list") {
     const suffix = target === "list" ? `${baseQuery}&view=list` : baseQuery;
     return `/products?${suffix.replace(/^&/, "")}`.replace(/\?&/, "?");
@@ -24,7 +26,7 @@ export default function CatalogViewToggle({ view, baseQuery }: Props) {
     <div className="nz-glass flex items-center gap-1 rounded-xl p-1">
       <Link
         href={hrefFor("grid")}
-        aria-label="Grid view"
+        aria-label={t("gridView")}
         aria-current={view === "grid" ? "true" : undefined}
         className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors ${view === "grid" ? "nz-cta" : "text-ink-muted hover:text-primary"}`}
       >
@@ -32,7 +34,7 @@ export default function CatalogViewToggle({ view, baseQuery }: Props) {
       </Link>
       <Link
         href={hrefFor("list")}
-        aria-label="List view"
+        aria-label={t("listView")}
         aria-current={view === "list" ? "true" : undefined}
         className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors ${view === "list" ? "nz-cta" : "text-ink-muted hover:text-primary"}`}
       >

@@ -492,7 +492,9 @@
     "refineFilters": "Уточнить фильтры",
     "onSaleOnly": "Только со скидкой",
     "sortDiscount": "Самая большая скидка",
-    "onSaleCount": "{count, plural, one {# товар со скидкой} few {# товара со скидкой} many {# товаров со скидкой} other {# товара со скидкой}}"
+    "onSaleCount": "{count, plural, one {# товар со скидкой} few {# товара со скидкой} many {# товаров со скидкой} other {# товара со скидкой}}",
+    "gridView": "Плитка",
+    "listView": "Список"
   },
   "brands": {
     "title": "Бренды",

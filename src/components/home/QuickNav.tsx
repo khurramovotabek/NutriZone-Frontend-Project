@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Coins, LayoutGrid, Package, Store, Tag } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getCategories } from "@/lib/api";
 import FullBleedImage from "@/components/FullBleedImage";
 
@@ -12,7 +12,7 @@ export default async function QuickNav() {
   const t = await getTranslations("home.quickNav");
   let categories: Awaited<ReturnType<typeof getCategories>>["data"] = [];
   try {
-    categories = (await getCategories()).data.filter((c) => !c.parent_id);
+    categories = (await getCategories(await getLocale())).data.filter((c) => !c.parent_id);
   } catch {
     categories = [];
   }

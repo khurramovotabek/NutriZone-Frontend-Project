@@ -16,7 +16,7 @@ import {
   Store,
   Tag,
 } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getBrands, getCategories, getProducts, type Brand } from "@/lib/api";
 import { getStores } from "@/lib/store-api";
 import FullBleedImage from "@/components/FullBleedImage";
@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * is simply left out rather than shown as a guess.
  */
 async function loadFacts() {
-  const [products, brands, stores, categories] = await Promise.allSettled([getProducts({ pageSize: 1 }), getBrands(), getStores(), getCategories()]);
+  const [products, brands, stores, categories] = await Promise.allSettled([getProducts({ pageSize: 1 }), getBrands(), getStores(), getCategories(await getLocale())]);
   return {
     productCount: products.status === "fulfilled" ? (products.value.pagination?.total_count ?? null) : null,
     brands: brands.status === "fulfilled" ? brands.value.data : ([] as Brand[]),

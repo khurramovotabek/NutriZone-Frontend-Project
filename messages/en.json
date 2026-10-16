@@ -492,7 +492,9 @@
     "refineFilters": "Refine with more filters",
     "onSaleOnly": "On sale only",
     "sortDiscount": "Biggest discount",
-    "onSaleCount": "{count, plural, one {# product on sale} other {# products on sale}}"
+    "onSaleCount": "{count, plural, one {# product on sale} other {# products on sale}}",
+    "gridView": "Grid view",
+    "listView": "List view"
   },
   "brands": {
     "title": "Brands",

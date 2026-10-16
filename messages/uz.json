@@ -492,7 +492,9 @@
     "refineFilters": "Filtrlarni kengaytirish",
     "onSaleOnly": "Faqat chegirmadagilar",
     "sortDiscount": "Eng katta chegirma",
-    "onSaleCount": "{count, plural, other {# ta mahsulot chegirmada}}"
+    "onSaleCount": "{count, plural, other {# ta mahsulot chegirmada}}",
+    "gridView": "Katak ko'rinishi",
+    "listView": "Ro'yxat ko'rinishi"
   },
   "brands": {
     "title": "Brendlar",
