@@ -19,6 +19,7 @@ import ReviewsWall from "@/components/home/ReviewsWall";
 import TelegramSubscribe from "@/components/home/TelegramSubscribe";
 import LoyaltyBanner from "@/components/home/LoyaltyBanner";
 import ProductShowcase, { type ShowcaseTab } from "@/components/home/ProductShowcase";
+import SaleSection from "@/components/home/SaleSection";
 import QuickNav from "@/components/home/QuickNav";
 import StoresSection from "@/components/home/StoresSection";
 
@@ -131,6 +132,10 @@ export default async function HomePage() {
       <section className="mt-8">
         <TrustBar />
       </section>
+
+      <Suspense fallback={null}>
+        <SaleSection />
+      </Suspense>
 
       <Suspense fallback={<ProductGridSkeleton />}>
         <Showcase />

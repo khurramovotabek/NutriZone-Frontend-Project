@@ -2,19 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { ArrowUp, Bot, LoaderCircle, RotateCcw, Sparkles, Square, ThumbsDown, ThumbsUp, X } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { ArrowUp, Bot, LoaderCircle, Mic, MicOff, RotateCcw, Sparkles, Square, ThumbsDown, ThumbsUp, Volume2, VolumeX, X } from "lucide-react";
 import ProductMini from "./ProductMini";
 import RichText from "./RichText";
 import { useAssistant } from "./useAssistant";
+import { useDictation, useSpeech } from "./useVoice";
 
 const HIDDEN = [/^\/profile\/store/, /^\/checkout/];
 const SUGGESTIONS = ["s1", "s2", "s3", "s4"] as const;
 
 /**
- * Storefront AI shopping assistant (Claude, apps/assistant): a launcher button and a chat panel -- full screen on
+ * Storefront AI shopping assistant (apps/assistant: free local advisor, or Claude when a key is configured): a launcher button and a chat panel -- full screen on
  * phones, a docked card on wide screens. Answers stream in; recommended products arrive as cards with add-to-cart.
- * Hidden where it would get in the way (store owner panel, checkout) and when the backend has no API key.
+ * Voice: dictation (mic) and read-aloud answers via the browser's Web Speech API. Quick replies (chips) under the
+ * latest answer. Hidden where it would get in the way (store owner panel, checkout) or when the backend switches it off.
  */
 export default function AssistantWidget() {
   const t = useTranslations("assistant");
@@ -23,6 +25,10 @@ export default function AssistantWidget() {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const ai = useAssistant();
+  const locale = useLocale();
+  const dictation = useDictation(locale);
+  const speech = useSpeech(locale);
+  const spokenRef = useRef(-1);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -36,6 +42,15 @@ export default function AssistantWidget() {
       alive = false;
     };
   }, []);
+
+  // read each finished answer aloud when the shopper turned voice answers on
+  useEffect(() => {
+    const lastIdx = ai.messages.length - 1;
+    const last = ai.messages[lastIdx];
+    if (ai.busy || !last || last.role !== "assistant" || !last.text || last.error || spokenRef.current === lastIdx) return;
+    spokenRef.current = lastIdx;
+    speech.speak(last.text);
+  }, [ai.busy, ai.messages, speech]);
 
   // keep the newest message in view while it streams
   useEffect(() => {
@@ -71,6 +86,10 @@ export default function AssistantWidget() {
   }
 
   const stageText = ai.stage ? t(`stage.${ai.stage}`) : null;
+  function toggleMic() {
+    if (dictation.listening) return dictation.stop();
+    dictation.start((text) => setDraft(text), (text) => submit(text));
+  }
 
   return (
     <>
@@ -102,6 +121,11 @@ export default function AssistantWidget() {
               <h2 className="text-sm font-bold text-ink">{t("title")}</h2>
               <p className="flex items-center gap-1.5 text-xs text-ink-soft"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />{t("subtitle")}</p>
             </div>
+            {speech.supported && (
+              <button type="button" onClick={speech.toggle} aria-pressed={speech.on} aria-label={speech.on ? t("speakOff") : t("speakOn")} title={speech.on ? t("speakOff") : t("speakOn")} className={`flex h-9 w-9 items-center justify-center rounded-xl hover:bg-surface-2 ${speech.on ? "text-primary" : "text-ink-muted hover:text-ink"}`}>
+                {speech.on ? <Volume2 className="h-4 w-4" aria-hidden="true" /> : <VolumeX className="h-4 w-4" aria-hidden="true" />}
+              </button>
+            )}
             {ai.messages.length > 0 && (
               <button type="button" onClick={ai.reset} aria-label={t("newChat")} title={t("newChat")} className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted hover:bg-surface-2 hover:text-ink">
                 <RotateCcw className="h-4 w-4" aria-hidden="true" />
@@ -147,6 +171,13 @@ export default function AssistantWidget() {
                       {m.products && m.products.length > 0 && (
                         <div className="grid gap-2">{m.products.map((p) => <ProductMini key={p.id} card={p} onNavigate={() => window.matchMedia("(max-width: 639px)").matches && setOpen(false)} />)}</div>
                       )}
+                      {last && !ai.busy && m.chips && m.chips.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {m.chips.map((c) => (
+                            <button key={c} type="button" onClick={() => submit(c)} className="rounded-full border border-primary/40 bg-primary-soft/40 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary hover:text-white">{c}</button>
+                          ))}
+                        </div>
+                      )}
                       {!m.error && m.index !== undefined && !(last && ai.busy) && (
                         <div className="flex items-center gap-1 text-ink-soft">
                           <button type="button" onClick={() => ai.rate(m, "up")} aria-pressed={m.feedback === "up"} aria-label={t("helpful")} className={`rounded-lg p-1.5 hover:bg-surface-2 ${m.feedback === "up" ? "text-emerald-500" : ""}`}><ThumbsUp className="h-3.5 w-3.5" aria-hidden="true" /></button>
@@ -180,10 +211,16 @@ export default function AssistantWidget() {
                       submit(draft);
                     }
                   }}
-                  placeholder={t("placeholder")}
+                  placeholder={dictation.listening ? t("listening") : t("placeholder")}
                   aria-label={t("placeholder")}
                   className="max-h-32 min-h-10 flex-1 resize-none bg-transparent px-2.5 py-2 text-sm text-ink outline-none placeholder:text-ink-soft"
                 />
+                {dictation.supported && !ai.busy && (
+                  <button type="button" onClick={toggleMic} aria-pressed={dictation.listening} aria-label={dictation.listening ? t("voiceStop") : t("voiceStart")} title={dictation.listening ? t("voiceStop") : t("voiceStart")}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${dictation.listening ? "animate-pulse bg-red-500 text-white" : "text-ink-muted hover:bg-surface hover:text-primary"}`}>
+                    {dictation.listening ? <MicOff className="h-5 w-5" aria-hidden="true" /> : <Mic className="h-5 w-5" aria-hidden="true" />}
+                  </button>
+                )}
                 {ai.busy ? (
                   <button type="button" onClick={ai.stop} aria-label={t("stop")} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink/10 text-ink"><Square className="h-4 w-4" aria-hidden="true" /></button>
                 ) : (

@@ -418,6 +418,12 @@
       "title": "For you",
       "subtitle": "Picked from your purchases and goal",
       "viewAll": "See all"
+    },
+    "sale": {
+      "eyebrow": "Limited time",
+      "title": "Deals",
+      "subtitle": "{count} products on sale — biggest discounts first",
+      "viewAll": "All deals"
     }
   },
   "blog": {
@@ -3117,7 +3123,7 @@
       "showing": "Preparing picks…",
       "stores": "Checking our branches…"
     },
-    "disclaimer": "AI can make mistakes. For health questions, talk to a doctor.",
+    "disclaimer": "The advisor gives general guidance. For health questions, consult a doctor.",
     "errNetwork": "Connection lost. Please try again.",
     "errBusy": "I couldn't answer right now. Please try again in a moment.",
     "errFull": "This chat got too long — start a new one.",
@@ -3128,6 +3134,12 @@
     "add": "Add",
     "added": "Added",
     "retry": "Retry",
-    "addToCart": "Add {name} to cart"
+    "addToCart": "Add {name} to cart",
+    "voiceStart": "Speak your question",
+    "voiceStop": "Stop listening",
+    "listening": "Listening… speak now",
+    "speakOn": "Read answers aloud",
+    "speakOff": "Stop reading answers",
+    "voiceUnsupported": "This browser doesn't support voice input"
   }
 }

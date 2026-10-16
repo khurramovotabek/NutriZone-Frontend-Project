@@ -21,6 +21,8 @@ export type ChatMessage = {
   text: string;
   products?: AssistantCard[];
   feedback?: "up" | "down" | null;
+  /** quick replies offered under the answer (free local advisor) */
+  chips?: string[];
   /** index in the stored transcript (feedback is sent by it); undefined while streaming */
   index?: number;
   error?: boolean;
@@ -31,5 +33,6 @@ export type StreamEvent =
   | { type: "status"; stage: "searching" | "reading" | "showing" | "stores" }
   | { type: "text"; delta: string }
   | { type: "products"; items: AssistantCard[] }
+  | { type: "chips"; items: string[] }
   | { type: "done"; conversation_id: string; turns: number; saved: boolean }
   | { type: "error"; code: string; message: string };

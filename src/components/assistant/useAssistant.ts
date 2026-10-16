@@ -124,6 +124,8 @@ export function useAssistant() {
           patch((m) => ({ ...m, text: m.text + ev.delta }));
         } else if (ev.type === "products") {
           patch((m) => ({ ...m, products: [...(m.products ?? []), ...ev.items.filter((c: AssistantCard) => !(m.products ?? []).some((p) => p.id === c.id))] }));
+        } else if (ev.type === "chips") {
+          patch((m) => ({ ...m, chips: ev.items }));
         } else if (ev.type === "error") {
           patch((m) => ({ ...m, text: (m.text ? m.text + "\n\n" : "") + ev.message, error: true }));
         } else if (ev.type === "done") {

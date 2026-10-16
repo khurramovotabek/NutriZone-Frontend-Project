@@ -418,6 +418,12 @@
       "title": "Siz uchun",
       "subtitle": "Xaridlaringiz va maqsadingiz asosida tanlandi",
       "viewAll": "Barchasi"
+    },
+    "sale": {
+      "eyebrow": "Cheklangan muddat",
+      "title": "Aksiyalar",
+      "subtitle": "{count} ta mahsulot chegirmada — eng katta chegirmalar birinchi",
+      "viewAll": "Barcha chegirmalar"
     }
   },
   "blog": {
@@ -3117,7 +3123,7 @@
       "showing": "Mahsulotlar tayyorlanmoqda…",
       "stores": "Filiallar ma'lumoti olinmoqda…"
     },
-    "disclaimer": "AI xato qilishi mumkin. Sog'liq bo'yicha savollarda shifokor bilan maslahatlashing.",
+    "disclaimer": "Maslahatchi umumiy tavsiya beradi. Sog'liq bo'yicha savollarda shifokor bilan maslahatlashing.",
     "errNetwork": "Internet aloqasi uzildi. Qayta urinib ko'ring.",
     "errBusy": "Hozir javob bera olmadim. Birozdan keyin qayta urinib ko'ring.",
     "errFull": "Bu suhbat juda uzun bo'lib ketdi — yangi suhbat boshlang.",
@@ -3128,6 +3134,12 @@
     "add": "Savatga",
     "added": "Qo'shildi",
     "retry": "Qayta",
-    "addToCart": "{name} — savatga qo'shish"
+    "addToCart": "{name} — savatga qo'shish",
+    "voiceStart": "Ovoz bilan yozish",
+    "voiceStop": "Tinglashni to'xtatish",
+    "listening": "Tinglayapman… gapiring",
+    "speakOn": "Javoblarni ovozda o'qish",
+    "speakOff": "Ovozli javobni o'chirish",
+    "voiceUnsupported": "Bu brauzer ovozli kiritishni qo'llamaydi"
   }
 }

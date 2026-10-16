@@ -1,15 +1,17 @@
 import { Fragment, type ReactNode } from "react";
 
 /**
- * The assistant's answer as safe React nodes: paragraphs, "- " / "• " / "1. " list lines and **bold** -- nothing
+ * The assistant's answer as safe React nodes: paragraphs, "- " / "• " / "1. " list lines, **bold**, _italic_, ~~struck~~ -- nothing
  * else is interpreted (no HTML, no links), so model output can never inject markup.
  */
 function inline(text: string, keyBase: string): ReactNode[] {
-  return text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part, i) =>
-    part.startsWith("**") && part.endsWith("**") && part.length > 4
-      ? <strong key={`${keyBase}-${i}`} className="font-semibold text-ink">{part.slice(2, -2)}</strong>
-      : <Fragment key={`${keyBase}-${i}`}>{part.replace(/\*\*/g, "")}</Fragment>,
-  );
+  return text.split(/(\*\*[^*]+\*\*|~~[^~]+~~|(?<![\w])_[^_]+_(?![\w]))/g).filter(Boolean).map((part, i) => {
+    const key = `${keyBase}-${i}`;
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) return <strong key={key} className="font-semibold text-ink">{part.slice(2, -2)}</strong>;
+    if (part.startsWith("~~") && part.endsWith("~~") && part.length > 4) return <s key={key} className="text-ink-soft">{part.slice(2, -2)}</s>;
+    if (part.startsWith("_") && part.endsWith("_") && part.length > 2) return <em key={key} className="text-ink-muted">{part.slice(1, -1)}</em>;
+    return <Fragment key={key}>{part.replace(/\*\*/g, "")}</Fragment>;
+  });
 }
 
 export default function RichText({ text }: { text: string }) {
