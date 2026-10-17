@@ -14,8 +14,8 @@ import { LOCALE_COOKIE, LOCALE_HEADER, splitLocalePath } from "@/i18n/config";
  *    requests carrying the same refresh token share ONE exchange (in-flight + short-lived result cache).
  * 2. Redirects: protected pages → /login?next=… without a session; /login → `next` with one.
  * 3. Language addresses: /ru/… and /en/… are served by the same pages as the plain (Uzbek) path -- the
- *    prefix is stripped here and the language passed on in LOCALE_HEADER (src/i18n/config.ts), so each
- *    language has its own indexable URL. The visitor's language cookie follows the address they opened.
+ *    language is passed on in LOCALE_HEADER (src/i18n/config.ts) and next.config.ts strips the prefix, so
+ *    each language has its own indexable URL. The visitor's language cookie follows the address they opened.
  */
 const PROTECTED_PREFIXES = ["/account", "/profile", "/checkout", "/orders"];
 const GUEST_ONLY_PREFIXES = ["/login", "/verify-otp"];
@@ -66,10 +66,8 @@ export async function proxy(req: NextRequest) {
     const headers = new Headers(req.headers);
     if (pathLocale) headers.set(LOCALE_HEADER, pathLocale);
     else headers.delete(LOCALE_HEADER);
-    if (!pathLocale) return NextResponse.next({ request: { headers } });
-    const target = req.nextUrl.clone();
-    target.pathname = pathname;
-    return NextResponse.rewrite(target, { request: { headers } });
+    // next.config.ts rewrites /ru/x → /x after this; only the language travels from here.
+    return NextResponse.next({ request: { headers } });
   };
   const refreshToken = req.cookies.get(REFRESH_COOKIE)?.value;
   let fresh: Tokens | null = null;

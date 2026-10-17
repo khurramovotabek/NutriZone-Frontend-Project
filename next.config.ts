@@ -93,6 +93,17 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  // /ru/… and /en/… are the same pages as the plain (Uzbek) path; src/proxy.ts sets the language header first.
+  // An internal rewrite here -- a proxy-made absolute URL behind nginx (X-Forwarded-Proto: https) became an
+  // outgoing https request to the app's own http port.
+  async rewrites() {
+    return {
+      beforeFiles: ["ru", "en"].flatMap((l) => [
+        { source: `/${l}`, destination: "/" },
+        { source: `/${l}/:path*`, destination: "/:path*" },
+      ]),
+    };
+  },
   poweredByHeader: false,
   async headers() {
     return [{ source: "/(.*)", headers: SECURITY_HEADERS }];
