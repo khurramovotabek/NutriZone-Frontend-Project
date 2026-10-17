@@ -67,15 +67,21 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
     loadError = true;
   }
 
-  const otherCategories = allCategories.filter((c) => c.id !== id).slice(0, 6);
+  // The category's place in the tree: its ancestors (breadcrumb), its own sub-sections, and its siblings.
+  const byId = new Map(allCategories.map((c) => [c.id, c]));
+  const ancestors: typeof allCategories = [];
+  for (let p = category.parent_id ? byId.get(category.parent_id) : undefined; p && ancestors.length < 5; p = p.parent_id ? byId.get(p.parent_id) : undefined) ancestors.unshift(p);
+  const subCategories = allCategories.filter((c) => c.parent_id === id).sort((a, b) => a.sort_order - b.sort_order);
+  const otherCategories = allCategories.filter((c) => c.id !== id && c.parent_id === category.parent_id).sort((a, b) => a.sort_order - b.sort_order).slice(0, 12);
+  const pageLocale = (await getLocale()) as Locale;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <JsonLd data={[
-        breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: t("title"), path: "/products" }, { name: category.name, path: `/categories/${category.id}` }], (await getLocale()) as Locale),
-        { "@context": "https://schema.org", "@type": "CollectionPage", name: category.name, url: absoluteUrl(localizedPath(`/categories/${category.id}`, (await getLocale()) as Locale)), isPartOf: { "@id": absoluteUrl("/#website") } },
+        breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: t("title"), path: "/products" }, ...ancestors.map((a) => ({ name: a.name, path: `/categories/${a.id}` })), { name: category.name, path: `/categories/${category.id}` }], pageLocale),
+        { "@context": "https://schema.org", "@type": "CollectionPage", name: category.name, url: absoluteUrl(localizedPath(`/categories/${category.id}`, pageLocale)), isPartOf: { "@id": absoluteUrl("/#website") } },
       ]} />
-      <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex items-center gap-1.5 text-sm text-ink-soft">
+      <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/" className="transition-colors hover:text-primary">
           {tNav("home")}
         </Link>
@@ -83,7 +89,13 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
         <Link href="/products" className="transition-colors hover:text-primary">
           {t("title")}
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
+        {ancestors.map((a) => (
+          <span key={a.id} className="contents">
+            <ChevronRight className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+            <Link href={`/categories/${a.id}`} className="truncate transition-colors hover:text-primary">{a.name}</Link>
+          </span>
+        ))}
+        <ChevronRight className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
         <span className="truncate font-medium text-ink">{category.name}</span>
       </nav>
 
@@ -111,6 +123,16 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
           {t("refineFilters")}
         </Link>
       </div>
+
+      {subCategories.length > 0 && (
+        <nav aria-label={category.name} className="mt-4 flex flex-wrap gap-2">
+          {subCategories.map((c) => (
+            <Link key={c.id} href={`/categories/${c.id}`} className="nz-glass rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-primary hover:text-primary">
+              {c.name}
+            </Link>
+          ))}
+        </nav>
+      )}
 
       <div className="mt-6">
         {loadError && <ErrorState message={t("error")} />}

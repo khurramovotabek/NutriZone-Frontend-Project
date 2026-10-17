@@ -10,42 +10,30 @@ import { useTranslations } from "next-intl";
 import type { Category } from "@/lib/api";
 
 interface CategoryNode extends Category {
-  children: Category[];
+  children: CategoryNode[];
 }
 
 /**
- * Real, product-required capability: groups the existing flat
- * Category[] (parent_id-based, already the real backend hierarchy)
- * into top-level categories with their direct children -- no
- * fabricated "Sport Nutrition/Vitamins/Accessories" groups, since the
- * real category tree may look entirely different. Deeper-than-2-level
- * nesting is deliberately flattened under its nearest top-level
- * ancestor -- this menu is a fast-navigation shortcut, not a full
- * category browser (that's the Catalog page's own filter sidebar).
+ * The real category tree from the flat parent_id list: top sections (Sport ozuqalari, Vitaminlar, ...) → sections
+ * (Proteinlar, Kreatin, ...) → product types (Whey, Isolate, ...). Orphans (parent hidden or deleted) show at the top.
  */
 function buildCategoryTree(categories: Category[]): CategoryNode[] {
-  const byId = new Map(categories.map((c) => [c.id, c]));
-  const topLevel = categories.filter((c) => !c.parent_id || !byId.has(c.parent_id));
-  const childrenByTopId = new Map<string, Category[]>();
-
-  for (const cat of categories) {
-    if (!cat.parent_id) continue;
-    let ancestor = byId.get(cat.parent_id);
-    let current = cat;
-    // Walk up to the nearest top-level ancestor for anything nested deeper than one level.
-    while (ancestor && ancestor.parent_id && byId.has(ancestor.parent_id)) {
-      current = ancestor;
-      ancestor = byId.get(ancestor.parent_id);
-    }
-    const topId = ancestor ? ancestor.id : current.parent_id!;
-    if (!childrenByTopId.has(topId)) childrenByTopId.set(topId, []);
-    if (cat.id !== topId) childrenByTopId.get(topId)!.push(cat);
+  const nodes = new Map<string, CategoryNode>(categories.map((c) => [c.id, { ...c, children: [] }]));
+  const roots: CategoryNode[] = [];
+  for (const node of nodes.values()) {
+    const parent = node.parent_id ? nodes.get(node.parent_id) : undefined;
+    if (parent) parent.children.push(node);
+    else roots.push(node);
   }
-
-  return topLevel
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .map((top) => ({ ...top, children: (childrenByTopId.get(top.id) || []).sort((a, b) => a.sort_order - b.sort_order) }));
+  const sort = (list: CategoryNode[]) => {
+    list.sort((a, b) => a.sort_order - b.sort_order || a.name.localeCompare(b.name));
+    list.forEach((n) => sort(n.children));
+    return list;
+  };
+  return sort(roots);
 }
+
+const categoryHref = (c: Category) => `/categories/${c.id}`;
 
 export default function CatalogButton({ categories }: { categories: Category[] }) {
   const t = useTranslations("catalog");
@@ -56,6 +44,8 @@ export default function CatalogButton({ categories }: { categories: Category[] }
   const buttonRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const tree = buildCategoryTree(categories);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const active = tree.find((c) => c.id === activeId) ?? tree[0];
 
   // Close on navigation (adjusted during render, not in an effect).
   const [openedOnPath, setOpenedOnPath] = useState(pathname);
@@ -122,33 +112,58 @@ export default function CatalogButton({ categories }: { categories: Category[] }
           <div
             id="nz-catalog-panel"
             role="menu"
-            className="nz-glass-strong animate-nz-catalog-in absolute left-0 top-full z-50 mt-3 hidden max-h-[70vh] w-[min(90vw,880px)] overflow-y-auto rounded-3xl p-6 sm:block"
+            className="nz-glass-strong animate-nz-catalog-in absolute left-0 top-full z-50 mt-3 hidden max-h-[75vh] w-[min(92vw,960px)] overflow-y-auto rounded-3xl p-6 sm:block"
           >
-            <h2 className="mb-5 text-xl font-semibold text-ink">{t("katalogButton")}</h2>
-            <div className="grid gap-5" style={{ gridTemplateColumns: `repeat(${Math.min(tree.length, 3)}, minmax(0, 1fr))` }}>
-              {tree.slice(0, 6).map((cat) => (
-                <div key={cat.id} className="group">
-                  <Link href={`/products?category=${cat.id}`} className="mb-3 flex items-center gap-2.5 text-sm font-semibold text-ink transition-colors hover:text-primary">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-surface-2 transition-all group-hover:border-primary/40 group-hover:shadow-[0_0_12px_rgba(var(--nz-primary-rgb),0.25)]">
-                      <Package className="h-4 w-4 text-primary" strokeWidth={1.75} aria-hidden="true" />
-                    </span>
-                    {cat.name}
+            <div className="grid grid-cols-[220px_minmax(0,1fr)] gap-6">
+              <ul className="flex flex-col gap-1 border-r border-border pr-4" role="tablist" aria-orientation="vertical">
+                {tree.map((cat) => {
+                  const on = cat.id === active?.id;
+                  return (
+                    <li key={cat.id}>
+                      <Link
+                        href={categoryHref(cat)}
+                        role="tab"
+                        aria-selected={on}
+                        onMouseEnter={() => setActiveId(cat.id)}
+                        onFocus={() => setActiveId(cat.id)}
+                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${on ? "bg-primary-soft text-primary" : "text-ink hover:bg-surface-2"}`}
+                      >
+                        <Package className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                        <span className="min-w-0 flex-1 truncate">{cat.name}</span>
+                        <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" strokeWidth={2} aria-hidden="true" />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              {active && (
+                <div role="tabpanel" className="min-w-0">
+                  <Link href={categoryHref(active)} className="mb-4 inline-flex items-center gap-1.5 text-lg font-bold text-ink hover:text-primary">
+                    {active.name}
+                    <ChevronRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
                   </Link>
-                  <ul className="flex flex-col gap-1.5">
-                    {cat.children.slice(0, 6).map((child) => (
-                      <li key={child.id}>
-                        <Link
-                          href={`/products?category=${child.id}`}
-                          className="group/link flex items-center justify-between rounded-lg px-2 py-1.5 text-sm text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink"
-                        >
-                          {child.name}
-                          <ChevronRight className="h-3.5 w-3.5 opacity-0 transition-all group-hover/link:translate-x-0.5 group-hover/link:opacity-100" strokeWidth={2} aria-hidden="true" />
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-5 lg:grid-cols-3">
+                    {active.children.map((section) => (
+                      <div key={section.id} className="min-w-0">
+                        <Link href={categoryHref(section)} className="block truncate text-sm font-semibold text-ink transition-colors hover:text-primary">
+                          {section.name}
                         </Link>
-                      </li>
+                        {section.children.length > 0 && (
+                          <ul className="mt-1.5 flex flex-col gap-0.5">
+                            {section.children.map((leaf) => (
+                              <li key={leaf.id}>
+                                <Link href={categoryHref(leaf)} className="block truncate rounded-md py-0.5 text-[13px] text-ink-muted transition-colors hover:text-primary">
+                                  {leaf.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
             <div className="mt-6 border-t border-border pt-4 text-center">
               <Link href="/products" className="text-sm font-medium text-ink-muted transition-colors hover:text-primary">
@@ -197,32 +212,38 @@ export default function CatalogButton({ categories }: { categories: Category[] }
   );
 }
 
-function MobileCategoryGroup({ category }: { category: CategoryNode }) {
+function MobileCategoryGroup({ category, depth = 0 }: { category: CategoryNode; depth?: number }) {
   const [expanded, setExpanded] = useState(false);
+  const t = useTranslations("catalog");
+  const hasChildren = category.children.length > 0;
   return (
-    <div className="border-b border-border py-1">
-      <button type="button" onClick={() => setExpanded((v) => !v)} className="flex w-full items-center justify-between rounded-lg px-2 py-3 text-left text-sm font-semibold text-ink">
-        <span className="flex items-center gap-2.5">
-          <Package className="h-4 w-4 text-primary" strokeWidth={1.75} aria-hidden="true" />
-          {category.name}
-        </span>
-        {category.children.length > 0 && (
-          <ChevronRight className={`h-4 w-4 text-ink-soft transition-transform ${expanded ? "rotate-90" : ""}`} strokeWidth={2} aria-hidden="true" />
+    <div className={depth === 0 ? "border-b border-border py-1" : ""}>
+      <div className="flex items-center">
+        <Link
+          href={categoryHref(category)}
+          className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 ${depth === 0 ? "py-3 text-sm font-semibold text-ink" : depth === 1 ? "py-2 text-sm font-medium text-ink" : "py-1.5 text-[13px] text-ink-muted"}`}
+        >
+          {depth === 0 && <Package className="h-4 w-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />}
+          <span className="truncate">{category.name}</span>
+        </Link>
+        {hasChildren && (
+          <button type="button" onClick={() => setExpanded((v) => !v)} aria-expanded={expanded} aria-label={category.name}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-ink-soft hover:bg-surface-2">
+            <ChevronRight className={`h-4 w-4 transition-transform ${expanded ? "rotate-90" : ""}`} strokeWidth={2} aria-hidden="true" />
+          </button>
         )}
-      </button>
-      {expanded && category.children.length > 0 && (
-        <ul className="ml-9 flex flex-col gap-1 pb-2">
+      </div>
+      {expanded && hasChildren && (
+        <div className={`${depth === 0 ? "ml-7" : "ml-4"} flex flex-col pb-1`}>
           {category.children.map((child) => (
-            <li key={child.id}>
-              <Link href={`/products?category=${child.id}`} className="block rounded-lg px-2 py-2 text-sm text-ink-muted hover:bg-surface-2 hover:text-ink">
-                {child.name}
-              </Link>
-            </li>
+            <MobileCategoryGroup key={child.id} category={child} depth={depth + 1} />
           ))}
-        </ul>
-      )}
-      {category.children.length === 0 && (
-        <Link href={`/products?category=${category.id}`} className="ml-9 block pb-2 text-sm text-ink-muted hover:text-ink" />
+          {depth === 0 && (
+            <Link href={categoryHref(category)} className="px-2 py-2 text-xs font-semibold text-primary">
+              {t("viewAllProducts")} →
+            </Link>
+          )}
+        </div>
       )}
     </div>
   );
