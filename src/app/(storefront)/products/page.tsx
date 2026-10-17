@@ -13,11 +13,14 @@ import CatalogFilterPanel from "@/components/CatalogFilterPanel";
 import CatalogViewToggle from "@/components/CatalogViewToggle";
 import ScrollSideNav from "@/components/ScrollSideNav";
 import { EmptyState, ErrorState } from "@/components/ui";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }): Promise<Metadata> {
   const [t, { q }] = await Promise.all([getTranslations("meta"), searchParams]);
   const query = q?.trim();
-  return query ? { title: t("search", { q: query.slice(0, 60) }), robots: { index: false, follow: true } } : { title: t("catalog") };
+  if (query) return { title: t("search", { q: query.slice(0, 60) }), robots: { index: false, follow: true } };
+  const tSeo = await getTranslations("seo");
+  return pageMetadata({ path: "/products", title: tSeo("catalogTitle"), description: tSeo("catalogDescription") });
 }
 export const revalidate = 60;
 

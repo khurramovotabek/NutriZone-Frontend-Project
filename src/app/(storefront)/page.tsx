@@ -22,6 +22,10 @@ import ProductShowcase, { type ShowcaseTab } from "@/components/home/ProductShow
 import SaleSection from "@/components/home/SaleSection";
 import QuickNav from "@/components/home/QuickNav";
 import StoresSection from "@/components/home/StoresSection";
+import SeoIntro, { FAQ_KEYS } from "@/components/home/SeoIntro";
+import type { Metadata } from "next";
+import type { Locale } from "@/i18n/config";
+import { pageMetadata } from "@/lib/seo";
 
 function ProductGridSkeleton() {
   return (
@@ -85,8 +89,14 @@ async function WhyNutriZone() {
   );
 }
 
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, { name }] = await Promise.all([getTranslations("seo"), getBrand()]);
+  return pageMetadata({ path: "/", title: { absolute: t("homeTitle", { brand: name }) }, description: t("homeDescription") });
+}
+
 export default async function HomePage() {
   const t = await getTranslations("home");
+  const tSeo = await getTranslations("seo");
   const locale = await getLocale();
 
   let banners: Banner[] = [];
@@ -103,9 +113,21 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
-      <SiteJsonLd name={brand.name} logoUrl={brand.logoUrl} site={site} telegramUrl={telegram} />
+      <SiteJsonLd
+        name={brand.name}
+        logoUrl={brand.logoUrl}
+        site={site}
+        telegramUrl={telegram}
+        locale={locale as Locale}
+        description={tSeo("homeDescription")}
+        faq={FAQ_KEYS.map((k) => ({ q: tSeo(`faq.q${k}`), a: tSeo(`faq.a${k}`, { brand: brand.name }) }))}
+      />
       {banners.length > 0 ? (
-        <HeroSlider banners={banners} />
+        <>
+          {/* The slider's banner titles are h2s; the page's own subject is the h1 (read by screen readers and search engines). */}
+          <h1 className="sr-only">{tSeo("homeTitle", { brand: brand.name })}</h1>
+          <HeroSlider banners={banners} />
+        </>
       ) : (
         <section className="nz-glass nz-glow relative overflow-hidden rounded-3xl px-6 py-14 sm:px-12 sm:py-20">
           <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-primary">
@@ -174,6 +196,8 @@ export default async function HomePage() {
       <Suspense fallback={null}>
         <BlogSection />
       </Suspense>
+
+      <SeoIntro brand={brand.name} />
 
       <section className="relative mt-16 overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary via-blue-600 to-indigo-700 px-6 py-12 text-center text-white shadow-2xl shadow-primary/25 sm:px-12 sm:py-16">
         <span aria-hidden="true" className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-white/15 blur-3xl" />

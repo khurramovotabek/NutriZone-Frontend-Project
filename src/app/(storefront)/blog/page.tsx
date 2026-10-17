@@ -5,9 +5,11 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { getBlogCategories, getBlogPosts } from "@/lib/api";
 import { EmptyState, ErrorState } from "@/components/ui";
 import FullBleedImage from "@/components/FullBleedImage";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return { title: (await getTranslations("meta"))("blog") };
+  const t = await getTranslations("seo");
+  return pageMetadata({ path: "/blog", title: t("blogTitle"), description: t("blogDescription") });
 }
 export const revalidate = 60;
 

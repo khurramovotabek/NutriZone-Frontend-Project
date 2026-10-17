@@ -7,10 +7,12 @@ import BrandLogo from "@/components/BrandLogo";
 import BrandsGrid from "@/components/BrandsGrid";
 import TrustBar from "@/components/TrustBar";
 import { EmptyState, ErrorState } from "@/components/ui";
+import { getBrand } from "@/lib/brand";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("brands");
-  return { title: t("title"), description: t("subtitle") };
+  const [t, { name }] = await Promise.all([getTranslations("seo"), getBrand()]);
+  return pageMetadata({ path: "/brands", title: t("brandsTitle"), description: t("brandsDescription", { brand: name }) });
 }
 
 export const revalidate = 60;

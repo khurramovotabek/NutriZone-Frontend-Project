@@ -5,7 +5,7 @@ import { Check, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { SUPPORTED_LOCALES, type Locale } from "@/i18n/config";
-import { setLocaleCookie } from "@/i18n/locale-cookie";
+import { switchLocale } from "@/i18n/locale-cookie";
 
 const LOCALE_LABELS: Record<Locale, string> = { uz: "O'zbekcha", ru: "Русский", en: "English" };
 const LOCALE_FLAGS: Record<Locale, string> = { uz: "🇺🇿", ru: "🇷🇺", en: "🇬🇧" };
@@ -44,8 +44,7 @@ export default function LoginLanguageSwitcher({ currentLocale }: { currentLocale
   function selectLocale(next: Locale) {
     setOpen(false);
     if (next === currentLocale) return;
-    setLocaleCookie(next);
-    router.refresh();
+    switchLocale(next, router);
   }
 
   return (

@@ -7,10 +7,12 @@ import { ErrorState } from "@/components/ui";
 import ContactForm from "@/components/ContactForm";
 import ContactChannelCard from "@/components/contact/ContactChannelCard";
 import ContactSpotlight from "@/components/contact/ContactSpotlight";
+import { getBrand } from "@/lib/brand";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("contact");
-  return { title: t("title"), description: t("intro") };
+  const [t, tSeo, { name }] = await Promise.all([getTranslations("contact"), getTranslations("seo"), getBrand()]);
+  return pageMetadata({ path: "/contact", title: t("title"), description: tSeo("contactDescription", { brand: name }) });
 }
 
 export default async function ContactPage() {

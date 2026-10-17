@@ -10,6 +10,13 @@ import BrandLogo from "@/components/BrandLogo";
 import ProductCard from "@/components/ProductCard";
 import ProductGrid from "@/components/ProductGrid";
 import { EmptyState, ErrorState } from "@/components/ui";
+import { getBrand } from "@/lib/brand";
+import { pageMetadata } from "@/lib/seo";
+import { localizedPath } from "@/i18n/config";
+import { absoluteUrl } from "@/lib/site-url";
+import type { Locale } from "@/i18n/config";
+import { breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -27,8 +34,9 @@ async function resolveBrand(id: string, locale?: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const { brand } = await resolveBrand(id);
-  return { title: brand?.name ?? (await getTranslations("meta"))("brand"), description: brand?.description?.slice(0, 160) || undefined };
+  const [{ brand }, t, site] = await Promise.all([resolveBrand(id), getTranslations("seo"), getBrand()]);
+  if (!brand) return { title: (await getTranslations("meta"))("brand") };
+  return pageMetadata({ path: `/brands/${brand.id}`, title: t("brandTitle", { name: brand.name }), description: brand.description?.trim() || t("brandDescription", { name: brand.name, brand: site.name }) });
 }
 
 export default async function BrandDetailPage({ params, searchParams }: Props) {
@@ -84,6 +92,10 @@ export default async function BrandDetailPage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
+      <JsonLd data={[
+        breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: tBrands("title"), path: "/brands" }, { name: brand.name, path: `/brands/${brand.id}` }], locale as Locale),
+        { "@context": "https://schema.org", "@type": "CollectionPage", name: brand.name, url: absoluteUrl(localizedPath(`/brands/${brand.id}`, locale as Locale)), about: { "@type": "Brand", name: brand.name }, isPartOf: { "@id": absoluteUrl("/#website") } },
+      ]} />
       <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/" className="transition-colors hover:text-primary">
           {tNav("home")}

@@ -21,12 +21,14 @@ import { getBrands, getCategories, getProducts, type Brand } from "@/lib/api";
 import { getStores } from "@/lib/store-api";
 import FullBleedImage from "@/components/FullBleedImage";
 import ContactSpotlight from "@/components/contact/ContactSpotlight";
+import { getBrand } from "@/lib/brand";
+import { pageMetadata } from "@/lib/seo";
 
 const STATS_MIN_PRODUCTS = 20;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("about");
-  return { title: t("metaTitle"), description: t("intro") };
+  const [t, tSeo, { name }] = await Promise.all([getTranslations("about"), getTranslations("seo"), getBrand()]);
+  return pageMetadata({ path: "/about", title: t("metaTitle"), description: tSeo("aboutDescription", { brand: name }) });
 }
 
 /**

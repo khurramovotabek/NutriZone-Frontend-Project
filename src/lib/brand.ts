@@ -16,15 +16,32 @@ export interface Brand {
 export const DEFAULT_BRAND_NAME = "NutriZone";
 export const DEFAULT_BRAND: Brand = { name: DEFAULT_BRAND_NAME, shortName: DEFAULT_BRAND_NAME, logoUrl: null, primaryColor: null };
 
+// One cached request per minute serves both the brand and the search-engine codes (Next dedupes identical fetches).
+async function publicSettings(): Promise<Record<string, unknown> | null> {
+  const res = await fetch(`${API_BASE_URL}/api/v1/settings/public`, { next: { revalidate: 60, tags: ["brand"] } });
+  if (!res.ok) return null;
+  return (await res.json())?.data ?? null;
+}
+
 export async function getBrand(): Promise<Brand> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/v1/settings/public`, { next: { revalidate: 60, tags: ["brand"] } });
-    if (!res.ok) return DEFAULT_BRAND;
-    const b = (await res.json())?.data?.brand;
+    const data = await publicSettings();
+    if (!data) return DEFAULT_BRAND;
+    const b = data.brand as { name?: string; short_name?: string; logo_url?: string; primary_color?: string } | undefined;
     if (!b?.name) return DEFAULT_BRAND;
     return { name: b.name, shortName: b.short_name || b.name, logoUrl: b.logo_url || null, primaryColor: b.primary_color || null };
   } catch {
     return DEFAULT_BRAND;
+  }
+}
+
+/** Site-ownership codes from Dashboard → Sozlamalar → Qidiruv tizimlari (rendered as verification <meta> tags). */
+export async function getSearchVerification(): Promise<{ google: string; yandex: string; bing: string }> {
+  try {
+    const v = ((await publicSettings())?.verification ?? {}) as Partial<Record<"google" | "yandex" | "bing", string>>;
+    return { google: v.google || "", yandex: v.yandex || "", bing: v.bing || "" };
+  } catch {
+    return { google: "", yandex: "", bing: "" };
   }
 }
 

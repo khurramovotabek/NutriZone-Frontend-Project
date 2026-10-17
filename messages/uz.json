@@ -3209,5 +3209,51 @@
     "speakOn": "Javoblarni ovozda o'qish",
     "speakOff": "Ovozli javobni o'chirish",
     "voiceUnsupported": "Bu brauzer ovozli kiritishni qo'llamaydi"
+  },
+  "seo": {
+    "homeTitle": "{brand} — sport ozuqalari Toshkentda: protein, gainer, kreatin",
+    "homeDescription": "Original sport ozuqalari do'koni: protein, gainer, kreatin, BCAA, aminokislotalar va vitaminlar. Optimum Nutrition va boshqa mashhur brendlar. Toshkent va O'zbekiston bo'ylab yetkazib berish, filiallardan olib ketish, NutriZone Coins keshbek.",
+    "keywords": "sport ozuqalari, sport pitaniya, protein, protein narxi, whey protein, gainer, geyner, kreatin, creatine, BCAA, aminokislotalar, vitaminlar, yog' yoquvchi, sport ozuqa do'koni Toshkent, {brand}, nutrizone.uz",
+    "catalogTitle": "Sport ozuqalari katalogi — narxlar Toshkentda",
+    "catalogDescription": "Protein, gainer, kreatin, BCAA, vitaminlar va boshqa sport ozuqalari: narxlar, ta'mlar va mavjudlik. Original mahsulotlar, tez yetkazib berish va filiallardan olib ketish.",
+    "productTitle": "{name} — narxi va sotib olish Toshkentda",
+    "productDescription": "{name}{brandPart} — {price}. Original mahsulot, Toshkent va O'zbekiston bo'ylab yetkazib berish, filiallardan olib ketish. Har xariddan NutriZone Coins keshbek.",
+    "productDescriptionNoPrice": "{name}{brandPart} — original mahsulot. Toshkent va O'zbekiston bo'ylab yetkazib berish, filiallardan olib ketish. Har xariddan NutriZone Coins keshbek.",
+    "categoryTitle": "{name} — sotib olish Toshkentda, narxlar",
+    "categoryDescription": "{name}: original mahsulotlar, narxlar, ta'mlar va mavjudlik. {brand} — Toshkentdagi sport ozuqalari do'koni: yetkazib berish va filiallardan olib ketish.",
+    "brandTitle": "{name} — original mahsulotlar va narxlar Toshkentda",
+    "brandDescription": "{name} mahsulotlari: original sport ozuqalari va vitaminlar, narxlar va mavjudlik. {brand} — rasmiy kanallardan olingan mahsulotlar, yetkazib berish va filiallar.",
+    "brandsTitle": "Sport ozuqalari brendlari — Optimum Nutrition va boshqalar",
+    "brandsDescription": "{brand} dagi barcha brendlar: Optimum Nutrition, Applied Nutrition, MuscleTech, BSN, Myprotein va boshqalar. Original mahsulotlar va narxlar.",
+    "storesTitle": "Filiallar va manzillar — sport ozuqalari do'konlari Toshkentda",
+    "storesDescription": "{brand} filiallari xaritada: manzil, ish vaqti, telefon va yo'nalish. Yaqin filialni toping va buyurtmani o'zingiz olib keting.",
+    "storeTitle": "{name} — manzil, ish vaqti va telefon",
+    "storeDescription": "{name}: {address}. Ish vaqti, telefon, xaritada yo'nalish va filialdagi mahsulotlar. {brand} sport ozuqalari do'koni.",
+    "loyaltyTitle": "NutriZone Coins — har xariddan keshbek va sodiqlik darajalari",
+    "loyaltyDescription": "NutriZone Coins: har bir xariddan keshbek coin, darajalar oshgani sari katta foiz, do'stlarni taklif qilish bonusi. 1 coin = 1 so'm — keyingi xaridda ishlating.",
+    "blogTitle": "Sport ovqatlanishi bo'yicha maqolalar",
+    "blogDescription": "Protein, kreatin, gainer va vitaminlarni qanday tanlash va qabul qilish, mashg'ulot va tiklanish bo'yicha foydali maqolalar.",
+    "aboutDescription": "{brand} — O'zbekistondagi original sport ozuqalari do'koni: brendlar, filiallar va xizmatlarimiz haqida.",
+    "contactDescription": "{brand} bilan bog'lanish: telefon, Telegram, manzil va ish vaqti.",
+    "storeType": "Sport ozuqalari do'koni",
+    "intro": {
+      "title": "Toshkentda original sport ozuqalari",
+      "p1": "{brand} — protein, gainer, kreatin va boshqa sport ozuqalarini bir joydan xarid qilish uchun do'kon. Katalogda zardob proteini (whey), izolyat va kazein, massa uchun gainerlar, kreatin monogidrat, BCAA va aminokislotalar, pre-workout, yog' yoquvchilar, vitaminlar va omega-3 bor.",
+      "p2": "Barcha mahsulotlar original: Optimum Nutrition, Applied Nutrition, MuscleTech, BSN, Myprotein va boshqa taniqli brendlar. Har bir mahsulot sahifasida narx, ta'mlar, porsiya va qaysi filialda borligi ko'rsatiladi.",
+      "p3": "Buyurtmani saytda yoki Telegram botda bering — Toshkent va O'zbekiston bo'ylab yetkazib beramiz yoki yaqin filialdan o'zingiz olib ketasiz. Har bir xariddan NutriZone Coins keshbek tushadi: 1 coin = 1 so'm, keyingi xaridda ishlatiladi."
+    },
+    "faq": {
+      "title": "Ko'p beriladigan savollar",
+      "q1": "Mahsulotlar originalmi?",
+      "a1": "Ha. {brand} faqat original, sertifikatlangan sport ozuqalarini sotadi: har bir mahsulotning brendi, ishlab chiqarilgan davlati va yaroqlilik muddati kuzatiladi.",
+      "q2": "Protein, gainer va kreatinning farqi nima?",
+      "a2": "Protein — mushak o'sishi va tiklanishi uchun oqsil. Gainer — oqsil va uglevod aralashmasi, vazn va massa yig'ish uchun. Kreatin — kuch va chidamlilikni oshiradi. Maqsadingizga qarab tanlashda operatorimiz yordam beradi.",
+      "q3": "Yetkazib berish va olib ketish qanday?",
+      "a3": "Buyurtma Toshkent va O'zbekiston bo'ylab yetkaziladi. Xohlasangiz, buyurtmani yaqin filialdan o'zingiz olib ketishingiz mumkin — filiallar manzili va ish vaqti «Filiallar» sahifasida.",
+      "q4": "NutriZone Coins nima?",
+      "a4": "Bu sodiqlik dasturi: har bir xariddan keshbek coin olasiz, darajangiz oshgani sari foiz ham oshadi. 1 coin = 1 so'm — keyingi buyurtmaning bir qismini coin bilan to'laysiz.",
+      "q5": "Qanday to'lash mumkin?",
+      "a5": "Naqd pul yoki karta orqali. Hozir mavjud to'lov usullari buyurtmani rasmiylashtirishda ko'rsatiladi."
+    }
   }
 }

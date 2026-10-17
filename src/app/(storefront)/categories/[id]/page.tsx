@@ -8,6 +8,13 @@ import MediaImage from "@/components/MediaImage";
 import ProductCard from "@/components/ProductCard";
 import ProductGrid from "@/components/ProductGrid";
 import { EmptyState, ErrorState } from "@/components/ui";
+import { getBrand } from "@/lib/brand";
+import { pageMetadata } from "@/lib/seo";
+import { localizedPath } from "@/i18n/config";
+import { absoluteUrl } from "@/lib/site-url";
+import type { Locale } from "@/i18n/config";
+import { breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -28,8 +35,9 @@ async function resolveCategory(id: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const { category } = await resolveCategory(id);
-  return { title: category?.name ?? (await getTranslations("meta"))("category") };
+  const [{ category }, t, { name: brand }] = await Promise.all([resolveCategory(id), getTranslations("seo"), getBrand()]);
+  if (!category) return { title: (await getTranslations("meta"))("category") };
+  return pageMetadata({ path: `/categories/${category.id}`, title: t("categoryTitle", { name: category.name }), description: t("categoryDescription", { name: category.name, brand }), image: category.image_url });
 }
 
 const PAGE_SIZE = 12;
@@ -63,6 +71,10 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
+      <JsonLd data={[
+        breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: t("title"), path: "/products" }, { name: category.name, path: `/categories/${category.id}` }], (await getLocale()) as Locale),
+        { "@context": "https://schema.org", "@type": "CollectionPage", name: category.name, url: absoluteUrl(localizedPath(`/categories/${category.id}`, (await getLocale()) as Locale)), isPartOf: { "@id": absoluteUrl("/#website") } },
+      ]} />
       <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/" className="transition-colors hover:text-primary">
           {tNav("home")}

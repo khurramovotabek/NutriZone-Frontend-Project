@@ -3209,5 +3209,51 @@
     "speakOn": "Read answers aloud",
     "speakOff": "Stop reading answers",
     "voiceUnsupported": "This browser doesn't support voice input"
+  },
+  "seo": {
+    "homeTitle": "{brand} — Sports Nutrition in Tashkent: Protein, Gainers, Creatine",
+    "homeDescription": "Genuine sports nutrition store: whey protein, mass gainers, creatine, BCAA, amino acids and vitamins. Optimum Nutrition and other top brands. Delivery across Tashkent and Uzbekistan, store pickup, NutriZone Coins cashback.",
+    "keywords": "sports nutrition Uzbekistan, sports nutrition Tashkent, whey protein, protein powder, mass gainer, creatine, BCAA, amino acids, vitamins, fat burner, supplement store Tashkent, {brand}, nutrizone.uz",
+    "catalogTitle": "Sports Nutrition Catalog — Prices in Tashkent",
+    "catalogDescription": "Protein, gainers, creatine, BCAA, vitamins and more: prices, flavours and availability. Genuine products, fast delivery and pickup from our stores.",
+    "productTitle": "{name} — Buy in Tashkent, Price",
+    "productDescription": "{name}{brandPart} — {price}. Genuine product, delivery across Tashkent and Uzbekistan, store pickup. NutriZone Coins cashback on every purchase.",
+    "productDescriptionNoPrice": "{name}{brandPart} — genuine product. Delivery across Tashkent and Uzbekistan, store pickup. NutriZone Coins cashback on every purchase.",
+    "categoryTitle": "{name} — Buy in Tashkent, Prices",
+    "categoryDescription": "{name}: genuine products, prices, flavours and availability. {brand} — sports nutrition store in Tashkent with delivery and store pickup.",
+    "brandTitle": "{name} — Genuine Products and Prices in Tashkent",
+    "brandDescription": "{name} products: genuine sports nutrition and vitamins, prices and availability. {brand} — delivery and stores in Tashkent.",
+    "brandsTitle": "Sports Nutrition Brands — Optimum Nutrition and More",
+    "brandsDescription": "All brands at {brand}: Optimum Nutrition, Applied Nutrition, MuscleTech, BSN, Myprotein and more. Genuine products and prices.",
+    "storesTitle": "Stores and Addresses — Sports Nutrition Shops in Tashkent",
+    "storesDescription": "{brand} stores on the map: address, opening hours, phone and directions. Find the nearest store and pick up your order.",
+    "storeTitle": "{name} — Address, Opening Hours and Phone",
+    "storeDescription": "{name}: {address}. Opening hours, phone, directions and products in stock. {brand} sports nutrition store.",
+    "loyaltyTitle": "NutriZone Coins — Cashback on Every Purchase and Loyalty Tiers",
+    "loyaltyDescription": "NutriZone Coins: cashback coins on every purchase, a higher rate at higher tiers and a bonus for inviting friends. 1 coin = 1 so'm — spend it on your next order.",
+    "blogTitle": "Sports Nutrition Articles",
+    "blogDescription": "How to choose and take protein, creatine, gainers and vitamins, plus practical articles on training and recovery.",
+    "aboutDescription": "{brand} — genuine sports nutrition store in Uzbekistan: our brands, stores and services.",
+    "contactDescription": "Contact {brand}: phone, Telegram, address and opening hours.",
+    "storeType": "Sports nutrition store",
+    "intro": {
+      "title": "Genuine sports nutrition in Tashkent",
+      "p1": "{brand} is the place to buy protein, mass gainers, creatine and other sports nutrition in one store. The catalog covers whey protein, isolate and casein, gainers for bulking, creatine monohydrate, BCAA and amino acids, pre-workouts, fat burners, vitamins and omega-3.",
+      "p2": "Every product is genuine: Optimum Nutrition, Applied Nutrition, MuscleTech, BSN, Myprotein and other well-known brands. Each product page shows the price, flavours, servings and which store has it in stock.",
+      "p3": "Order on the website or in our Telegram bot — we deliver across Tashkent and Uzbekistan, or you can pick up from the nearest store. Every purchase earns NutriZone Coins cashback: 1 coin = 1 so'm, to spend on your next order."
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "q1": "Are the products genuine?",
+      "a1": "Yes. {brand} sells only genuine, certified sports nutrition: the brand, country of manufacture and expiry date of every product are tracked.",
+      "q2": "What is the difference between protein, a gainer and creatine?",
+      "a2": "Protein supports muscle growth and recovery. A gainer mixes protein and carbohydrates for gaining weight and mass. Creatine improves strength and endurance. Our operator will help you choose for your goal.",
+      "q3": "How do delivery and pickup work?",
+      "a3": "Orders are delivered across Tashkent and Uzbekistan. You can also pick up your order from the nearest store — addresses and opening hours are on the Stores page.",
+      "q4": "What are NutriZone Coins?",
+      "a4": "Our loyalty programme: every purchase earns cashback coins, and the rate grows with your tier. 1 coin = 1 so'm — pay part of your next order with coins.",
+      "q5": "How can I pay?",
+      "a5": "In cash or by card. The payment methods available right now are shown at checkout."
+    }
   }
 }

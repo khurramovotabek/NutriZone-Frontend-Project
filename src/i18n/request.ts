@@ -1,12 +1,16 @@
 import { getRequestConfig } from "next-intl/server";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { getBrand, rebrandMessages } from "@/lib/brand";
-import { DEFAULT_LOCALE, LOCALE_COOKIE, SUPPORTED_LOCALES, type Locale } from "./config";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, LOCALE_HEADER, SUPPORTED_LOCALES, type Locale } from "./config";
+
+function supported(value: string | null | undefined): Locale | null {
+  return SUPPORTED_LOCALES.includes(value as Locale) ? (value as Locale) : null;
+}
 
 export default getRequestConfig(async () => {
-  const cookieStore = await cookies();
-  const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
-  const locale: Locale = SUPPORTED_LOCALES.includes(cookieLocale as Locale) ? (cookieLocale as Locale) : DEFAULT_LOCALE;
+  // A /ru or /en address decides the language (src/proxy.ts); otherwise the visitor's own choice; otherwise Uzbek.
+  const [headerList, cookieStore] = await Promise.all([headers(), cookies()]);
+  const locale: Locale = supported(headerList.get(LOCALE_HEADER)) ?? supported(cookieStore.get(LOCALE_COOKIE)?.value) ?? DEFAULT_LOCALE;
 
   return {
     locale,

@@ -2,15 +2,19 @@ import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { DoorOpen, LayoutGrid, Map as MapIcon, MapPinned, Store as StoreIcon } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getStores } from "@/lib/store-api";
 import NearMeFilter from "@/components/NearMeFilter";
 import StoreCard from "@/components/StoreCard";
 import StoresMap from "@/components/StoresMapLazy";
+import { getBrand } from "@/lib/brand";
+import { pageMetadata } from "@/lib/seo";
+import type { Locale } from "@/i18n/config";
+import StoreJsonLd from "@/components/StoreJsonLd";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("stores");
-  return { title: t("title") };
+  const [t, { name }] = await Promise.all([getTranslations("seo"), getBrand()]);
+  return pageMetadata({ path: "/stores", title: t("storesTitle"), description: t("storesDescription", { brand: name }) });
 }
 
 export default async function StoresPage({
@@ -63,6 +67,7 @@ export default async function StoresPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      <StoreJsonLd stores={stores} locale={(await getLocale()) as Locale} brandName={(await getBrand()).name} />
       <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex items-center gap-1.5 text-xs text-ink-muted">
         <Link href="/" className="transition-colors hover:text-primary">
           {tNav("home")}

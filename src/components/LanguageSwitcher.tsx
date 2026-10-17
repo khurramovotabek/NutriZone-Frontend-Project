@@ -7,7 +7,7 @@ import { Check, ChevronDown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { SUPPORTED_LOCALES, type Locale } from "@/i18n/config";
-import { setLocaleCookie } from "@/i18n/locale-cookie";
+import { switchLocale } from "@/i18n/locale-cookie";
 import { useDropdownVerticalFlip } from "@/hooks/useDropdownVerticalFlip";
 
 const LOCALE_FLAGS: Record<Locale, string> = {
@@ -92,8 +92,7 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
   function selectLocale(next: Locale) {
     setOpen(false);
     if (next === locale) return;
-    setLocaleCookie(next);
-    router.refresh();
+    switchLocale(next, router);
   }
 
   return (

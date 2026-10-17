@@ -2,6 +2,16 @@ import type { MetadataRoute } from "next";
 import { getBlogPosts, getBrands, getCategories, searchProducts } from "@/lib/api";
 import { getStores } from "@/lib/store-api";
 import { absoluteUrl } from "@/lib/site-url";
+import { sitemapAlternates } from "@/lib/seo";
+import { SUPPORTED_LOCALES, localizedPath } from "@/i18n/config";
+
+type Entry = MetadataRoute.Sitemap[number];
+
+/** One entry per language (/x, /ru/x, /en/x), each listing all three as hreflang alternates. */
+function localized(path: string, rest: Omit<Entry, "url" | "alternates"> = {}): MetadataRoute.Sitemap {
+  const alternates = sitemapAlternates(path);
+  return SUPPORTED_LOCALES.map((l) => ({ url: absoluteUrl(localizedPath(path, l)), alternates, ...rest }));
+}
 
 // Rebuilt at most hourly (never only at build time -- new products must appear without a redeploy).
 export const revalidate = 3600;
@@ -22,7 +32,7 @@ async function productEntries(): Promise<MetadataRoute.Sitemap> {
     const res = await safely(() => searchProducts({ page, pageSize: 100, sort: "-created_at" }), null);
     if (!res) break;
     for (const p of res.data) {
-      out.push({ url: absoluteUrl(`/products/${p.slug}`), lastModified: p.created_at ? new Date(p.created_at) : undefined, changeFrequency: "daily", priority: 0.8 });
+      out.push(...localized(`/products/${p.slug}`, { lastModified: p.created_at ? new Date(p.created_at) : undefined, changeFrequency: "daily", priority: 0.8 }));
     }
     if (page >= (res.pagination?.total_pages ?? 1)) break;
   }
@@ -32,14 +42,14 @@ async function productEntries(): Promise<MetadataRoute.Sitemap> {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const staticPages: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"), lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: absoluteUrl("/products"), lastModified: now, changeFrequency: "daily", priority: 0.9 },
-    { url: absoluteUrl("/brands"), changeFrequency: "weekly", priority: 0.6 },
-    { url: absoluteUrl("/stores"), changeFrequency: "weekly", priority: 0.6 },
-    { url: absoluteUrl("/blog"), changeFrequency: "weekly", priority: 0.6 },
-    { url: absoluteUrl("/loyalty"), changeFrequency: "monthly", priority: 0.4 },
-    { url: absoluteUrl("/about"), changeFrequency: "monthly", priority: 0.3 },
-    { url: absoluteUrl("/contact"), changeFrequency: "monthly", priority: 0.3 },
+    ...localized("/", { lastModified: now, changeFrequency: "daily", priority: 1 }),
+    ...localized("/products", { lastModified: now, changeFrequency: "daily", priority: 0.9 }),
+    ...localized("/stores", { changeFrequency: "weekly", priority: 0.8 }),
+    ...localized("/brands", { changeFrequency: "weekly", priority: 0.7 }),
+    ...localized("/loyalty", { changeFrequency: "monthly", priority: 0.6 }),
+    ...localized("/blog", { changeFrequency: "weekly", priority: 0.6 }),
+    ...localized("/about", { changeFrequency: "monthly", priority: 0.4 }),
+    ...localized("/contact", { changeFrequency: "monthly", priority: 0.4 }),
   ];
 
   const [products, categories, brands, stores, posts] = await Promise.all([
@@ -53,9 +63,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticPages,
     ...products,
-    ...categories.map((c) => ({ url: absoluteUrl(`/categories/${c.id}`), changeFrequency: "weekly" as const, priority: 0.7 })),
-    ...brands.map((b) => ({ url: absoluteUrl(`/brands/${b.id}`), changeFrequency: "weekly" as const, priority: 0.6 })),
-    ...stores.map((s) => ({ url: absoluteUrl(`/store/${s.slug}`), changeFrequency: "weekly" as const, priority: 0.5 })),
-    ...posts.map((p) => ({ url: absoluteUrl(`/blog/${p.slug}`), lastModified: p.published_at ? new Date(p.published_at) : undefined, changeFrequency: "monthly" as const, priority: 0.5 })),
+    ...categories.flatMap((c) => localized(`/categories/${c.id}`, { changeFrequency: "weekly", priority: 0.8 })),
+    ...brands.flatMap((b) => localized(`/brands/${b.id}`, { changeFrequency: "weekly", priority: 0.7 })),
+    ...stores.flatMap((s) => localized(`/store/${s.slug}`, { changeFrequency: "weekly", priority: 0.7 })),
+    ...posts.flatMap((p) => localized(`/blog/${p.slug}`, { lastModified: p.published_at ? new Date(p.published_at) : undefined, changeFrequency: "monthly", priority: 0.5 })),
   ];
 }

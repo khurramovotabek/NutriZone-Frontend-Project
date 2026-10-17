@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { clientIpFrom } from "@/lib/client-ip";
 import { isSafeRedirectPath } from "@/lib/safe-redirect";
+import { LOCALE_COOKIE, LOCALE_HEADER, splitLocalePath } from "@/i18n/config";
 
 /**
  * Two jobs, both UX conveniences (the Django backend stays the only security authority):
@@ -12,6 +13,9 @@ import { isSafeRedirectPath } from "@/lib/safe-redirect";
  *    The backend rotates refresh tokens and treats re-use as theft (revoking the session), so concurrent
  *    requests carrying the same refresh token share ONE exchange (in-flight + short-lived result cache).
  * 2. Redirects: protected pages → /login?next=… without a session; /login → `next` with one.
+ * 3. Language addresses: /ru/… and /en/… are served by the same pages as the plain (Uzbek) path -- the
+ *    prefix is stripped here and the language passed on in LOCALE_HEADER (src/i18n/config.ts), so each
+ *    language has its own indexable URL. The visitor's language cookie follows the address they opened.
  */
 const PROTECTED_PREFIXES = ["/account", "/profile", "/checkout", "/orders"];
 const GUEST_ONLY_PREFIXES = ["/login", "/verify-otp"];
@@ -56,7 +60,17 @@ function exchange(refreshToken: string, ip: string | null): Promise<Exchange> {
 }
 
 export async function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const { locale: pathLocale, path: pathname } = splitLocalePath(req.nextUrl.pathname);
+  const pass = () => {
+    // The language header is ours alone: set from the address, never passed on from a client.
+    const headers = new Headers(req.headers);
+    if (pathLocale) headers.set(LOCALE_HEADER, pathLocale);
+    else headers.delete(LOCALE_HEADER);
+    if (!pathLocale) return NextResponse.next({ request: { headers } });
+    const target = req.nextUrl.clone();
+    target.pathname = pathname;
+    return NextResponse.rewrite(target, { request: { headers } });
+  };
   const refreshToken = req.cookies.get(REFRESH_COOKIE)?.value;
   let fresh: Tokens | null = null;
   let dropSession = false;
@@ -72,7 +86,7 @@ export async function proxy(req: NextRequest) {
   let response: NextResponse;
   if (PROTECTED_PREFIXES.some((p) => pathname.startsWith(p)) && !hasSession) {
     const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("next", pathname);
+    loginUrl.searchParams.set("next", req.nextUrl.pathname);
     response = NextResponse.redirect(loginUrl);
   } else if (GUEST_ONLY_PREFIXES.some((p) => pathname.startsWith(p)) && hasSession && pathname !== "/verify-otp") {
     // An already-signed-in visitor opening /login?next=/checkout goes straight to that (safe) destination.
@@ -82,12 +96,15 @@ export async function proxy(req: NextRequest) {
     // Downstream (page / Route Handler) must see the new access token on THIS request already.
     req.cookies.set(ACCESS_COOKIE, fresh.access_token);
     req.cookies.set(REFRESH_COOKIE, fresh.refresh_token);
-    response = NextResponse.next({ request: { headers: req.headers } });
+    response = pass();
   } else if (dropSession) {
     req.cookies.delete(REFRESH_COOKIE);
-    response = NextResponse.next({ request: { headers: req.headers } });
+    response = pass();
   } else {
-    response = NextResponse.next();
+    response = pass();
+  }
+  if (pathLocale && req.cookies.get(LOCALE_COOKIE)?.value !== pathLocale) {
+    response.cookies.set(LOCALE_COOKIE, pathLocale, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
   }
 
   if (fresh) {

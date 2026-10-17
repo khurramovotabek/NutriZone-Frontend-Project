@@ -4,6 +4,7 @@ import { AlertTriangle, ChevronRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import type { Locale } from "@/i18n/config";
 import { ApiError, getBrands, getCategories, getProductBySlug, getProductRecommendations } from "@/lib/api";
 import { getPublicProductReviews } from "@/lib/reviews-api";
 import { getWishlist } from "@/lib/wishlist-api";
@@ -16,20 +17,33 @@ import ReviewsSection from "@/components/ReviewsSection";
 import SupplementFactsSection from "@/components/SupplementFactsSection";
 import TrustBar from "@/components/TrustBar";
 import ProductJsonLd from "@/components/ProductJsonLd";
+import { clip, pageMetadata } from "@/lib/seo";
 import { ErrorState, Skeleton } from "@/components/ui";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   try {
-    const { data: product } = await getProductBySlug(slug, await getLocale());
-    const description = product.description?.slice(0, 160) || undefined;
-    return {
-      title: product.name,
+    const locale = await getLocale();
+    const [{ data: product }, t] = await Promise.all([getProductBySlug(slug, locale), getTranslations("seo")]);
+    const brandName = product.brand_id ? await getBrands(locale).then((r) => r.data.find((b) => b.id === product.brand_id)?.name ?? null).catch(() => null) : null;
+    const amount = Number(product.price);
+    const price = product.price && Number.isFinite(amount) && amount > 0
+      ? `${Math.round(amount).toLocaleString("ru-RU").replace(/\s/g, " ")} ${product.currency && product.currency !== "UZS" ? product.currency : locale === "ru" ? "сум" : "so'm"}`
+      : null;
+    const brandPart = brandName && !product.name.toLowerCase().includes(brandName.toLowerCase()) ? ` (${brandName})` : "";
+    // A written description wins; otherwise a factual one (name, brand, price) instead of an empty snippet.
+    const description = product.description?.trim()
+      ? clip(product.description, 160)
+      : price
+        ? t("productDescription", { name: product.name, brandPart, price })
+        : t("productDescriptionNoPrice", { name: product.name, brandPart });
+    return pageMetadata({
+      path: `/products/${product.slug}`,
+      title: t("productTitle", { name: product.name }),
       description,
-      alternates: { canonical: `/products/${product.slug}` },
-      // The product photo as the link preview when the page is shared (Telegram, Instagram, Facebook).
-      openGraph: { title: product.name, description, url: `/products/${product.slug}`, ...(product.primary_image_path ? { images: [{ url: product.primary_image_path, alt: product.name }] } : {}) },
-    };
+      image: product.primary_image_path,
+      imageAlt: product.name,
+    });
   } catch {
     return { title: (await getTranslations("meta"))("product") };
   }
@@ -109,7 +123,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
-      <ProductJsonLd product={product} brandName={brandName} description={product.description} />
+      <ProductJsonLd product={product} brandName={brandName} description={product.description} categoryName={categoryName} locale={(await getLocale()) as Locale} catalogName={tCatalog("title")} />
       <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/products" className="transition-colors hover:text-primary">
           {tCatalog("title")}

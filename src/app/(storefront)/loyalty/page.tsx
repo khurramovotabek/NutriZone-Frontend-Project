@@ -4,10 +4,11 @@ import { getTranslations } from "next-intl/server";
 import { getLoyaltyTiers, type LoyaltyTier } from "@/lib/loyalty-api";
 import ContactSpotlight from "@/components/contact/ContactSpotlight";
 import LoyaltyExperience from "@/components/loyalty/LoyaltyExperience";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("loyalty");
-  return { title: t("metaTitle"), description: t("intro") };
+  const t = await getTranslations("seo");
+  return pageMetadata({ path: "/loyalty", title: t("loyaltyTitle"), description: t("loyaltyDescription") });
 }
 
 export default async function LoyaltyPage() {

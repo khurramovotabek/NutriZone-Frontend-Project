@@ -7,12 +7,13 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { ApiError, getBlogPostBySlug } from "@/lib/api";
 import { ErrorState } from "@/components/ui";
 import MediaImage from "@/components/MediaImage";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   try {
     const { data: post } = await getBlogPostBySlug(slug, await getLocale());
-    return { title: post.title, description: post.excerpt || undefined };
+    return pageMetadata({ path: `/blog/${post.slug}`, title: post.title, description: post.excerpt || undefined, image: post.cover_image_url ?? null, type: "article" });
   } catch {
     return { title: (await getTranslations("meta"))("blog") };
   }

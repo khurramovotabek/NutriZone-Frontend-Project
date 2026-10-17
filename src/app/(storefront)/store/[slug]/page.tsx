@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Phone, Mail, Send, MapPin, Star, Camera, Store as StoreIcon, Navigation, Clock, ChevronRight, User, Package, CalendarDays, Landmark, ShoppingBag } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getStoreBySlug } from "@/lib/store-api";
 import { ApiError, API_BASE_URL } from "@/lib/api";
 import { getAccessToken } from "@/lib/session";
@@ -19,6 +19,10 @@ import StoreLocationMap from "@/components/StoreLocationMapLazy";
 import { yandexRouteUrl } from "@/lib/maps";
 import { AMENITY_ICONS } from "@/components/store-dashboard/amenities";
 import { STORE_AMENITIES, type StoreAmenity } from "@/components/store-dashboard/types";
+import { getBrand } from "@/lib/brand";
+import { pageMetadata } from "@/lib/seo";
+import type { Locale } from "@/i18n/config";
+import StoreJsonLd from "@/components/StoreJsonLd";
 
 const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 
@@ -62,8 +66,9 @@ const STATUS_DOT: Record<string, string> = {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   try {
-    const { data: store } = await getStoreBySlug(slug);
-    return { title: store.name, description: store.description || undefined };
+    const [{ data: store }, t, { name }] = await Promise.all([getStoreBySlug(slug), getTranslations("seo"), getBrand()]);
+    const address = [store.address, store.city].filter(Boolean).join(", ");
+    return pageMetadata({ path: `/store/${store.slug}`, title: t("storeTitle", { name: store.name }), description: store.description?.trim() || t("storeDescription", { name: store.name, address, brand: name }) });
   } catch {
     return {};
   }
@@ -121,10 +126,12 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
   const today = store.today_hours;
   const todayText = !today || store.status !== "active" ? statusLabel : today.closed ? t("dayOff") : store.is_open_now ? t("closesAt", { time: today.close }) : t("opensAt", { time: today.open });
   const upcoming = (store.upcoming_special_days ?? []).filter((d) => d.date !== now.toISOString().slice(0, 10)).slice(0, 5);
-  const fmtDate = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString("uz-Latn", { day: "numeric", month: "long", weekday: "short" });
+  const pageLocale = await getLocale();
+  const fmtDate = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString(pageLocale === "uz" ? "uz-Latn" : pageLocale, { day: "numeric", month: "long", weekday: "short" });
 
   return (
     <div className="pb-16">
+      <StoreJsonLd stores={[store]} locale={pageLocale as Locale} brandName={(await getBrand()).name} />
       <nav aria-label={t("breadcrumbLabel")} className="mx-auto max-w-6xl px-4 pt-6 text-xs text-ink-soft">
         <div className="flex items-center gap-1.5">
           <Link href="/" className="transition-colors hover:text-primary">

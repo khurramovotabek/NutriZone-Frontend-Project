@@ -11,7 +11,7 @@ import { Button, ErrorState, Skeleton } from "@/components/ui";
 import AccountLayout from "@/components/AccountLayout";
 import { useIsClient } from "@/hooks/useIsClient";
 import { SUPPORTED_LOCALES, type Locale } from "@/i18n/config";
-import { setLocaleCookie } from "@/i18n/locale-cookie";
+import { switchLocale } from "@/i18n/locale-cookie";
 import { setChatSoundEnabled, useChatSoundEnabled } from "@/lib/chat-sound";
 import type { UserSession } from "@/lib/sessions-api";
 
@@ -106,8 +106,7 @@ export default function AccountSettingsPage() {
 
   function selectLocale(next: Locale) {
     if (next === locale) return;
-    setLocaleCookie(next);
-    router.refresh();
+    switchLocale(next, router);
   }
 
   function telegramEnabled(type: PrefType): boolean {
