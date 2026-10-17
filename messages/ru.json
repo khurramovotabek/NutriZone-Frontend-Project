@@ -609,7 +609,13 @@
       "toNext": "До {tier} ещё {amount} сум",
       "perItem": "за 1 шт.",
       "orderEarn": "+{coins} коинов за этот заказ"
-    }
+    },
+    "optionUnavailable": "Нет в этом варианте — нажмите, чтобы перейти к доступному",
+    "optionSoldOut": "Нет в наличии",
+    "originalBadge": "100% оригинал",
+    "perServing": "{servings} порций · 1 порция ≈ {price}",
+    "priceFrom": "от {price}",
+    "chooseOptions": "Выбрать вариант"
   },
   "wishlist": {
     "title": "Избранное",

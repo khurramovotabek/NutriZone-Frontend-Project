@@ -26,11 +26,13 @@ interface ApiVariantDisplay {
   weight_value: number | null;
   weight_unit: string | null;
   package: { id: string; name: string } | null;
+  flavour?: { id: string; name: string } | null;
   is_published: boolean;
 }
 
 function fromApi(row: ApiVariantDisplay): VariantDisplay {
-  const label = [formatWeight(row.weight_value, row.weight_unit), row.package?.name].filter(Boolean).join(" · ");
+  // "2.27 kg · Chocolate · Banka" -- size, flavour (each variant of a family is one of each), package
+  const label = [formatWeight(row.weight_value, row.weight_unit), row.flavour?.name, row.package?.name].filter(Boolean).join(" · ");
   return {
     variantId: row.variant_id,
     productName: row.product_name,

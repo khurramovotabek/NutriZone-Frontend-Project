@@ -609,7 +609,13 @@
       "toNext": "{amount} UZS more to {tier}",
       "perItem": "per item",
       "orderEarn": "+{coins} coins for this order"
-    }
+    },
+    "optionUnavailable": "Not available with this choice — tap to switch to one that is",
+    "optionSoldOut": "Sold out",
+    "originalBadge": "100% genuine",
+    "perServing": "{servings} servings · 1 serving ≈ {price}",
+    "priceFrom": "from {price}",
+    "chooseOptions": "Choose options"
   },
   "wishlist": {
     "title": "My Wishlist",

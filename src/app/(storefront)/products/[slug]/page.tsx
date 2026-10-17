@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { AlertTriangle, ChevronRight } from "lucide-react";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/config";
@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   try {
     const locale = await getLocale();
     const [{ data: product }, t] = await Promise.all([getProductBySlug(slug, locale), getTranslations("seo")]);
+    if (product.moved_to) return { robots: { index: false, follow: true } };
     const brandName = product.brand_id ? await getBrands(locale).then((r) => r.data.find((b) => b.id === product.brand_id)?.name ?? null).catch(() => null) : null;
     const amount = Number(product.price);
     const price = product.price && Number.isFinite(amount) && amount > 0
@@ -63,6 +64,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       notFound();
     }
     return <ErrorState message={t("loadError")} />;
+  }
+
+  // Grouped into a product family (Dashboard → Guruhlash): the old address moves for good to the family page,
+  // with the variant this product used to be pre-selected.
+  if (product.moved_to) {
+    permanentRedirect(`/products/${product.moved_to.slug}${product.moved_to.variant_id ? `?variant=${product.moved_to.variant_id}` : ""}`);
   }
 
   // Real category name resolved from the product's own real category_id

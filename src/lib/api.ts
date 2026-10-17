@@ -131,6 +131,12 @@ export interface ProductCard {
    * Phase 09.3: closes the confirmed Phase 09.2 gap (public detail
    * response had no purchasable variant identifiers at all).
    */
+  /** List cards: a product family's size / flavour counts and its lowest variant price when prices differ. */
+  size_count?: number;
+  flavour_count?: number;
+  price_from?: string | null;
+  /** Only on the detail endpoint, for a product that was grouped into another one: where its page lives now. */
+  moved_to?: { slug: string; variant_id: string | null };
   variants?: {
     id: string;
     sku: string;
@@ -148,6 +154,8 @@ export interface ProductCard {
     weight_unit: string;
     /** This variant's real container/packaging type (box/bottle/pouch/...) -- `null` only when genuinely not set yet, never fabricated. */
     package: { id: string; name: string } | null;
+    /** This variant's flavour -- a product family is one size x one flavour per variant; `null` for unflavoured goods or legacy one-flavour products. */
+    flavour?: { id: string; name: string; color_hex: string | null; image_url: string | null } | null;
     /**
      * Real, closed gap: previously only the product-level `gallery`/
      * `price`/`currency` existed -- every variant (Flavor/Size

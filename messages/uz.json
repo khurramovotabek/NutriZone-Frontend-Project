@@ -609,7 +609,13 @@
       "toNext": "{tier} darajasigacha {amount} so'm",
       "perItem": "bir dona uchun",
       "orderEarn": "Bu buyurtmadan +{coins} coin"
-    }
+    },
+    "optionUnavailable": "Bu hajmda yo'q — bosilsa mavjudiga o'tadi",
+    "optionSoldOut": "Tugagan",
+    "originalBadge": "100% original",
+    "perServing": "{servings} porsiya · 1 porsiya ≈ {price}",
+    "priceFrom": "{price} dan",
+    "chooseOptions": "Variantni tanlash"
   },
   "wishlist": {
     "title": "Sevimlilar",

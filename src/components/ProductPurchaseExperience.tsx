@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Banknote, Coins, PhoneCall, Star, Truck } from "lucide-react";
+import { Banknote, BadgeCheck, Coins, Droplets, PhoneCall, Ruler, Star, Truck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ProductCard } from "@/lib/api";
 import { formatWeight } from "@/lib/format-weight";
@@ -78,7 +78,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
         productName: product.name,
         brandName,
         image: v.gallery[0] ?? productImage,
-        variantLabel: formatWeight(v.weight_value, v.weight_unit),
+        variantLabel: [formatWeight(v.weight_value, v.weight_unit), v.flavour?.name].filter(Boolean).join(" · ") || null,
         displayPrice: v.price ?? product.price ?? null,
         displayCurrency: v.currency ?? product.currency ?? null,
         cachedAt: Date.now(),
@@ -118,6 +118,13 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
   // Never a second, invented data source.
   const statFacts = (product.specifications ?? []).slice(0, 3);
 
+  // Price per serving for the chosen size: servings = the size in grams / one serving's grams (or the label's own
+  // servings count for a single-size product) -- how protein buyers actually compare tubs.
+  const servingGrams = product.nutrition?.serving_size_grams ?? null;
+  const grams = selected?.weight_value ? (selected.weight_unit === "kg" ? selected.weight_value * 1000 : selected.weight_unit === "g" ? selected.weight_value : null) : null;
+  const servings = grams && servingGrams ? Math.floor(grams / servingGrams) : sizeCountSafe(product) === 1 ? (product.nutrition?.servings_per_container ?? null) : null;
+  const perServing = servings && price ? Math.round(Number(price) / servings) : null;
+
   const buyBoxRef = useRef<HTMLDivElement>(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
   useEffect(() => {
@@ -134,7 +141,10 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
   // FlavourSwitcher.tsx). Only shown when there's genuinely more than
   // one option to choose from.
   const sizeCount = useMemo(() => new Set(purchasableVariants.filter((v) => v.weight_value !== null).map((v) => `${v.weight_value}${v.weight_unit}`)).size, [purchasableVariants]);
-  const flavorCount = product.flavours?.length ?? 0;
+  // A size x flavour family picks its flavour on this page (VariantSelector); legacy one-flavour products hop between
+  // sibling products with FlavourSwitcher.
+  const variantFlavourCount = useMemo(() => new Set(purchasableVariants.map((v) => v.flavour?.id).filter(Boolean)).size, [purchasableVariants]);
+  const flavorCount = variantFlavourCount || (product.flavours?.length ?? 0);
 
   return (
     <>
@@ -177,11 +187,24 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
           {product.description && <p className="mt-2 line-clamp-2 text-sm text-ink-muted">{product.description}</p>}
         </div>
 
-        {(sizeCount > 1 || flavorCount > 1) && (
-          <p className="mt-2 text-sm text-ink-soft">
-            {[sizeCount > 1 ? t("sizesCount", { count: sizeCount }) : null, flavorCount > 1 ? t("flavorsCount", { count: flavorCount }) : null].filter(Boolean).join(" · ")}
-          </p>
-        )}
+        <div className="mt-3 flex flex-wrap gap-1.5 text-xs font-medium">
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/12 px-2.5 py-1 text-emerald-600 dark:text-emerald-400">
+            <BadgeCheck className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+            {t("originalBadge")}
+          </span>
+          {sizeCount > 1 && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface-2 px-2.5 py-1 text-ink-muted">
+              <Ruler className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+              {t("sizesCount", { count: sizeCount })}
+            </span>
+          )}
+          {flavorCount > 1 && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface-2 px-2.5 py-1 text-ink-muted">
+              <Droplets className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+              {t("flavorsCount", { count: flavorCount })}
+            </span>
+          )}
+        </div>
 
         {/* Buy box: price, stock, variants, quantity, CTAs and wishlist/share all live in one cohesive card -- the single decision surface a shopper needs, not several disconnected blocks. */}
         <div ref={buyBoxRef} className="nz-glass-strong mt-5 rounded-2xl p-5">
@@ -201,14 +224,18 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
             )}
             {selected && <StockStatus status={selected.stock_status} quantity={selected.stock_quantity} className="shrink-0 pt-1" />}
           </div>
+          {perServing !== null && servings !== null && (
+            <p className="mt-1.5 text-sm font-medium text-ink-muted">{t("perServing", { servings, price: formatPrice(String(perServing), currency) ?? "" })}</p>
+          )}
           {selected && (
             <p className="mt-1 text-xs text-ink-soft">
+              {[formatWeight(selected.weight_value, selected.weight_unit), selected.flavour?.name, selected.package?.name].filter(Boolean).join(" · ")}
+              {" · "}
               {t("skuLabel")}: {selected.sku}
-              {selected.package && ` · ${selected.package.name}`}
             </p>
           )}
 
-          {product.flavours && product.flavours.length > 0 && (
+          {variantFlavourCount === 0 && product.flavours && product.flavours.length > 0 && (
             <div className="mt-4">
               <FlavourSwitcher flavours={product.flavours} />
             </div>
@@ -290,4 +317,9 @@ function BuyFact({ icon: Icon, title, text, href }: { icon: typeof Truck; title:
       )}
     </li>
   );
+}
+
+/** Distinct sizes among the purchasable variants (a single-size product can use the label's servings count). */
+function sizeCountSafe(product: ProductCard): number {
+  return new Set((product.variants ?? []).filter((v) => v.status === "active" && v.weight_value !== null).map((v) => `${v.weight_value}${v.weight_unit}`)).size;
 }

@@ -106,6 +106,7 @@ export default function ProductCard({
   // Stock 0 -> sold out. Either signal counts: the bulk status, or an
   // explicit zero count (a tracked product with nothing left).
   const outOfStock = product.stock_status === "out_of_stock" || product.stock_quantity === 0;
+  const isFamily = (product.size_count ?? 0) > 1 || (product.flavour_count ?? 0) > 1;
 
   if (layout === "list") {
     return (
@@ -210,10 +211,19 @@ export default function ProductCard({
             reviewsLabel={tReviews("ratingCount", { count: product.rating_count })}
             size={isCompact ? "xs" : "sm"}
           />
+          {isFamily && !isCompact && (
+            <p className="mt-1 text-xs font-medium text-primary">
+              {[(product.size_count ?? 0) > 1 ? t("sizesCount", { count: product.size_count ?? 0 }) : null, (product.flavour_count ?? 0) > 1 ? t("flavorsCount", { count: product.flavour_count ?? 0 }) : null].filter(Boolean).join(" · ")}
+            </p>
+          )}
           <StockLine status={product.stock_status} quantity={product.stock_quantity} size={isCompact ? "xs" : "sm"} />
 
           <div className="mt-auto pt-2">
-            {formattedPrice ? (
+            {product.price_from ? (
+              <p className={`font-bold text-ink ${isFeatured ? "text-lg" : isCompact ? "text-sm" : "text-base"}`}>
+                {t("priceFrom", { price: formatPrice(product.price_from, product.currency) ?? "" })}
+              </p>
+            ) : formattedPrice ? (
               <PriceTag
                 price={product.price}
                 compareAt={product.compare_at_price}
@@ -225,12 +235,19 @@ export default function ProductCard({
             ) : (
               !isCompact && <p className="text-xs text-ink-soft">{t("priceUnavailable")}</p>
             )}
-            <AddToCartButton
-              variantId={product.default_variant_id ?? ""}
-              outOfStock={outOfStock}
-              unavailable={!product.default_variant_id}
-              className={`mt-2 w-full ${isFeatured ? "!py-2.5 !text-sm" : ""}`}
-            />
+            {isFamily ? (
+              // several sizes / flavours: the shopper picks one on the product page, never a silent default
+              <span className={`nz-cta mt-2 flex w-full items-center justify-center rounded-xl px-3 py-2 text-xs font-bold ${isFeatured ? "!py-2.5 !text-sm" : ""}`}>
+                {t("chooseOptions")}
+              </span>
+            ) : (
+              <AddToCartButton
+                variantId={product.default_variant_id ?? ""}
+                outOfStock={outOfStock}
+                unavailable={!product.default_variant_id}
+                className={`mt-2 w-full ${isFeatured ? "!py-2.5 !text-sm" : ""}`}
+              />
+            )}
           </div>
         </div>
       </Card>

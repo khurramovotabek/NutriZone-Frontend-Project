@@ -159,7 +159,8 @@ export default function AddToCartForm({ variants, selectedId, onSelectVariant, f
   }
 
   const busy = state === "adding" || state === "pricing" || state === "buying";
-  const hasWeightData = purchasableVariants.filter((v) => v.weight_value !== null).length >= 2;
+  // Size x flavour families pick by size and flavour; only a product with neither recorded falls back to a SKU list.
+  const hasWeightData = purchasableVariants.filter((v) => v.weight_value !== null).length >= 2 || new Set(purchasableVariants.map((v) => v.flavour?.id).filter(Boolean)).size >= 2;
 
   return (
     <div className="mt-6 space-y-4">
@@ -184,63 +185,55 @@ export default function AddToCartForm({ variants, selectedId, onSelectVariant, f
           </div>
         ))}
 
-      <div>
-        <label htmlFor="quantity" className="mb-1 block text-sm font-medium text-ink-muted">
-          {t("quantity")}
-        </label>
-        <div className="nz-glass-input inline-flex items-center rounded-lg">
-          <button
-            type="button"
-            disabled={busy || quantity <= 1}
-            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            aria-label={t("decreaseQuantity")}
-            className="flex h-10 w-10 items-center justify-center text-ink-muted transition-colors hover:text-primary disabled:pointer-events-none disabled:opacity-40"
-          >
-            &minus;
-          </button>
-          <input
-            id="quantity"
-            type="number"
-            min={1}
-            step={1}
-            value={quantity}
-            disabled={busy}
-            onChange={(e) => setQuantity(Math.min(maxQuantity, Math.max(1, Math.floor(Number(e.target.value) || 1))))}
-            className="w-12 border-x border-border bg-transparent px-1 py-2.5 text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-          />
-          <button
-            type="button"
-            disabled={busy || selectedOutOfStock || quantity >= maxQuantity}
-            onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
-            aria-label={t("increaseQuantity")}
-            className="flex h-10 w-10 items-center justify-center text-ink-muted transition-colors hover:text-primary disabled:pointer-events-none disabled:opacity-40"
-          >
-            +
-          </button>
-        </div>
-      </div>
-
+      {/* One decision row: how many + add to cart; "buy now" right under it. */}
       {selectedOutOfStock ? (
         <Button disabled variant="secondary" className="w-full">
           {t("outOfStock")}
         </Button>
       ) : canPurchase ? (
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Button onClick={handleAddToCart} disabled={busy || !variantId} variant="primary" className="flex-1">
-            {state === "adding" ? t("adding") : state === "pricing" ? t("confirmingPrice") : t("addToCart")}
-          </Button>
-          <Button onClick={handleBuyNow} disabled={busy || !variantId} variant="secondary" className="flex-1">
+        <div className="space-y-2">
+          <div className="flex items-stretch gap-2">
+            <div className="nz-glass-input inline-flex shrink-0 items-center rounded-xl" role="group" aria-label={t("quantity")}>
+              <button
+                type="button"
+                disabled={busy || quantity <= 1}
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                aria-label={t("decreaseQuantity")}
+                className="flex h-12 w-10 items-center justify-center text-lg text-ink-muted transition-colors hover:text-primary disabled:pointer-events-none disabled:opacity-40"
+              >
+                &minus;
+              </button>
+              <input
+                id="quantity"
+                type="number"
+                min={1}
+                step={1}
+                value={quantity}
+                disabled={busy}
+                aria-label={t("quantity")}
+                onChange={(e) => setQuantity(Math.min(maxQuantity, Math.max(1, Math.floor(Number(e.target.value) || 1))))}
+                className="w-10 bg-transparent px-0 py-2.5 text-center text-base font-semibold [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              />
+              <button
+                type="button"
+                disabled={busy || quantity >= maxQuantity}
+                onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
+                aria-label={t("increaseQuantity")}
+                className="flex h-12 w-10 items-center justify-center text-lg text-ink-muted transition-colors hover:text-primary disabled:pointer-events-none disabled:opacity-40"
+              >
+                +
+              </button>
+            </div>
+            <Button onClick={handleAddToCart} disabled={busy || !variantId} variant="primary" className="min-h-12 flex-1 text-base">
+              {state === "adding" ? t("adding") : state === "pricing" ? t("confirmingPrice") : t("addToCart")}
+            </Button>
+          </div>
+          <Button onClick={handleBuyNow} disabled={busy || !variantId} variant="secondary" className="w-full">
             {state === "buying" ? t("redirectingToCheckout") : t("buyNow")}
           </Button>
         </div>
       ) : (
-        // Real, closed gap: this used to render the same fully-working
-        // Add to Cart/Buy Now buttons regardless of whether a price was
-        // even displayed above -- a customer could tap "Add to Cart" on a
-        // product visibly marked "Price unavailable" and only find out it
-        // failed afterward. Disabled here instead, so the buy box never
-        // implies a purchase is possible when the backend has no price to
-        // confirm it with.
+        // Never imply a purchase is possible when the backend has no price to confirm it with.
         <Button disabled variant="primary" className="w-full">
           {t("purchaseUnavailableButton")}
         </Button>

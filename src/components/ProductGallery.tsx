@@ -157,6 +157,13 @@ export default function ProductGallery({ media, alt, badge }: { media: MediaLigh
             </div>
           );
         })}
+        {!hasMedia && (
+          // No photo yet: a calm placeholder on the same white stage, not an empty box.
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-50 to-slate-100 text-slate-400">
+            <Package className="h-20 w-20" strokeWidth={1} aria-hidden="true" />
+            <span className="text-sm font-medium">{tCommon("imageUnavailable")}</span>
+          </div>
+        )}
         {!activeItem?.isVideo && (
           <button type="button" onClick={() => hasMedia && setZoomOpen(true)} disabled={!hasMedia} aria-label={t("zoomImage")} className={`absolute inset-0 h-full w-full ${hasMedia ? "cursor-zoom-in" : ""}`} />
         )}
