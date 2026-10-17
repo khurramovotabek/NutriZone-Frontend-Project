@@ -219,7 +219,7 @@ export default function HeroSlider({ banners }: { banners: Banner[] }) {
               alt=""
               fit="cover"
               loading={isNeighbor ? "eager" : "lazy"}
-              sizes="100vw"
+              sizes="(max-width: 1280px) 100vw, 1280px"
               fallbackIcon={<ImageOff className="h-10 w-10 text-white/30" strokeWidth={1.25} aria-hidden="true" />}
             />
           </div>

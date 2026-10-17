@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { AtSign, Landmark, LoaderCircle, Mail, MapPin, Phone, Send, Wand2 } from "lucide-react";
@@ -38,21 +38,42 @@ export default function StoreContactPage() {
   const [locateError, setLocateError] = useState<string | null>(null);
   const [found, setFound] = useState<LocateResult | null>(null);
   const [detecting, setDetecting] = useState(false);
+  // While GPS is still refining, the pin follows the fixes here; only the final point is saved.
+  const [draft, setDraft] = useState<{ lat: number; lng: number } | null>(null);
+  const [savingPoint, setSavingPoint] = useState(false);
+  const [savedPoint, setSavedPoint] = useState(false);
+  const seq = useRef(0);
   if (!store) return null;
-  const hasPoint = store.latitude != null && store.longitude != null;
+  const pointLat = draft?.lat ?? store.latitude;
+  const pointLng = draft?.lng ?? store.longitude;
+  const hasPoint = pointLat != null && pointLng != null;
 
-  async function onPoint(lat: number, lng: number, _meta?: PickMeta) {
+  async function onPoint(lat: number, lng: number, meta?: PickMeta) {
     setLocateError(null);
-    await saveField({ latitude: lat, longitude: lng });
+    setDraft({ lat, lng });
+    if (meta?.final === false) return;
+    const mine = ++seq.current; // a slower earlier save must never overwrite a newer point
+    setSavingPoint(true);
+    setSavedPoint(false);
+    try {
+      await saveField({ latitude: Number(lat.toFixed(7)), longitude: Number(lng.toFixed(7)) });
+    } finally {
+      if (mine === seq.current) {
+        setSavingPoint(false);
+        setSavedPoint(true);
+        setDraft(null);
+      }
+    }
+    if (mine !== seq.current) return;
     setDetecting(true);
     try {
       const res = await fetch(`/api/geo/locate?lat=${lat}&lng=${lng}&lang=${locale}`);
       const body = await res.json();
-      setFound(body?.success ? body.data : null);
+      if (mine === seq.current) setFound(body?.success ? body.data : null);
     } catch {
-      setFound(null);
+      if (mine === seq.current) setFound(null);
     } finally {
-      setDetecting(false);
+      if (mine === seq.current) setDetecting(false);
     }
   }
 
@@ -66,15 +87,21 @@ export default function StoreContactPage() {
       <Card className="p-5">
         <Fieldset legend={t("location")} icon={<MapPin className="h-3.5 w-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />}>
           <LocationPicker
-            latitude={store.latitude} longitude={store.longitude} onChange={onPoint}
+            latitude={pointLat} longitude={pointLng} onChange={onPoint}
             hintText={t("locationPickerHint")} emptyText={t("locationPickerEmpty")}
-            coordinatesText={hasPoint ? t("locationPickerCoordinates", { lat: store.latitude!.toFixed(6), lng: store.longitude!.toFixed(6) }) : ""}
+            coordinatesText={hasPoint ? t("locationPickerCoordinates", { lat: pointLat!.toFixed(6), lng: pointLng!.toFixed(6) }) : ""}
             accuracyText={(meters) => t("locationPickerAccuracy", { meters })} locateLabel={t("useMyLocation")} locatingLabel={t("locating")}
             onLocateUnsupported={() => setLocateError(t("geolocationUnsupported"))} onLocateDenied={() => setLocateError(t("geolocationDenied"))}
             onLocateUnavailable={() => setLocateError(tp("geolocationUnavailable"))} onLocateTimeout={() => setLocateError(tp("geolocationTimeout"))}
             heightClassName="h-80" shareLabel={store.name}
           />
           {locateError && <p role="alert" className="text-xs text-red-600 dark:text-red-400">{locateError}</p>}
+          {(savingPoint || savedPoint) && (
+            <p className={`flex items-center gap-1.5 text-xs font-medium ${savingPoint ? "text-ink-soft" : "text-emerald-600 dark:text-emerald-400"}`} aria-live="polite">
+              {savingPoint ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <MapPin className="h-3.5 w-3.5" aria-hidden="true" />}
+              {savingPoint ? t("locationSaving") : t("locationSaved")}
+            </p>
+          )}
           {detecting && <p className="flex items-center gap-1.5 text-xs text-ink-soft"><LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> {tp("detecting")}</p>}
           {!detecting && differs && suggestion && (
             <button type="button" onClick={() => { saveField({ address: suggestion.address, district: suggestion.district, city: suggestion.city }); setFound(null); }}

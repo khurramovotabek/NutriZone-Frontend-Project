@@ -119,7 +119,7 @@ export default function MediaLightbox({
           {active.isVideo ? (
             <video src={active.url} controls autoPlay preload="metadata" className="max-h-full max-w-full rounded-lg" />
           ) : (
-            <MediaImage src={active.url} alt={alt} fit="contain" fallbackIcon={<Package className="h-16 w-16 text-white/40" strokeWidth={1.25} aria-hidden="true" />} />
+            <MediaImage src={active.url} alt={alt} fit="contain" sizes="100vw" loading="eager" fallbackIcon={<Package className="h-16 w-16 text-white/40" strokeWidth={1.25} aria-hidden="true" />} />
           )}
         </div>
 
@@ -166,7 +166,7 @@ export default function MediaLightbox({
                   <PlayCircle className="h-5 w-5 text-white/70" strokeWidth={1.5} aria-hidden="true" />
                 </span>
               ) : (
-                <MediaImage src={item.url} alt="" fit="cover" fallbackIcon={<Package className="h-4 w-4 text-white/40" strokeWidth={1.25} aria-hidden="true" />} />
+                <MediaImage src={item.url} alt="" fit="cover" sizes="64px" fallbackIcon={<Package className="h-4 w-4 text-white/40" strokeWidth={1.25} aria-hidden="true" />} />
               )}
             </button>
           ))}

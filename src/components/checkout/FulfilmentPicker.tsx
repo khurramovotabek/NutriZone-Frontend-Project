@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Clock, LoaderCircle, LocateFixed, MapPin, Store as StoreIcon, Truck } from "lucide-react";
 import MapLinks from "@/components/MapLinks";
+import { approxPosition } from "@/lib/current-position";
 
 export interface PickupOption {
   id: string;
@@ -72,13 +73,11 @@ export default function FulfilmentPicker({
   }, [options, selectedId, onSelect]);
 
   function locate() {
-    if (!navigator.geolocation) return;
     setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (p) => { setMe({ lat: p.coords.latitude, lng: p.coords.longitude }); setLocating(false); },
-      () => setLocating(false),
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
-    );
+    void approxPosition().then((pos) => {
+      if (!("error" in pos)) setMe(pos);
+      setLocating(false);
+    });
   }
 
   const tab = "flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors";

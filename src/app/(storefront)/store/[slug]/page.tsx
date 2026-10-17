@@ -157,7 +157,7 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
           <div className="mx-auto max-w-6xl px-4 pb-5 sm:pb-6">
             <div className="flex items-end gap-3.5 sm:gap-4">
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border-2 bg-white shadow-lg sm:h-20 sm:w-20" style={{ borderColor: accent, boxShadow: `0 10px 30px -10px ${accent}` }}>
-                <MediaImage src={store.logo_url} alt="" fit="contain" padding="p-2" fallbackIcon={<StoreIcon className="h-7 w-7 text-white/70" strokeWidth={1.25} aria-hidden="true" />} />
+                <MediaImage src={store.logo_url} alt="" fit="contain" padding="p-2" sizes="80px" loading="eager" fallbackIcon={<StoreIcon className="h-7 w-7 text-white/70" strokeWidth={1.25} aria-hidden="true" />} />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">

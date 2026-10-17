@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LocateFixed, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { approxPosition } from "@/lib/current-position";
 
 /**
  * Real, previously-dormant backend capability wired up: GET /stores
@@ -38,22 +39,17 @@ export default function NearMeFilter() {
       return;
     }
 
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
-      setState("error");
-      return;
-    }
-
     setState("loading");
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        next.set("lat", String(position.coords.latitude));
-        next.set("lng", String(position.coords.longitude));
-        setState("idle");
-        navigate(next);
-      },
-      () => setState("error"),
-      { timeout: 10000, maximumAge: 5 * 60 * 1000 },
-    );
+    void approxPosition().then((pos) => {
+      if ("error" in pos) {
+        setState("error");
+        return;
+      }
+      next.set("lat", pos.lat.toFixed(6));
+      next.set("lng", pos.lng.toFixed(6));
+      setState("idle");
+      navigate(next);
+    });
   }
 
   return (

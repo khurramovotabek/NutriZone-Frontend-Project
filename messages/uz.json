@@ -2156,7 +2156,9 @@
         "online": "Onlayn",
         "manual": "Qo'lda"
       }
-    }
+    },
+    "locationSaving": "Joylashuv saqlanmoqda…",
+    "locationSaved": "Joylashuv saqlandi ✓ — mijozlar xaritada aynan shu nuqtani ko'radi"
   },
   "search": {
     "didYouMean": "Siz buni nazarda tutdingizmi:",
@@ -3052,7 +3054,15 @@
     "deniedAlternative": "Yoki xaritada bosing, joy nomini qidiring yoki xarita havolasini joylang.",
     "insecureTitle": "Joylashuv faqat xavfsiz (https) sahifada ishlaydi",
     "insecureText": "Sayt https orqali ochilganda «joylashuvim» ishlaydi. Hozircha xaritada bosing yoki joyni qidiring.",
-    "close": "Yopish"
+    "close": "Yopish",
+    "offTitle": "Telefonda joylashuv (GPS) o'chiq",
+    "offText": "Telefon sozlamalarida «Joylashuv» / «Geolokatsiya»ni yoqing (Android: yuqori panel → Joylashuv; iPhone: Sozlamalar → Maxfiylik → Joylashuv xizmatlari), so'ng «Qayta urinish»ni bosing.",
+    "timeoutTitle": "Joylashuv signali topilmadi",
+    "timeoutText": "Ochiq joyga yoki derazaga yaqinlashing, Wi-Fi'ni yoqing (aniqlikni oshiradi) va qayta urining.",
+    "tgDeniedTitle": "Telegram'da joylashuvga ruxsat berilmagan",
+    "tgDeniedText": "Telegram sozlamalarida bu botga joylashuvdan foydalanishga ruxsat bering yoki sahifani brauzerda oching.",
+    "retry": "Qayta urinish",
+    "tgOpenSettings": "Telegram sozlamalarini ochish"
   },
   "storeAmenity": {
     "card_payment": "Karta orqali to'lov",

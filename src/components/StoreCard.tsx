@@ -40,7 +40,7 @@ export default async function StoreCard({ store }: { store: StoreListItem }) {
 
       <div className="relative h-36 w-full overflow-hidden" style={{ background: `linear-gradient(135deg, ${accent}, color-mix(in srgb, ${accent} 45%, #0b1220))` }}>
         {store.cover_image_url && (
-          <MediaImage src={store.cover_image_url} alt="" fit="cover" loading="lazy" fallbackIcon={null} className="transition-transform duration-500 group-hover:scale-105" />
+          <MediaImage src={store.cover_image_url} alt="" fit="cover" loading="lazy" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px" fallbackIcon={null} className="transition-transform duration-500 group-hover:scale-105" />
         )}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
         <span className={`absolute left-3 top-3 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold shadow-lg backdrop-blur-sm ${status.cls}`}>
@@ -60,7 +60,7 @@ export default async function StoreCard({ store }: { store: StoreListItem }) {
           className="relative -mt-8 mb-2 h-16 w-16 overflow-hidden rounded-2xl bg-white shadow-lg ring-4"
           style={{ ["--tw-ring-color" as string]: `color-mix(in srgb, ${accent} 70%, transparent)` }}
         >
-          <MediaImage src={store.logo_url} alt="" fit="contain" padding="p-1.5" fallbackIcon={<StoreIcon className="h-7 w-7" style={{ color: accent }} strokeWidth={1.5} aria-hidden="true" />} />
+          <MediaImage src={store.logo_url} alt="" fit="contain" padding="p-1.5" sizes="64px" fallbackIcon={<StoreIcon className="h-7 w-7" style={{ color: accent }} strokeWidth={1.5} aria-hidden="true" />} />
         </div>
 
         <h2 className="text-lg font-bold leading-tight text-ink transition-colors group-hover:text-[var(--c)]">{store.name}</h2>

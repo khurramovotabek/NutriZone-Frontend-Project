@@ -32,6 +32,16 @@ export type TelegramWebApp = {
   openTelegramLink?: (url: string) => void;
   BackButton?: { show: () => void; hide: () => void; onClick: (cb: () => void) => void; offClick: (cb: () => void) => void };
   MainButton?: BottomButton;
+  /** Bot API 8.0+: the device location through Telegram's own permission (the in-app browser often has no GPS access). */
+  LocationManager?: {
+    isInited: boolean;
+    isLocationAvailable: boolean;
+    isAccessRequested: boolean;
+    isAccessGranted: boolean;
+    init: (cb?: () => void) => void;
+    getLocation: (cb: (data: { latitude: number; longitude: number; horizontal_accuracy?: number | null } | null) => void) => void;
+    openSettings: () => void;
+  };
   HapticFeedback?: { impactOccurred: (s: "light" | "medium" | "heavy" | "rigid" | "soft") => void; notificationOccurred: (t: "error" | "success" | "warning") => void; selectionChanged: () => void };
 };
 
@@ -112,4 +122,37 @@ export function haptic(kind: "success" | "error" | "light" | "select"): void {
   if (kind === "light") h.impactOccurred("light");
   else if (kind === "select") h.selectionChanged();
   else h.notificationOccurred(kind);
+}
+
+export type TelegramFix = { lat: number; lng: number; accuracy: number | null };
+
+/**
+ * The location from Telegram itself when the page runs as the Mini App (Bot API 8.0+): Telegram asks the user once
+ * and remembers. Resolves "unsupported" outside Telegram or on older clients (use the browser's geolocation then),
+ * "denied" when the user refused (Telegram's settings can re-allow it), "unavailable" when the device has no fix.
+ */
+export function telegramLocation(): Promise<TelegramFix | "unsupported" | "denied" | "unavailable"> {
+  const app = isMiniAppSession() ? telegramApp() : null;
+  const lm = app && supports(app, "8.0") ? app.LocationManager : undefined;
+  if (!lm) return Promise.resolve("unsupported");
+  return new Promise((resolve) => {
+    const ask = () => {
+      if (!lm.isLocationAvailable) return resolve("unavailable");
+      if (lm.isAccessRequested && !lm.isAccessGranted) return resolve("denied");
+      lm.getLocation((d) => {
+        if (!d) return resolve(lm.isAccessGranted ? "unavailable" : "denied");
+        resolve({ lat: d.latitude, lng: d.longitude, accuracy: d.horizontal_accuracy ?? null });
+      });
+    };
+    if (lm.isInited) ask();
+    else lm.init(ask);
+  });
+}
+
+/** Opens Telegram's location permission screen for this bot (after the user said no). */
+export function openTelegramLocationSettings(): boolean {
+  const lm = telegramApp()?.LocationManager;
+  if (!lm) return false;
+  lm.openSettings();
+  return true;
 }

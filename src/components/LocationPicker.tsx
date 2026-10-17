@@ -12,6 +12,7 @@ import type { CoordinateSource } from "@/lib/geo-api";
 import type { GeocodeResult } from "@/lib/geo-locate";
 import MapSizeFixer from "@/components/MapSizeFixer";
 import MapLinks from "@/components/MapLinks";
+import { openTelegramLocationSettings, telegramLocation } from "@/lib/telegram-webapp";
 
 /**
  * The map location picker shared by every feature that sets a real point (address book, checkout, store profile).
@@ -40,7 +41,14 @@ const LISTEN_MS = 9000; // ...or after this long, keeping the best fix
 export interface PickMeta {
   source: CoordinateSource;
   accuracy?: number | null;
+  /**
+   * false while GPS is still refining (the pin moves as better fixes arrive); true / absent for the point to keep.
+   * Callers that save immediately (store profile) save only final points.
+   */
+  final?: boolean;
 }
+
+type Help = "denied" | "insecure" | "off" | "timeout" | "tgDenied";
 
 function ClickToPlace({ onChange }: { onChange: (lat: number, lng: number) => void }) {
   useMapEvents({ click: (e) => onChange(e.latlng.lat, e.latlng.lng) });
@@ -116,7 +124,7 @@ export default function LocationPicker({
   const [accuracy, setAccuracy] = useState<number | null>(null);
   const [layer, setLayer] = useState<MapLayerKey>("street");
   const [layersOpen, setLayersOpen] = useState(false);
-  const [help, setHelp] = useState<"denied" | "insecure" | null>(null);
+  const [help, setHelp] = useState<Help | null>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GeocodeResult[] | null>(null);
   const [searching, setSearching] = useState(false);
@@ -126,6 +134,7 @@ export default function LocationPicker({
   const [linkBusy, setLinkBusy] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
   const watchRef = useRef<number | null>(null);
+  const bestRef = useRef<GeolocationPosition | null>(null);
   const timerRef = useRef<number | null>(null);
   // only the last GPS fix this picker produced shows an accuracy circle -- a click / drag / search has none
   const lastGpsCoordRef = useRef<{ lat: number; lng: number } | null>(null);
@@ -135,7 +144,11 @@ export default function LocationPicker({
     const gps = lastGpsCoordRef.current;
     if (!(gps != null && latitude === gps.lat && longitude === gps.lng)) setAccuracy(null);
   }, [latitude, longitude]);
-  useEffect(() => () => stopListening(), []);
+  useEffect(() => () => {
+    // unmount: stop the GPS watch without reporting anything
+    if (watchRef.current != null) navigator.geolocation?.clearWatch(watchRef.current);
+    if (timerRef.current != null) window.clearTimeout(timerRef.current);
+  }, []);
 
   // search as you type (debounced); results come closest to what's on screen first
   useEffect(() => {
@@ -170,20 +183,43 @@ export default function LocationPicker({
     if (flyTo) fly(lat, lng);
   }
 
-  function stopListening() {
+  function stopListening(commit = false) {
     if (watchRef.current != null && typeof navigator !== "undefined") navigator.geolocation?.clearWatch(watchRef.current);
     if (timerRef.current != null) window.clearTimeout(timerRef.current);
     watchRef.current = null;
     timerRef.current = null;
     setLocating(false);
+    const best = bestRef.current;
+    bestRef.current = null;
+    // The most precise fix becomes the point to keep (callers that save on every change wait for this one).
+    if (commit && best) onChange(best.coords.latitude, best.coords.longitude, { source: "gps", accuracy: best.coords.accuracy, final: true });
   }
 
   async function handleLocate() {
     if (locating) {
-      stopListening();
+      stopListening(true);
       return;
     }
     setHelp(null);
+
+    // Inside the Telegram Mini App the in-app browser often has no GPS access: ask Telegram itself (Bot API 8.0+).
+    const tg = await telegramLocation();
+    if (tg !== "unsupported") {
+      if (typeof tg === "object") {
+        lastGpsCoordRef.current = { lat: tg.lat, lng: tg.lng };
+        setAccuracy(tg.accuracy);
+        onChange(tg.lat, tg.lng, { source: "gps", accuracy: tg.accuracy, final: true });
+        fly(tg.lat, tg.lng);
+      } else if (tg === "denied") {
+        setHelp("tgDenied");
+        onLocateDenied();
+      } else {
+        setHelp("off");
+        (onLocateUnavailable ?? onLocateDenied)();
+      }
+      return;
+    }
+
     if (typeof navigator === "undefined" || !navigator.geolocation) {
       onLocateUnsupported();
       return;
@@ -204,25 +240,32 @@ export default function LocationPicker({
       /* Permissions API missing (older Safari) -- just ask */
     }
     setLocating(true);
-    let best: GeolocationPosition | null = null;
+    bestRef.current = null;
     let first = true;
+    // watchPosition (not getCurrentPosition): phones answer first from Wi-Fi / cell towers, then GPS -- keep listening
+    // a few seconds and keep the most precise fix. The browser shows its own permission prompt on the first call.
     watchRef.current = navigator.geolocation.watchPosition(
       (position) => {
+        const best = bestRef.current;
         if (best && position.coords.accuracy >= best.coords.accuracy) return; // keep the most precise fix
-        best = position;
+        bestRef.current = position;
         const { latitude: lat, longitude: lng, accuracy: acc } = position.coords;
         lastGpsCoordRef.current = { lat, lng };
         setAccuracy(acc);
-        onChange(lat, lng, { source: "gps", accuracy: acc });
+        if (acc <= GOOD_ACCURACY_M) {
+          if (first) fly(lat, lng);
+          stopListening(true);
+          return;
+        }
+        onChange(lat, lng, { source: "gps", accuracy: acc, final: false });
         if (first) {
           fly(lat, lng);
           first = false;
         }
-        if (acc <= GOOD_ACCURACY_M) stopListening();
       },
       (error) => {
-        if (best) {
-          stopListening(); // a later failure after a good fix: keep what we have
+        if (bestRef.current) {
+          stopListening(true); // a later failure after a fix: keep the best one we have
           return;
         }
         stopListening();
@@ -230,15 +273,17 @@ export default function LocationPicker({
           setHelp("denied");
           onLocateDenied();
         } else if (error.code === error.TIMEOUT) {
+          setHelp("timeout");
           (onLocateTimeout ?? onLocateDenied)();
         } else {
+          setHelp("off");
           (onLocateUnavailable ?? onLocateDenied)();
         }
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 },
     );
     timerRef.current = window.setTimeout(() => {
-      if (best) stopListening();
+      if (bestRef.current) stopListening(true);
     }, LISTEN_MS);
   }
 
@@ -369,17 +414,30 @@ export default function LocationPicker({
         <div role="alert" className="flex gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-ink">
           <ShieldAlert className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
           <div className="space-y-1.5">
-            <p className="font-semibold">{help === "insecure" ? t("insecureTitle") : t("deniedTitle")}</p>
-            {help === "insecure" ? (
-              <p className="text-ink-muted">{t("insecureText")}</p>
-            ) : (
+            <p className="font-semibold">{t(`${help}Title`)}</p>
+            {help === "denied" ? (
               <ul className="list-disc space-y-0.5 pl-4 text-ink-muted">
                 <li>{t("deniedChrome")}</li>
                 <li>{t("deniedIphone")}</li>
                 <li>{t("deniedTelegram")}</li>
               </ul>
+            ) : (
+              <p className="text-ink-muted">{t(`${help}Text`)}</p>
             )}
             <p className="text-ink-muted">{t("deniedAlternative")}</p>
+            <div className="flex flex-wrap gap-2 pt-0.5">
+              {help !== "insecure" && (
+                <button type="button" onClick={handleLocate} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 font-semibold text-white">
+                  <Navigation className="h-3.5 w-3.5" aria-hidden="true" />
+                  {t("retry")}
+                </button>
+              )}
+              {help === "tgDenied" && (
+                <button type="button" onClick={() => openTelegramLocationSettings()} className="rounded-lg border border-border px-3 py-1.5 font-semibold text-ink">
+                  {t("tgOpenSettings")}
+                </button>
+              )}
+            </div>
           </div>
           <button type="button" onClick={() => setHelp(null)} className="self-start text-ink-soft hover:text-ink" aria-label={t("close")}>
             <X className="h-4 w-4" aria-hidden="true" />

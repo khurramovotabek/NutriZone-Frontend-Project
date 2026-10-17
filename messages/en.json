@@ -2156,7 +2156,9 @@
         "online": "Online",
         "manual": "Manual"
       }
-    }
+    },
+    "locationSaving": "Saving the location…",
+    "locationSaved": "Location saved ✓ — customers see exactly this point on the map"
   },
   "search": {
     "didYouMean": "Did you mean:",
@@ -3052,7 +3054,15 @@
     "deniedAlternative": "Or tap the map, search the place by name, or paste a map link.",
     "insecureTitle": "Location only works on a secure (https) page",
     "insecureText": "“My location” works when the site is opened over https. For now tap the map or search the place.",
-    "close": "Close"
+    "close": "Close",
+    "offTitle": "Location (GPS) is turned off on the phone",
+    "offText": "Turn on «Location» in the phone settings (Android: quick settings → Location; iPhone: Settings → Privacy → Location Services), then tap «Try again».",
+    "timeoutTitle": "No location signal",
+    "timeoutText": "Move to an open spot or near a window, turn on Wi-Fi (it improves accuracy) and try again.",
+    "tgDeniedTitle": "Telegram has no location access",
+    "tgDeniedText": "Allow this bot to use your location in Telegram's settings, or open the page in a browser.",
+    "retry": "Try again",
+    "tgOpenSettings": "Open Telegram settings"
   },
   "storeAmenity": {
     "card_payment": "Card payment",

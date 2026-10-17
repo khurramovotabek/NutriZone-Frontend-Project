@@ -21,7 +21,7 @@ export default function StoreGallery({ items, storeName }: { items: MediaLightbo
             {item.isVideo ? (
               <video src={item.url} className="h-full w-full object-cover" muted preload="metadata" />
             ) : (
-              <MediaImage src={item.url} alt={`${storeName} ${idx + 1}`} fit="cover" fallbackIcon={<StoreIcon className="h-6 w-6 text-ink-soft" strokeWidth={1.25} aria-hidden="true" />} />
+              <MediaImage src={item.url} alt={`${storeName} ${idx + 1}`} fit="cover" sizes="(max-width: 640px) 33vw, (max-width: 1152px) 25vw, 280px" fallbackIcon={<StoreIcon className="h-6 w-6 text-ink-soft" strokeWidth={1.25} aria-hidden="true" />} />
             )}
             {item.isVideo && (
               <span className="absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity group-hover:bg-black/30">

@@ -192,12 +192,21 @@ export default function AddressForm({
 
   async function saveCoordinates(id: string): Promise<Address | null> {
     if (!coordinate) return null;
-    const res = await fetch(`/api/addresses/${id}/coordinates`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ latitude: coordinate.latitude, longitude: coordinate.longitude, source: coordinate.source, accuracy: coordinate.accuracy }),
-    });
-    const body = await res.json();
-    return res.ok && body.success ? body.data : null;
+    // The map point is what the courier navigates to -- a dropped mobile connection gets one more try.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const res = await fetch(`/api/addresses/${id}/coordinates`, {
+          method: "PATCH", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ latitude: coordinate.latitude, longitude: coordinate.longitude, source: coordinate.source, accuracy: coordinate.accuracy }),
+        });
+        const body = await res.json();
+        if (res.ok && body.success) return body.data;
+        if (res.status < 500) return null;
+      } catch {
+        /* retry once */
+      }
+    }
+    return null;
   }
 
   async function handleSubmit(e: React.FormEvent) {
