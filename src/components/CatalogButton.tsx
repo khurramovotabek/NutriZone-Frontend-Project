@@ -114,7 +114,7 @@ export default function CatalogButton({ categories }: { categories: Category[] }
             role="menu"
             className="nz-glass-strong animate-nz-catalog-in absolute left-0 top-full z-50 mt-3 hidden max-h-[75vh] w-[min(92vw,960px)] overflow-y-auto rounded-3xl p-6 sm:block"
           >
-            <div className="grid grid-cols-[220px_minmax(0,1fr)] gap-6">
+            <div className="grid grid-cols-[230px_minmax(0,1fr)] gap-6">
               <ul className="flex flex-col gap-1 border-r border-border pr-4" role="tablist" aria-orientation="vertical">
                 {tree.map((cat) => {
                   const on = cat.id === active?.id;
@@ -129,7 +129,7 @@ export default function CatalogButton({ categories }: { categories: Category[] }
                         className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${on ? "bg-primary-soft text-primary" : "text-ink hover:bg-surface-2"}`}
                       >
                         <Package className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                        <span className="min-w-0 flex-1 truncate">{cat.name}</span>
+                        <span className="min-w-0 flex-1 leading-snug">{cat.name}</span>
                         <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" strokeWidth={2} aria-hidden="true" />
                       </Link>
                     </li>
