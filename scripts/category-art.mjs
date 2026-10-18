@@ -85,10 +85,10 @@ export function tileSvg([name, icon, badge, section]) {
   const id = name.replace(/[^a-z0-9]/gi, "");
   const glyph = iconInner(icon, 1.75);
   const mark = iconInner(icon, 1.1);
-  const disc = 300;
-  const cy = badge ? 340 : 384;
-  const iconSize = 196;
-  const badgeW = Math.max(150, badge.length * 34 + 72);
+  const disc = 420;
+  const cy = badge ? 350 : 384;
+  const iconSize = 260;
+  const badgeW = Math.max(140, badge.length * 30 + 64);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">
   <defs>
     <linearGradient id="bg${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient>
@@ -102,13 +102,13 @@ export function tileSvg([name, icon, badge, section]) {
   <rect width="${SIZE}" height="${SIZE}" fill="url(#shade${id})"/>
   <g opacity="0.13" transform="translate(455 425) rotate(-14) scale(17)" fill="none" stroke="#fff">${mark}</g>
   <g opacity="0.07" fill="none" stroke="#fff" stroke-width="2">
-    <circle cx="${SIZE / 2}" cy="${cy}" r="${disc / 2 + 70}"/><circle cx="${SIZE / 2}" cy="${cy}" r="${disc / 2 + 140}"/>
+    <circle cx="${SIZE / 2}" cy="${cy}" r="${disc / 2 + 50}"/><circle cx="${SIZE / 2}" cy="${cy}" r="${disc / 2 + 110}"/>
   </g>
   <circle cx="${SIZE / 2}" cy="${cy}" r="${disc / 2}" fill="url(#disc${id})" stroke="#ffffff" stroke-opacity="0.42" stroke-width="2.5" filter="url(#soft${id})"/>
   <g transform="translate(${SIZE / 2 - iconSize / 2} ${cy - iconSize / 2}) scale(${iconSize / 24})" fill="none" stroke="#fff">${glyph}</g>
   ${badge ? `<g filter="url(#soft${id})">
-    <rect x="${SIZE / 2 - badgeW / 2}" y="560" width="${badgeW}" height="86" rx="43" fill="#ffffff" fill-opacity="0.96"/>
-    <text x="${SIZE / 2}" y="617" text-anchor="middle" font-family="Ubuntu Sans, Ubuntu, DejaVu Sans, sans-serif" font-weight="800" font-size="44" letter-spacing="2" fill="${to}">${esc(badge)}</text>
+    <rect x="${SIZE / 2 - badgeW / 2}" y="596" width="${badgeW}" height="78" rx="39" fill="#ffffff" fill-opacity="0.96"/>
+    <text x="${SIZE / 2}" y="649" text-anchor="middle" font-family="Ubuntu Sans, Ubuntu, DejaVu Sans, sans-serif" font-weight="800" font-size="40" letter-spacing="2" fill="${to}">${esc(badge)}</text>
   </g>` : ""}
 </svg>`;
 }
