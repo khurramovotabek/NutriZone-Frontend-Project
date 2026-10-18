@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight, LayoutGrid, Package, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { Category } from "@/lib/api";
+import MediaImage from "@/components/MediaImage";
 
 interface CategoryNode extends Category {
   children: CategoryNode[];
@@ -34,6 +35,15 @@ function buildCategoryTree(categories: Category[]): CategoryNode[] {
 }
 
 const categoryHref = (c: Category) => `/categories/${c.id}`;
+
+/** A category's artwork (Dashboard → Kategoriyalar image) as a small rounded tile; the box icon when it has none. */
+function CategoryThumb({ category, size, className = "" }: { category: Category; size: number; className?: string }) {
+  return (
+    <span className={`relative shrink-0 overflow-hidden bg-surface-2 ring-1 ring-black/5 dark:ring-white/10 ${className}`} style={{ width: size, height: size }}>
+      <MediaImage src={category.image_url} alt="" fit="cover" sizes={`${size}px`} fallbackIcon={<Package className="h-4 w-4 text-ink-soft" strokeWidth={1.75} aria-hidden="true" />} />
+    </span>
+  );
+}
 
 export default function CatalogButton({ categories }: { categories: Category[] }) {
   const t = useTranslations("catalog");
@@ -112,7 +122,7 @@ export default function CatalogButton({ categories }: { categories: Category[] }
           <div
             id="nz-catalog-panel"
             role="menu"
-            className="nz-glass-strong animate-nz-catalog-in absolute left-0 top-full z-50 mt-3 hidden max-h-[75vh] w-[min(92vw,960px)] overflow-y-auto rounded-3xl p-6 sm:block"
+            className="nz-glass-strong bg-surface animate-nz-catalog-in absolute left-0 top-full z-50 mt-3 hidden max-h-[75vh] w-[min(92vw,960px)] overflow-y-auto rounded-3xl p-6 sm:block"
           >
             <div className="grid grid-cols-[230px_minmax(0,1fr)] gap-6">
               <ul className="flex flex-col gap-1 border-r border-border pr-4" role="tablist" aria-orientation="vertical">
@@ -128,7 +138,7 @@ export default function CatalogButton({ categories }: { categories: Category[] }
                         onFocus={() => setActiveId(cat.id)}
                         className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${on ? "bg-primary-soft text-primary" : "text-ink hover:bg-surface-2"}`}
                       >
-                        <Package className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                        <CategoryThumb category={cat} size={34} className="rounded-lg" />
                         <span className="min-w-0 flex-1 leading-snug">{cat.name}</span>
                         <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" strokeWidth={2} aria-hidden="true" />
                       </Link>
@@ -138,18 +148,20 @@ export default function CatalogButton({ categories }: { categories: Category[] }
               </ul>
               {active && (
                 <div role="tabpanel" className="min-w-0">
-                  <Link href={categoryHref(active)} className="mb-4 inline-flex items-center gap-1.5 text-lg font-bold text-ink hover:text-primary">
-                    {active.name}
-                    <ChevronRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                  <Link href={categoryHref(active)} className="group mb-5 flex items-center gap-3 text-lg font-bold text-ink hover:text-primary">
+                    <CategoryThumb category={active} size={48} className="rounded-xl shadow-sm" />
+                    <span>{active.name}</span>
+                    <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2} aria-hidden="true" />
                   </Link>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-5 lg:grid-cols-3">
                     {active.children.map((section) => (
                       <div key={section.id} className="min-w-0">
-                        <Link href={categoryHref(section)} className="block truncate text-sm font-semibold text-ink transition-colors hover:text-primary">
-                          {section.name}
+                        <Link href={categoryHref(section)} className="group flex min-w-0 items-center gap-2.5 text-sm font-semibold text-ink transition-colors hover:text-primary">
+                          <CategoryThumb category={section} size={36} className="rounded-lg transition-transform group-hover:scale-105" />
+                          <span className="truncate">{section.name}</span>
                         </Link>
                         {section.children.length > 0 && (
-                          <ul className="mt-1.5 flex flex-col gap-0.5">
+                          <ul className="mt-2 flex flex-col gap-0.5 pl-[46px]">
                             {section.children.map((leaf) => (
                               <li key={leaf.id}>
                                 <Link href={categoryHref(leaf)} className="block truncate rounded-md py-0.5 text-[13px] text-ink-muted transition-colors hover:text-primary">
@@ -185,7 +197,7 @@ export default function CatalogButton({ categories }: { categories: Category[] }
             createPortal(
               <>
                 <div className="fixed inset-0 z-40 bg-black/25 backdrop-blur-[2px] sm:hidden" aria-hidden="true" onClick={() => setOpen(false)} />
-                <div ref={drawerRef} className="nz-glass-strong fixed inset-y-0 right-0 z-50 flex w-[86vw] max-w-sm animate-nz-drawer-in flex-col border-y-0 border-r-0 sm:hidden">
+                <div ref={drawerRef} className="nz-glass-strong bg-surface fixed inset-y-0 right-0 z-50 flex w-[86vw] max-w-sm animate-nz-drawer-in flex-col border-y-0 border-r-0 sm:hidden">
                   <div className="flex items-center justify-between border-b border-border p-4">
                     <h2 className="text-lg font-semibold text-ink">{t("katalogButton")}</h2>
                     <button type="button" onClick={() => setOpen(false)} aria-label={t("close")} className="flex h-8 w-8 items-center justify-center rounded-full text-ink-muted hover:bg-surface-2">
@@ -223,7 +235,7 @@ function MobileCategoryGroup({ category, depth = 0 }: { category: CategoryNode; 
           href={categoryHref(category)}
           className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 ${depth === 0 ? "py-3 text-sm font-semibold text-ink" : depth === 1 ? "py-2 text-sm font-medium text-ink" : "py-1.5 text-[13px] text-ink-muted"}`}
         >
-          {depth === 0 && <Package className="h-4 w-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />}
+          {depth < 2 && <CategoryThumb category={category} size={depth === 0 ? 32 : 26} className={depth === 0 ? "rounded-lg" : "rounded-md"} />}
           <span className="truncate">{category.name}</span>
         </Link>
         {hasChildren && (
