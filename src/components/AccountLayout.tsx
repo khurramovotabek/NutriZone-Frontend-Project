@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Coins, LayoutDashboard, LogOut, Mail, MapPin, MessageCircle, Package, ReceiptText, Settings, User } from "lucide-react";
+import { Bell, Coins, LayoutDashboard, LogOut, Mail, MapPin, MessageCircle, Package, PackageSearch, ReceiptText, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: "/orders", labelKey: "orders", icon: Package },
   { href: "/account/receipts", labelKey: "receipts", icon: ReceiptText },
   { href: "/account/loyalty", labelKey: "loyalty", icon: Coins },
+  { href: "/account/product-requests", labelKey: "productRequests", icon: PackageSearch },
   { href: "/account/addresses", labelKey: "addresses", icon: MapPin },
   { href: "/account/notifications", labelKey: "notifications", icon: Bell },
   { href: "/account/chat", labelKey: "chat", icon: MessageCircle },

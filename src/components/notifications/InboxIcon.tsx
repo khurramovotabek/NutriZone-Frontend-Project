@@ -1,6 +1,6 @@
 import {
   Bell, CircleCheck, CircleX, Coins, Crown, Gift, Hourglass, Megaphone, Package, PackageCheck, ShoppingCart, Sparkles, Store, TicketPercent,
-  CreditCard, MessageCircle, ShieldAlert, ShoppingBag, Star, TriangleAlert, Trophy, Truck, Undo2, type LucideIcon,
+  CreditCard, MessageCircle, Search, SearchX, ShieldAlert, ShoppingBag, Star, TriangleAlert, Trophy, Truck, Undo2, type LucideIcon,
 } from "lucide-react";
 import type { InboxTone } from "@/lib/notifications-api";
 
@@ -9,7 +9,7 @@ const ICONS: Record<string, LucideIcon> = {
   "undo-2": Undo2, "triangle-alert": TriangleAlert, coins: Coins, trophy: Trophy, crown: Crown, gift: Gift,
   hourglass: Hourglass, "ticket-percent": TicketPercent, sparkles: Sparkles, megaphone: Megaphone, bell: Bell, "shopping-cart": ShoppingCart,
   store: Store, "shield-alert": ShieldAlert, "credit-card": CreditCard, "message-circle": MessageCircle, star: Star,
-  "shopping-bag": ShoppingBag,
+  "shopping-bag": ShoppingBag, search: Search, "search-x": SearchX,
 };
 
 // Soft glass tiles per tone -- readable on both themes.

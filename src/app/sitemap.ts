@@ -50,6 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...localized("/blog", { changeFrequency: "weekly", priority: 0.6 }),
     ...localized("/about", { changeFrequency: "monthly", priority: 0.4 }),
     ...localized("/contact", { changeFrequency: "monthly", priority: 0.4 }),
+    ...localized("/privacy", { changeFrequency: "yearly", priority: 0.2 }),
   ];
 
   const [products, categories, brands, stores, posts] = await Promise.all([

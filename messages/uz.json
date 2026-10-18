@@ -887,7 +887,8 @@
       "subtitle": "Telegram hisobingiz orqali bir zumda kiring yoki bot yuborgan 6 xonali kodni kiriting.",
       "openBotButton": "Telegram botni ochish",
       "or": "yoki",
-      "securityHint": "Kodingiz faqat Telegram orqali yuboriladi va hech qayerda ko'rsatilmaydi yoki saqlanmaydi."
+      "securityHint": "Kodingiz faqat Telegram orqali yuboriladi va hech qayerda ko'rsatilmaydi yoki saqlanmaydi.",
+      "consent": "Kirish orqali siz <link>Maxfiylik siyosati</link> shartlariga rozilik bildirasiz."
     },
     "loginCode": {
       "title": "Kodni kiriting",
@@ -1155,7 +1156,9 @@
           "fat_loss": "Ozish",
           "healthy_lifestyle": "Sog'lom turmush"
         }
-      }
+      },
+      "findProductTitle": "Kerakli mahsulotni topmadingizmi?",
+      "findProductText": "Nomi, rasmi yoki havolasini yuboring — biz topib beramiz."
     },
     "addresses": "Manzillar kitobi",
     "addressesPage": {
@@ -1357,13 +1360,82 @@
       "login": "Cheklaringizni ko'rish uchun hisobingizga kiring.",
       "loginCta": "Kirish",
       "loadError": "Cheklarni yuklab bo'lmadi."
+    },
+    "productRequests": "Mahsulot so'rovlari",
+    "productRequestsPage": {
+      "title": "Mahsulotni topib berish",
+      "subtitle": "Saytda topilmagan sport ozuqasini so'rang — yetkazib beruvchilarimizdan qidirib, narx va muddatini aytamiz.",
+      "how1": "Mahsulot nomi, rasmi yoki havolasini yuboring",
+      "how2": "Mutaxassislarimiz uni yetkazib beruvchilardan qidiradi",
+      "how3": "Narx va muddat bilan javob beramiz — bildirishnoma keladi",
+      "openCount": "jarayonda",
+      "foundCount": "topildi",
+      "formTitle": "Yangi so'rov",
+      "name": "Mahsulot nomi",
+      "namePlaceholder": "Masalan: Mutant Mass 6.8 kg",
+      "brand": "Brend",
+      "brandPlaceholder": "Masalan: Mutant",
+      "url": "Havola (do'kon yoki ishlab chiqaruvchi sayti)",
+      "quantity": "Soni",
+      "description": "Tavsif",
+      "descriptionPlaceholder": "Ta'mi, hajmi, qadoq turi yoki boshqa muhim tafsilotlar…",
+      "image": "Rasm",
+      "imagePick": "Rasm yuklash",
+      "imageHint": "JPG, PNG yoki WEBP · 5 MB gacha",
+      "imagePreview": "Tanlangan rasm",
+      "removeImage": "Rasmni olib tashlash",
+      "privacyNote": "Ma'lumotlaringiz faqat mahsulotni qidirish uchun ishlatiladi.",
+      "submit": "So'rov yuborish",
+      "sending": "Yuborilmoqda…",
+      "sent": "{number} so'rovingiz qabul qilindi. Javobni shu yerda va bildirishnomalarda ko'rasiz.",
+      "listTitle": "Mening so'rovlarim",
+      "emptyTitle": "Hali so'rov yo'q",
+      "emptyBody": "Kerakli mahsulotni saytda topmasangiz, yuqoridagi forma orqali so'rang.",
+      "pieces": "{count} dona",
+      "replyTitle": "NutriZone javobi",
+      "price": "Taxminiy narx",
+      "currency": "so'm",
+      "openProduct": "Mahsulotni ochish",
+      "cancel": "Bekor qilish",
+      "login": "So'rov yuborish uchun hisobingizga kiring.",
+      "loginCta": "Kirish",
+      "loadError": "So'rovlarni yuklab bo'lmadi.",
+      "status": {
+        "new": "Yuborildi",
+        "searching": "Qidirilmoqda",
+        "found": "Topildi",
+        "not_found": "Topilmadi",
+        "cancelled": "Bekor qilingan"
+      },
+      "errors": {
+        "NAME_REQUIRED": "Mahsulot nomini yozing.",
+        "URL_INVALID": "Havola noto'g'ri — to'liq manzilni kiriting (https://…).",
+        "URL_TOO_LONG": "Havola juda uzun.",
+        "IMAGE_TOO_LARGE": "Rasm 5 MB dan oshmasin.",
+        "IMAGE_TYPE": "Faqat JPG, PNG yoki WEBP rasm yuklang.",
+        "IMAGE_INVALID": "Rasmni o'qib bo'lmadi — boshqa fayl tanlang.",
+        "TOO_MANY_OPEN": "Ochiq so'rovlar juda ko'p — avvalgilariga javobni kuting.",
+        "RATE_LIMITED": "Juda ko'p so'rov — birozdan keyin urinib ko'ring.",
+        "generic": "So'rovni yuborib bo'lmadi. Qayta urinib ko'ring."
+      },
+      "orderViaChat": "Chat orqali buyurtma berish"
     }
   },
   "footer": {
     "tagline": "Premium sport oziq-ovqati O'zbekiston bo'ylab yetkazib beriladi.",
     "shopHeading": "Do'kon",
     "accountHeading": "Hisob",
-    "myAccount": "Mening hisobim"
+    "myAccount": "Mening hisobim",
+    "brands": "Brendlar",
+    "stores": "Do'konlar",
+    "loyaltyProgram": "NutriZone Coins",
+    "findProduct": "Mahsulotni topib berish",
+    "privacy": "Maxfiylik siyosati",
+    "contactHeading": "Aloqa",
+    "hours": "Har kuni {hours}",
+    "paymentMethods": "To'lov usullari",
+    "rights": "Barcha huquqlar himoyalangan.",
+    "telegramChannel": "Telegram kanal"
   },
   "about": {
     "metaTitle": "Biz haqimizda",
@@ -1513,7 +1585,8 @@
       "catalogBody": "Brend, kategoriya va narx bo'yicha mahsulot tanlang.",
       "aboutTitle": "Biz haqimizda",
       "aboutBody": "NutriZone va mahsulot sifati kafolati haqida."
-    }
+    },
+    "privacyLink": "Maxfiylik siyosati"
   },
   "accountSettings": {
     "title": "Hisob sozlamalari",
@@ -3106,7 +3179,8 @@
     "settings": "Sozlamalar",
     "profile": "Profil",
     "myStore": "Mening do'konim",
-    "notFound": "Sahifa topilmadi"
+    "notFound": "Sahifa topilmadi",
+    "productRequests": "Mahsulotni topib berish"
   },
   "miniApp": {
     "title": "Do'kon ochilmoqda",

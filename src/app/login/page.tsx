@@ -108,6 +108,15 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               <ShieldCheck className="mt-px h-3.5 w-3.5 shrink-0 text-success" strokeWidth={2} aria-hidden="true" />
               {t("welcome.securityHint")}
             </p>
+            <p className="mt-2 text-center text-[11px] leading-relaxed text-ink-soft">
+              {t.rich("welcome.consent", {
+                link: (chunks) => (
+                  <Link href="/privacy" className="font-semibold text-primary underline-offset-2 hover:underline">
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </p>
           </div>
         </section>
       </main>

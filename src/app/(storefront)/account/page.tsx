@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowDownRight, ArrowUpRight, ChevronRight, LifeBuoy, PieChart, Package, ShoppingBag, TrendingUp, Truck, UserRoundPen, Wallet } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, ChevronRight, LifeBuoy, PieChart, Package, PackageSearch, ShoppingBag, TrendingUp, Truck, UserRoundPen, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { Order } from "@/lib/orders-api";
@@ -212,6 +212,17 @@ export default function AccountDashboardPage() {
               <ChevronRight className="h-4 w-4 shrink-0 text-ink-soft transition-transform group-hover:translate-x-0.5 group-hover:text-primary" strokeWidth={2} aria-hidden="true" />
             </Link>
           )}
+
+          <Link href="/account/product-requests" className="nz-glass nz-glass-interactive group flex items-center gap-4 rounded-3xl p-5">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-600 ring-1 ring-violet-500/25 dark:text-violet-300">
+              <PackageSearch className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-ink">{t("findProductTitle")}</p>
+              <p className="mt-0.5 text-xs text-ink-muted">{t("findProductText")}</p>
+            </div>
+            <ChevronRight className="h-4 w-4 shrink-0 text-ink-soft transition-transform group-hover:translate-x-0.5 group-hover:text-primary" strokeWidth={2} aria-hidden="true" />
+          </Link>
 
           <section className="relative overflow-hidden rounded-3xl bg-[linear-gradient(150deg,color-mix(in_srgb,var(--nz-primary)_92%,black),color-mix(in_srgb,var(--nz-primary)_55%,#0e9f5f))] p-5 text-white shadow-[0_24px_48px_-24px_rgba(var(--nz-primary-rgb),0.8)]">
             <div aria-hidden="true" className="pointer-events-none absolute -bottom-12 -right-8 h-36 w-36 rounded-full bg-white/10 blur-2xl" />

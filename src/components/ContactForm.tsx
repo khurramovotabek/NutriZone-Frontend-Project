@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { AlertCircle, CheckCircle2, Loader2, Lock, Send } from "lucide-react";
 import { submitContactMessage } from "@/lib/settings-api";
@@ -232,7 +233,12 @@ export default function ContactForm() {
 
       <p id={`${uid}-privacy`} className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-ink-soft">
         <Lock className="h-3 w-3 shrink-0" strokeWidth={2} aria-hidden="true" />
-        {t("formPrivacyNote")}
+        <span>
+          {t("formPrivacyNote")}{" "}
+          <Link href="/privacy" className="font-semibold text-primary underline-offset-2 hover:underline">
+            {t("privacyLink")}
+          </Link>
+        </span>
       </p>
     </form>
   );

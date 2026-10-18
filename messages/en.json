@@ -887,7 +887,8 @@
       "subtitle": "Sign in instantly with your Telegram account, or enter the 6-digit code the bot sends you.",
       "openBotButton": "Open Telegram Bot",
       "or": "or",
-      "securityHint": "Your code is only ever sent through Telegram, never displayed or logged anywhere else."
+      "securityHint": "Your code is only ever sent through Telegram, never displayed or logged anywhere else.",
+      "consent": "By signing in you agree to our <link>Privacy Policy</link>."
     },
     "loginCode": {
       "title": "Enter your code",
@@ -1155,7 +1156,9 @@
           "fat_loss": "Fat loss",
           "healthy_lifestyle": "Healthy lifestyle"
         }
-      }
+      },
+      "findProductTitle": "Can't find a product?",
+      "findProductText": "Send its name, a photo or a link — we'll source it for you."
     },
     "addresses": "Address Book",
     "addressesPage": {
@@ -1357,13 +1360,82 @@
       "login": "Sign in to see your receipts.",
       "loginCta": "Sign in",
       "loadError": "Could not load receipts."
+    },
+    "productRequests": "Product requests",
+    "productRequestsPage": {
+      "title": "Find a product for me",
+      "subtitle": "Ask for sports nutrition we don't list yet — we'll check our suppliers and tell you the price and lead time.",
+      "how1": "Send the product name, a photo or a link",
+      "how2": "Our team checks it with suppliers",
+      "how3": "We reply with price and timing — you get a notification",
+      "openCount": "in progress",
+      "foundCount": "found",
+      "formTitle": "New request",
+      "name": "Product name",
+      "namePlaceholder": "e.g. Mutant Mass 6.8 kg",
+      "brand": "Brand",
+      "brandPlaceholder": "e.g. Mutant",
+      "url": "Link (a shop or the maker's site)",
+      "quantity": "Quantity",
+      "description": "Description",
+      "descriptionPlaceholder": "Flavour, size, pack type or other important details…",
+      "image": "Photo",
+      "imagePick": "Upload a photo",
+      "imageHint": "JPG, PNG or WEBP · up to 5 MB",
+      "imagePreview": "Selected photo",
+      "removeImage": "Remove photo",
+      "privacyNote": "Your details are only used to find the product.",
+      "submit": "Send request",
+      "sending": "Sending…",
+      "sent": "Request {number} received. You'll see the answer here and in notifications.",
+      "listTitle": "My requests",
+      "emptyTitle": "No requests yet",
+      "emptyBody": "If you can't find a product on the site, ask for it with the form above.",
+      "pieces": "{count} pcs",
+      "replyTitle": "NutriZone's answer",
+      "price": "Estimated price",
+      "currency": "UZS",
+      "openProduct": "Open product",
+      "cancel": "Cancel",
+      "login": "Sign in to send a request.",
+      "loginCta": "Sign in",
+      "loadError": "Couldn't load your requests.",
+      "status": {
+        "new": "Sent",
+        "searching": "Searching",
+        "found": "Found",
+        "not_found": "Not found",
+        "cancelled": "Cancelled"
+      },
+      "errors": {
+        "NAME_REQUIRED": "Enter the product name.",
+        "URL_INVALID": "Invalid link — enter the full address (https://…).",
+        "URL_TOO_LONG": "The link is too long.",
+        "IMAGE_TOO_LARGE": "The photo must be 5 MB or smaller.",
+        "IMAGE_TYPE": "Upload a JPG, PNG or WEBP photo.",
+        "IMAGE_INVALID": "Couldn't read the photo — pick another file.",
+        "TOO_MANY_OPEN": "Too many open requests — wait for answers to the earlier ones.",
+        "RATE_LIMITED": "Too many requests — try again a bit later.",
+        "generic": "Couldn't send the request. Please try again."
+      },
+      "orderViaChat": "Order via chat"
     }
   },
   "footer": {
     "tagline": "Premium sport nutrition, delivered across Uzbekistan.",
     "shopHeading": "Shop",
     "accountHeading": "Account",
-    "myAccount": "My Account"
+    "myAccount": "My Account",
+    "brands": "Brands",
+    "stores": "Stores",
+    "loyaltyProgram": "NutriZone Coins",
+    "findProduct": "Find a product for me",
+    "privacy": "Privacy Policy",
+    "contactHeading": "Contact",
+    "hours": "Daily {hours}",
+    "paymentMethods": "Payment methods",
+    "rights": "All rights reserved.",
+    "telegramChannel": "Telegram channel"
   },
   "about": {
     "metaTitle": "About us",
@@ -1513,7 +1585,8 @@
       "catalogBody": "Browse by brand, category and price.",
       "aboutTitle": "About us",
       "aboutBody": "About NutriZone and our quality guarantee."
-    }
+    },
+    "privacyLink": "Privacy Policy"
   },
   "accountSettings": {
     "title": "Account Settings",
@@ -3106,7 +3179,8 @@
     "settings": "Settings",
     "profile": "Profile",
     "myStore": "My store",
-    "notFound": "Page not found"
+    "notFound": "Page not found",
+    "productRequests": "Find a product for me"
   },
   "miniApp": {
     "title": "Opening the shop",
