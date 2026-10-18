@@ -10,6 +10,7 @@ export interface PublicSiteSettings {
   telegram_channel_url: string | null;
   instagram_url: string | null;
   primary_color: string;
+  requisites?: { legal_name: string; tin: string; address: string; phone: string };
 }
 
 export async function getPublicSiteSettings() {

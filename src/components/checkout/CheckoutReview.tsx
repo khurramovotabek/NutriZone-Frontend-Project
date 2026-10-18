@@ -1,6 +1,7 @@
 "use client";
 
 import { AtSign, LoaderCircle, MapPin, MessageSquare, Phone, Store as StoreIcon, User } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { PaymentMethod } from "@/lib/payments-api";
 import { methodName } from "@/components/checkout/PaymentMethodCard";
@@ -137,6 +138,20 @@ export default function CheckoutReview({
           {submitting && <LoaderCircle className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden="true" />}
           {redirecting ? t("pay.redirecting") : submitting ? t("submitting") : paymentMethod?.online ? t("pay.placeAndPay") : t("confirmOrder")}
         </Button>
+        <p className="mt-3 text-center text-xs leading-relaxed text-ink-soft">
+          {t.rich("legalConsent", {
+            terms: (chunks) => (
+              <Link href="/terms" target="_blank" className="font-semibold text-primary underline-offset-2 hover:underline">
+                {chunks}
+              </Link>
+            ),
+            privacy: (chunks) => (
+              <Link href="/privacy" target="_blank" className="font-semibold text-primary underline-offset-2 hover:underline">
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
       </Card>
     </div>
   );

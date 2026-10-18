@@ -873,7 +873,8 @@
       "pickupAt": "Olib ketish joyi",
       "chooseStoreError": "Olib ketish uchun do'konni tanlang."
     },
-    "cashAtStore": "Do'konda to'lov (naqd yoki karta)"
+    "cashAtStore": "Do'konda to'lov (naqd yoki karta)",
+    "legalConsent": "Buyurtma berish orqali siz <terms>Ommaviy oferta</terms> va <privacy>Maxfiylik siyosati</privacy> shartlarini qabul qilasiz."
   },
   "auth": {
     "title": "Kirish yoki ro'yxatdan o'tish",
@@ -888,7 +889,7 @@
       "openBotButton": "Telegram botni ochish",
       "or": "yoki",
       "securityHint": "Kodingiz faqat Telegram orqali yuboriladi va hech qayerda ko'rsatilmaydi yoki saqlanmaydi.",
-      "consent": "Kirish orqali siz <link>Maxfiylik siyosati</link> shartlariga rozilik bildirasiz."
+      "consent": "Kirish orqali siz <terms>Ommaviy oferta</terms> va <link>Maxfiylik siyosati</link> shartlariga rozilik bildirasiz."
     },
     "loginCode": {
       "title": "Kodni kiriting",
@@ -1435,7 +1436,8 @@
     "hours": "Har kuni {hours}",
     "paymentMethods": "To'lov usullari",
     "rights": "Barcha huquqlar himoyalangan.",
-    "telegramChannel": "Telegram kanal"
+    "telegramChannel": "Telegram kanal",
+    "terms": "Ommaviy oferta"
   },
   "about": {
     "metaTitle": "Biz haqimizda",

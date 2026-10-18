@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Clock, Mail, MapPin, Phone, Send, ShieldCheck } from "lucide-react";
+import { Clock, FileSignature, Mail, MapPin, Phone, Send, ShieldCheck } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import BrandMark from "@/components/BrandMark";
 import { getBrand } from "@/lib/brand";
@@ -89,6 +89,7 @@ export default async function Footer() {
               </li>
               <li><Link href="/account/product-requests" className={link}>{t("findProduct")}</Link></li>
               <li><Link href="/contact" className={link}>{tNav("contact")}</Link></li>
+              <li><Link href="/terms" className={link}>{t("terms")}</Link></li>
               <li><Link href="/privacy" className={link}>{t("privacy")}</Link></li>
             </ul>
           </div>
@@ -143,10 +144,16 @@ export default async function Footer() {
             ))}
           </div>
           <div className="flex flex-col items-start gap-1 text-sm text-ink-soft sm:items-end">
-            <Link href="/privacy" className="inline-flex items-center gap-1.5 transition-colors hover:text-primary">
-              <ShieldCheck className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
-              {t("privacy")}
-            </Link>
+            <div className="flex flex-wrap gap-x-4 gap-y-1">
+              <Link href="/terms" className="inline-flex items-center gap-1.5 transition-colors hover:text-primary">
+                <FileSignature className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
+                {t("terms")}
+              </Link>
+              <Link href="/privacy" className="inline-flex items-center gap-1.5 transition-colors hover:text-primary">
+                <ShieldCheck className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
+                {t("privacy")}
+              </Link>
+            </div>
             <span>
               © {year} {brand.name}. {t("rights")}
             </span>

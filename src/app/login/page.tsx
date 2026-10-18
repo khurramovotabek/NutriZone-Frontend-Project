@@ -115,6 +115,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
                     {chunks}
                   </Link>
                 ),
+                terms: (chunks) => (
+                  <Link href="/terms" className="font-semibold text-primary underline-offset-2 hover:underline">
+                    {chunks}
+                  </Link>
+                ),
               })}
             </p>
           </div>

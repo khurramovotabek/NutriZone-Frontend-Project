@@ -873,7 +873,8 @@
       "pickupAt": "Pickup point",
       "chooseStoreError": "Choose a store to pick up from."
     },
-    "cashAtStore": "Pay at the store (cash or card)"
+    "cashAtStore": "Pay at the store (cash or card)",
+    "legalConsent": "By placing an order you accept the <terms>Public Offer</terms> and the <privacy>Privacy Policy</privacy>."
   },
   "auth": {
     "title": "Log in or sign up",
@@ -888,7 +889,7 @@
       "openBotButton": "Open Telegram Bot",
       "or": "or",
       "securityHint": "Your code is only ever sent through Telegram, never displayed or logged anywhere else.",
-      "consent": "By signing in you agree to our <link>Privacy Policy</link>."
+      "consent": "By signing in you agree to the <terms>Public Offer</terms> and our <link>Privacy Policy</link>."
     },
     "loginCode": {
       "title": "Enter your code",
@@ -1435,7 +1436,8 @@
     "hours": "Daily {hours}",
     "paymentMethods": "Payment methods",
     "rights": "All rights reserved.",
-    "telegramChannel": "Telegram channel"
+    "telegramChannel": "Telegram channel",
+    "terms": "Public Offer"
   },
   "about": {
     "metaTitle": "About us",
