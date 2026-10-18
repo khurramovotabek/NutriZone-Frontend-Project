@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import type { InboxItem } from "@/lib/notifications-api";
+import { openNotificationLink } from "@/lib/notification-link";
 import { emitNotificationsChanged, markNotificationsRead, relativeTime } from "@/lib/notification-events";
 import { Button, EmptyState, ErrorState, Skeleton } from "@/components/ui";
 import AccountLayout from "@/components/AccountLayout";
@@ -87,7 +88,7 @@ export default function NotificationsPage() {
       setUnread((n) => Math.max(n - 1, 0));
       markNotificationsRead({ ids: [item.id] });
     }
-    if (item.link) router.push(item.link);
+    if (item.link) openNotificationLink(item.link, router.push);
   }
 
   async function markAll() {

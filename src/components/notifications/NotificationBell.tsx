@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import type { InboxItem } from "@/lib/notifications-api";
+import { openNotificationLink } from "@/lib/notification-link";
 import { markNotificationsRead, onNotificationsChanged, relativeTime } from "@/lib/notification-events";
 import InboxIcon from "@/components/notifications/InboxIcon";
 
@@ -92,7 +93,7 @@ export default function NotificationBell({ compact = false }: { compact?: boolea
       setItems((prev) => prev?.map((i) => (i.id === item.id ? { ...i, read: true } : i)) ?? prev);
       markNotificationsRead({ ids: [item.id] });
     }
-    router.push(item.link || "/account/notifications");
+    openNotificationLink(item.link || "/account/notifications", router.push);
   }
 
   return (
