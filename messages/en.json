@@ -500,7 +500,9 @@
     "sortDiscount": "Biggest discount",
     "onSaleCount": "{count, plural, one {# product on sale} other {# products on sale}}",
     "gridView": "Grid view",
-    "listView": "List view"
+    "listView": "List view",
+    "aboutCategory": "About {name}",
+    "readMore": "Read more"
   },
   "brands": {
     "title": "Brands",

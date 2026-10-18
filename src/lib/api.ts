@@ -371,6 +371,16 @@ export async function getCategories(locale?: string): Promise<ApiEnvelope<Catego
   return apiFetch<Category[]>(`/api/v1/categories${locale ? `?locale=${encodeURIComponent(locale)}` : ""}`);
 }
 
+/** One category's long description in `locale` ("" when there is none or the request fails -- the page still renders). */
+export async function getCategoryDescription(id: string, locale?: string): Promise<string> {
+  try {
+    const res = await apiFetch<{ description: string }>(`/api/v1/categories/${encodeURIComponent(id)}${locale ? `?locale=${encodeURIComponent(locale)}` : ""}`);
+    return res.success ? (res.data.description || "").trim() : "";
+  } catch {
+    return "";
+  }
+}
+
 export interface Banner {
   id: string;
   title: string;

@@ -500,7 +500,9 @@
     "sortDiscount": "Самая большая скидка",
     "onSaleCount": "{count, plural, one {# товар со скидкой} few {# товара со скидкой} many {# товаров со скидкой} other {# товара со скидкой}}",
     "gridView": "Плитка",
-    "listView": "Список"
+    "listView": "Список",
+    "aboutCategory": "О категории {name}",
+    "readMore": "Подробнее"
   },
   "brands": {
     "title": "Бренды",

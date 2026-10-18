@@ -459,7 +459,7 @@
     "sortPopular": "Eng ko'p sotilganlar",
     "sortName": "Nomi bo'yicha (A–Z)",
     "showMore": "Yana {count} ta",
-    "showLess": "Kamroq ko'rsatish",
+    "showLess": "Yig'ish",
     "searchBrands": "Brendni qidirish...",
     "activeFilters": "Tanlangan filtrlar",
     "removeFilter": "Filtrni olib tashlash: {label}",
@@ -500,7 +500,9 @@
     "sortDiscount": "Eng katta chegirma",
     "onSaleCount": "{count, plural, other {# ta mahsulot chegirmada}}",
     "gridView": "Katak ko'rinishi",
-    "listView": "Ro'yxat ko'rinishi"
+    "listView": "Ro'yxat ko'rinishi",
+    "aboutCategory": "{name} haqida",
+    "readMore": "Batafsil"
   },
   "brands": {
     "title": "Brendlar",

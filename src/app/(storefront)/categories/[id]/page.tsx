@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ChevronRight, Package, SlidersHorizontal, X } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getBrandNameMap, getCategories, getProducts } from "@/lib/api";
+import { getBrandNameMap, getCategories, getCategoryDescription, getProducts } from "@/lib/api";
 import MediaImage from "@/components/MediaImage";
 import ProductCard from "@/components/ProductCard";
 import ProductGrid from "@/components/ProductGrid";
@@ -13,7 +13,7 @@ import { pageMetadata } from "@/lib/seo";
 import { localizedPath } from "@/i18n/config";
 import { absoluteUrl } from "@/lib/site-url";
 import type { Locale } from "@/i18n/config";
-import { breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, clip } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 
 interface Props {
@@ -35,9 +35,11 @@ async function resolveCategory(id: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const [{ category }, t, { name: brand }] = await Promise.all([resolveCategory(id), getTranslations("seo"), getBrand()]);
+  const locale = await getLocale();
+  const [{ category }, t, { name: brand }, about] = await Promise.all([resolveCategory(id), getTranslations("seo"), getBrand(), getCategoryDescription(id, locale)]);
   if (!category) return { title: (await getTranslations("meta"))("category") };
-  return pageMetadata({ path: `/categories/${category.id}`, title: t("categoryTitle", { name: category.name }), description: t("categoryDescription", { name: category.name, brand }), image: category.image_url });
+  const description = about ? clip(about.split(/\n\s*\n/)[0], 160) : t("categoryDescription", { name: category.name, brand });
+  return pageMetadata({ path: `/categories/${category.id}`, title: t("categoryTitle", { name: category.name }), description, image: category.image_url });
 }
 
 const PAGE_SIZE = 12;
@@ -49,8 +51,9 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
   const t = await getTranslations("catalog");
   const tNav = await getTranslations("navigation");
 
-  const { category, allCategories } = await resolveCategory(id);
+  const [{ category, allCategories }, about] = await Promise.all([resolveCategory(id), getCategoryDescription(id, await getLocale())]);
   if (!category) notFound();
+  const aboutParagraphs = about.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
   let products: Awaited<ReturnType<typeof getProducts>>["data"] = [];
   let brandNames: Record<string, string> = {};
@@ -99,7 +102,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
         <span className="truncate font-medium text-ink">{category.name}</span>
       </nav>
 
-      {/* Category hero -- name/image/count only, per this endpoint's real fields; no fabricated description. */}
+      {/* Category hero -- name, image, count and (when written in the dashboard) the category's own description. */}
       <div className="nz-glass-strong flex flex-col items-center gap-4 rounded-3xl px-6 py-10 text-center sm:px-10">
         <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-surface-2">
           <MediaImage src={category.image_url} alt="" fit="cover" fallbackIcon={<Package className="h-10 w-10 text-ink-soft" strokeWidth={1.25} aria-hidden="true" />} />
@@ -108,6 +111,25 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
           <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{category.name}</h1>
           {!loadError && <p className="mt-1.5 text-sm text-ink-muted">{t("resultCount", { count: totalCount })}</p>}
         </div>
+        {aboutParagraphs.length > 0 && (
+          <details className="group w-full max-w-3xl text-left">
+            <summary className="list-none [&::-webkit-details-marker]:hidden">
+              <span className="sr-only">{t("aboutCategory", { name: category.name })}</span>
+              <p className="text-sm leading-relaxed text-ink-muted sm:text-[15px]">{aboutParagraphs[0]}</p>
+              {aboutParagraphs.length > 1 && (
+                <span className="mt-2 inline-block cursor-pointer text-sm font-semibold text-primary hover:underline">
+                  <span className="group-open:hidden">{t("readMore")}</span>
+                  <span className="hidden group-open:inline">{t("showLess")}</span>
+                </span>
+              )}
+            </summary>
+            {aboutParagraphs.slice(1).map((paragraph) => (
+              <p key={paragraph.slice(0, 40)} className="mt-3 text-sm leading-relaxed text-ink-muted sm:text-[15px]">
+                {paragraph}
+              </p>
+            ))}
+          </details>
+        )}
       </div>
 
       {/* Active-filter chip + escape hatch into the full Catalog filter sidebar (brand/price/availability combined with this same category) -- reuses the existing `/products?category=` capability rather than duplicating CatalogFilterPanel here. */}
