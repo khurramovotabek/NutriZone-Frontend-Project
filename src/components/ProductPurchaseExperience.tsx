@@ -118,11 +118,13 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
   // Never a second, invented data source.
   const statFacts = (product.specifications ?? []).slice(0, 3);
 
-  // Price per serving for the chosen size: servings = the size in grams / one serving's grams (or the label's own
-  // servings count for a single-size product) -- how protein buyers actually compare tubs.
+  // Price per serving for the chosen size -- how protein buyers actually compare tubs. A single-size product uses the
+  // label's own servings count (the tub's real number: 2.29 kg / 31 g would floor to 73, the label says 74); a
+  // multi-size family has one label count for one size, so there servings = the size in grams / one serving's grams.
   const servingGrams = product.nutrition?.serving_size_grams ?? null;
   const grams = selected?.weight_value ? (selected.weight_unit === "kg" ? selected.weight_value * 1000 : selected.weight_unit === "g" ? selected.weight_value : null) : null;
-  const servings = grams && servingGrams ? Math.floor(grams / servingGrams) : sizeCountSafe(product) === 1 ? (product.nutrition?.servings_per_container ?? null) : null;
+  const labelServings = sizeCountSafe(product) === 1 ? (product.nutrition?.servings_per_container ?? null) : null;
+  const servings = labelServings ?? (grams && servingGrams ? Math.floor(grams / servingGrams) : null);
   const perServing = servings && price ? Math.round(Number(price) / servings) : null;
 
   const buyBoxRef = useRef<HTMLDivElement>(null);
