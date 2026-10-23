@@ -92,8 +92,10 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
   const isOwnStore = await isViewingOwnStore(store.id);
 
   const statusKey = store.status === "temporarily_closed" || store.status === "coming_soon" ? store.status : store.is_open_now ? "active_open" : "active_closed";
+  // no weekly schedule entered yet: say so instead of a misleading "closed"
+  const hoursKnown = Object.values(store.working_hours ?? {}).some((d) => Boolean(d?.closed || (d?.open && d?.close)));
   const statusLabel =
-    store.status === "temporarily_closed" ? t("temporarilyClosed") : store.status === "coming_soon" ? t("comingSoon") : store.is_open_now ? t("open") : t("closed");
+    store.status === "temporarily_closed" ? t("temporarilyClosed") : store.status === "coming_soon" ? t("comingSoon") : store.is_open_now ? t("open") : hoursKnown ? t("closed") : t("hoursUnknown");
 
   const hasCoordinates = store.latitude != null && store.longitude != null;
   // Yandex route -- the navigator people in Uzbekistan actually use (Google stays one tap away in MapLinks)

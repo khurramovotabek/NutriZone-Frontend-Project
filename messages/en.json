@@ -1762,7 +1762,8 @@
     "amenities": "Amenities",
     "pickupTitle": "Order online — pick it up here",
     "pickupBody": "Choose “Pick up at a store” at checkout: we'll tell you when it's ready, no waiting in line.",
-    "landmark": "Landmark"
+    "landmark": "Landmark",
+    "hoursUnknown": "Hours not set"
   },
   "myStore": {
     "myStore": "My Store",

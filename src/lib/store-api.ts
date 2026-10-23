@@ -21,7 +21,7 @@ export interface StoreListItem {
   color?: string;
   phone?: string | null;
   /** Today's effective hours in Tashkent time; a special day wins over the weekly schedule. */
-  today_hours?: { open: string; close: string; closed: boolean; special: boolean; note: string };
+  today_hours?: { open: string; close: string; closed: boolean; special: boolean; note: string; unknown?: boolean };
   product_count?: number | null;
   tagline?: string;
   amenities?: string[];

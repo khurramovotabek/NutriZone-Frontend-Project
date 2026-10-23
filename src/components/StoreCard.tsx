@@ -29,7 +29,9 @@ export default async function StoreCard({ store }: { store: StoreListItem }) {
         ? { label: t("comingSoon"), cls: "bg-blue-500/90 text-white" }
         : store.is_open_now
           ? { label: t("open"), cls: "bg-emerald-500/90 text-white" }
-          : { label: t("closed"), cls: "bg-black/55 text-white/90" };
+          : today?.unknown
+            ? { label: t("hoursUnknown"), cls: "bg-black/45 text-white/90" }
+            : { label: t("closed"), cls: "bg-black/55 text-white/90" };
 
   return (
     <article
@@ -94,7 +96,9 @@ export default async function StoreCard({ store }: { store: StoreListItem }) {
           <p className="mt-1.5 flex items-center gap-1.5 text-sm">
             <Clock className="h-3.5 w-3.5 shrink-0 text-ink-soft" strokeWidth={1.75} aria-hidden="true" />
             <span className="text-ink-soft">{t("todayLabel")}:</span>
-            {today.closed ? (
+            {today.unknown ? (
+              <span className="font-medium text-ink-muted">{t("hoursUnknown")}</span>
+            ) : today.closed ? (
               <span className="font-medium text-ink-muted">{t("closedAllDay")}</span>
             ) : (
               <span className="font-semibold tabular-nums text-ink">

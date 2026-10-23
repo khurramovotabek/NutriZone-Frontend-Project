@@ -1762,7 +1762,8 @@
     "amenities": "Qulayliklar",
     "pickupTitle": "Saytdan buyurtma bering — shu do'kondan olib keting",
     "pickupBody": "Checkoutda «Do'kondan olib ketish»ni tanlang: tayyor bo'lganda xabar beramiz, navbatsiz olasiz.",
-    "landmark": "Mo'ljal"
+    "landmark": "Mo'ljal",
+    "hoursUnknown": "Ish vaqti kiritilmagan"
   },
   "myStore": {
     "myStore": "Mening do'konim",
