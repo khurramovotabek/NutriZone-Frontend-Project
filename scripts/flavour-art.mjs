@@ -86,6 +86,9 @@ const FLAVOURS = [
   ["pistachio", "Pistachio", "#7fae5c", "Nut"],
   ["peanut-butter", "Peanut Butter", "#c68e3f", "Nut"],
   ["hazelnut", "Hazelnut", "#a0522d", "Nut"],
+  ["turbo-chocolate", "Turbo Chocolate", "#3b2314", "Candy"],
+  ["velocity-vanilla", "Velocity Vanilla", "#cfae6a", "IceCreamCone"],
+  ["supercharged-strawberry", "Supercharged Strawberry", "#d9304a", "Cherry"],
   ["unflavoured", "Unflavoured", "#64748b", "Droplet"],
 ];
 

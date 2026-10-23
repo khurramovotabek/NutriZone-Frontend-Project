@@ -558,7 +558,7 @@
     "specificationsTab": "Composition",
     "reviewsTab": "Reviews",
     "noDescription": "No description available for this product yet.",
-    "noSpecifications": "No composition information available for this product yet.",
+    "noSpecifications": "No specifications for this product yet.",
     "keyFacts": "Quick facts",
     "zoomImage": "Zoom image",
     "attributeFlavor": "Flavor",
@@ -617,7 +617,16 @@
     "originalBadge": "100% genuine",
     "perServing": "{servings} servings · 1 serving ≈ {price}",
     "priceFrom": "from {price}",
-    "chooseOptions": "Choose options"
+    "chooseOptions": "Choose options",
+    "specBrand": "Brand",
+    "specCategory": "Category",
+    "specSize": "Size",
+    "specPackage": "Package",
+    "specFlavour": "Flavour",
+    "specServingSize": "Serving size",
+    "specServings": "Servings per container",
+    "specCalories": "Calories (per serving)",
+    "specSku": "SKU"
   },
   "wishlist": {
     "title": "My Wishlist",

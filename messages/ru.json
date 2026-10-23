@@ -558,7 +558,7 @@
     "specificationsTab": "Состав",
     "reviewsTab": "Отзывы",
     "noDescription": "Описание для этого товара пока отсутствует.",
-    "noSpecifications": "Информация о составе для этого товара пока не указана.",
+    "noSpecifications": "Характеристики для этого товара пока не добавлены.",
     "keyFacts": "Коротко о товаре",
     "zoomImage": "Увеличить изображение",
     "attributeFlavor": "Вкус",
@@ -617,7 +617,16 @@
     "originalBadge": "100% оригинал",
     "perServing": "{servings} порций · 1 порция ≈ {price}",
     "priceFrom": "от {price}",
-    "chooseOptions": "Выбрать вариант"
+    "chooseOptions": "Выбрать вариант",
+    "specBrand": "Бренд",
+    "specCategory": "Категория",
+    "specSize": "Объём",
+    "specPackage": "Упаковка",
+    "specFlavour": "Вкус",
+    "specServingSize": "Порция",
+    "specServings": "Количество порций",
+    "specCalories": "Калории (1 порция)",
+    "specSku": "Артикул"
   },
   "wishlist": {
     "title": "Избранное",

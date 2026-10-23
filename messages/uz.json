@@ -558,7 +558,7 @@
     "specificationsTab": "Xususiyatlar",
     "reviewsTab": "Sharhlar",
     "noDescription": "Ushbu mahsulot uchun hali tavsif mavjud emas.",
-    "noSpecifications": "Ushbu mahsulot uchun hali tarkib ma'lumotlari kiritilmagan.",
+    "noSpecifications": "Ushbu mahsulot uchun xususiyatlar hali kiritilmagan.",
     "keyFacts": "Qisqacha ma'lumot",
     "zoomImage": "Rasmni kattalashtirish",
     "attributeFlavor": "Ta'm",
@@ -617,7 +617,16 @@
     "originalBadge": "100% original",
     "perServing": "{servings} porsiya · 1 porsiya ≈ {price}",
     "priceFrom": "{price} dan",
-    "chooseOptions": "Variantni tanlash"
+    "chooseOptions": "Variantni tanlash",
+    "specBrand": "Brend",
+    "specCategory": "Kategoriya",
+    "specSize": "Hajmi",
+    "specPackage": "Qadoq",
+    "specFlavour": "Ta'm",
+    "specServingSize": "Bir porsiya",
+    "specServings": "Porsiyalar soni",
+    "specCalories": "Kaloriya (1 porsiya)",
+    "specSku": "Artikul"
   },
   "wishlist": {
     "title": "Sevimlilar",

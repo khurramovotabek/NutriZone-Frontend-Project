@@ -126,7 +126,28 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     // Reviews tab shows its own empty/error state below -- never blocks the rest of the page.
   }
 
-  const specifications = product.specifications ?? [];
+  // Xususiyatlar: admin kiritgan qatorlar + mahsulotning tuzilgan ma'lumotlari (brend, hajm, ta'm, porsiya...) --
+  // tab hech qachon bo'sh qolmasin; admin qatori bir xil nomdagi avtomatik qatordan ustun.
+  const defaultVariant = product.variants?.find((v) => v.is_default) ?? product.variants?.[0];
+  const unitLabel = (unit: string) => ({ g: "g", kg: "kg", ml: "ml", l: "l" } as Record<string, string>)[unit] ?? unit;
+  const currentFlavours = (product.flavours ?? []).filter((f) => f.is_current).map((f) => f.name);
+  const derived: { key: string; value: string | null | undefined }[] = [
+    { key: t("specBrand"), value: brandName },
+    { key: t("specCategory"), value: categoryName },
+    { key: t("specSize"), value: defaultVariant?.weight_value ? `${defaultVariant.weight_value} ${unitLabel(defaultVariant.weight_unit)}` : null },
+    { key: t("specPackage"), value: defaultVariant?.package?.name },
+    { key: t("specFlavour"), value: currentFlavours.length ? currentFlavours.join(", ") : defaultVariant?.flavour?.name },
+    { key: t("specServingSize"), value: product.nutrition?.serving_size_grams ? `${product.nutrition.serving_size_grams} g` : null },
+    { key: t("specServings"), value: product.nutrition?.servings_per_container ? String(product.nutrition.servings_per_container) : null },
+    { key: t("specCalories"), value: product.nutrition?.calories ? `${product.nutrition.calories} kcal` : null },
+    { key: t("specSku"), value: defaultVariant?.sku },
+  ];
+  const manual = product.specifications ?? [];
+  const taken = new Set(manual.map((row) => row.key.trim().toLowerCase()));
+  const specifications = [
+    ...manual,
+    ...derived.filter((row): row is { key: string; value: string } => Boolean(row.value) && !taken.has(row.key.toLowerCase())),
+  ];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
