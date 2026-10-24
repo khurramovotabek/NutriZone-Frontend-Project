@@ -3370,5 +3370,14 @@
       "q5": "Qanday to'lash mumkin?",
       "a5": "Naqd pul yoki karta orqali. Hozir mavjud to'lov usullari buyurtmani rasmiylashtirishda ko'rsatiladi."
     }
+  },
+  "pagination": {
+    "prev": "Oldingi",
+    "next": "Keyingi",
+    "first": "Birinchi sahifa",
+    "last": "Oxirgi sahifa",
+    "goTo": "{page}-sahifaga o'tish",
+    "showing": "{total} ta mahsulotdan {from}–{to} ko'rsatilmoqda",
+    "pageOf": "{page}-sahifa, jami {total}"
   }
 }

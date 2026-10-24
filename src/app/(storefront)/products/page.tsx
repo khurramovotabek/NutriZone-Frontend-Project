@@ -9,6 +9,7 @@ import { formatSizeKey } from "@/lib/format-weight";
 import CatalogSortSelect from "@/components/CatalogSortSelect";
 import ProductCard from "@/components/ProductCard";
 import ProductGrid from "@/components/ProductGrid";
+import CatalogPagination from "@/components/CatalogPagination";
 import CatalogFilterPanel from "@/components/CatalogFilterPanel";
 import CatalogViewToggle from "@/components/CatalogViewToggle";
 import ScrollSideNav from "@/components/ScrollSideNav";
@@ -23,20 +24,6 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   return pageMetadata({ path: "/products", title: tSeo("catalogTitle"), description: tSeo("catalogDescription") });
 }
 export const revalidate = 60;
-
-function buildPageNumbers(current: number, total: number): (number | "ellipsis")[] {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const pages = new Set<number>([1, 2, total - 1, total, current - 1, current, current + 1]);
-  const sorted = Array.from(pages).filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
-  const result: (number | "ellipsis")[] = [];
-  let prev = 0;
-  for (const p of sorted) {
-    if (prev && p - prev > 1) result.push("ellipsis");
-    result.push(p);
-    prev = p;
-  }
-  return result;
-}
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const state = parseCatalogParams(await searchParams);
@@ -228,35 +215,15 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 </div>
               )}
 
-              {data.pagination && data.pagination.total_pages > 1 && (
-                <nav aria-label={t("paginationLabel")} className="mt-10 flex flex-wrap items-center justify-center gap-2">
-                  {page > 1 && (
-                    <Link href={catalogHref(state, { page: page - 1 })} className="nz-glass rounded-lg px-3 py-1.5 text-sm font-medium text-ink-muted transition-all hover:-translate-y-0.5 hover:text-primary">
-                      &larr;
-                    </Link>
-                  )}
-                  {buildPageNumbers(page, data.pagination.total_pages).map((p, idx) =>
-                    p === "ellipsis" ? (
-                      <span key={`ellipsis-${idx}`} className="px-1 text-sm text-ink-soft">
-                        &hellip;
-                      </span>
-                    ) : (
-                      <Link
-                        key={p}
-                        href={catalogHref(state, { page: p })}
-                        aria-current={p === page ? "page" : undefined}
-                        className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all hover:-translate-y-0.5 ${p === page ? "nz-cta" : "nz-glass text-ink-muted hover:text-primary"}`}
-                      >
-                        {p}
-                      </Link>
-                    ),
-                  )}
-                  {page < data.pagination.total_pages && (
-                    <Link href={catalogHref(state, { page: page + 1 })} className="nz-glass rounded-lg px-3 py-1.5 text-sm font-medium text-ink-muted transition-all hover:-translate-y-0.5 hover:text-primary">
-                      &rarr;
-                    </Link>
-                  )}
-                </nav>
+              {data.pagination && (
+                <CatalogPagination
+                  page={page}
+                  totalPages={data.pagination.total_pages}
+                  totalCount={data.pagination.total_count}
+                  pageSize={data.pagination.page_size}
+                  hrefFor={(p) => catalogHref(state, { page: p })}
+                  label={t("paginationLabel")}
+                />
               )}
             </>
           )}

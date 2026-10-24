@@ -7,6 +7,7 @@ import { getBrandNameMap, getCategories, getCategoryDescription, getProducts } f
 import MediaImage from "@/components/MediaImage";
 import ProductCard from "@/components/ProductCard";
 import ProductGrid from "@/components/ProductGrid";
+import CatalogPagination from "@/components/CatalogPagination";
 import { EmptyState, ErrorState } from "@/components/ui";
 import { getBrand } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
@@ -171,30 +172,14 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
               ))}
             </ProductGrid>
 
-            {totalPages > 1 && (
-              <nav aria-label={t("paginationLabel")} className="mt-10 flex flex-wrap items-center justify-center gap-2">
-                {page > 1 && (
-                  <Link href={`/categories/${id}?page=${page - 1}`} className="nz-glass rounded-lg px-3 py-1.5 text-sm font-medium text-ink-muted transition-all hover:-translate-y-0.5 hover:text-primary">
-                    &larr;
-                  </Link>
-                )}
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                  <Link
-                    key={p}
-                    href={`/categories/${id}?page=${p}`}
-                    aria-current={p === page ? "page" : undefined}
-                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all hover:-translate-y-0.5 ${p === page ? "nz-cta" : "nz-glass text-ink-muted hover:text-primary"}`}
-                  >
-                    {p}
-                  </Link>
-                ))}
-                {page < totalPages && (
-                  <Link href={`/categories/${id}?page=${page + 1}`} className="nz-glass rounded-lg px-3 py-1.5 text-sm font-medium text-ink-muted transition-all hover:-translate-y-0.5 hover:text-primary">
-                    &rarr;
-                  </Link>
-                )}
-              </nav>
-            )}
+            <CatalogPagination
+              page={page}
+              totalPages={totalPages}
+              totalCount={totalCount}
+              pageSize={PAGE_SIZE}
+              hrefFor={(p) => (p > 1 ? `/categories/${id}?page=${p}` : `/categories/${id}`)}
+              label={t("paginationLabel")}
+            />
           </>
         )}
       </div>
