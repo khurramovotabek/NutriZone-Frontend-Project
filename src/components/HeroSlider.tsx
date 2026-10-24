@@ -225,7 +225,9 @@ export default function HeroSlider({ banners }: { banners: Banner[] }) {
           </div>
         );
       })}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+      {/* Phones show the artwork's busy centre under the text: a stronger scrim there; wide screens keep the art bright on the right. */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10 sm:from-black/75 sm:via-black/25 sm:to-transparent" />
+      <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-black/55 via-black/10 to-transparent sm:block" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
 
       {hasMultiple && (
@@ -255,8 +257,8 @@ export default function HeroSlider({ banners }: { banners: Banner[] }) {
       </p>
 
       <div key={`content-${index}`} className="animate-nz-banner-fade-in relative flex h-full flex-col justify-end p-6 sm:p-10 lg:p-14">
-        <h2 className="max-w-xl text-2xl font-bold leading-tight text-white sm:text-4xl">{banner.title}</h2>
-        {banner.subtitle && <p className="mt-2 max-w-lg text-sm text-white/80 sm:text-base">{banner.subtitle}</p>}
+        <h2 className="max-w-xl text-2xl font-bold leading-tight text-white drop-shadow-lg sm:text-4xl">{banner.title}</h2>
+        {banner.subtitle && <p className="mt-2 line-clamp-3 max-w-lg text-sm text-white/85 drop-shadow sm:line-clamp-none sm:text-base">{banner.subtitle}</p>}
         {banner.cta_text && banner.cta_url && (
           // a "go to Telegram" call-to-action is pointless inside the Telegram Mini App -- hidden there (html[data-tg])
           <Link href={banner.cta_url} className={`nz-cta nz-shimmer-btn mt-5 inline-flex w-fit items-center rounded-xl px-6 py-3 text-sm font-bold${/^https?:\/\/(t\.me|telegram\.me)\//.test(banner.cta_url) ? " nz-tg-hide" : ""}`}>
