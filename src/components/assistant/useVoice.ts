@@ -62,10 +62,24 @@ export function useDictation(locale: string) {
   return { supported, listening, start, stop };
 }
 
-/** Read-aloud toggle (remembered per browser) + speak(text) that strips the light markdown first. */
-export function useSpeech(locale: string) {
+function cleanForSpeech(text: string): string {
+  return text.replace(/\*\*|~~|(^|\s)_|_(\s|$)/g, " ").replace(/[•#]/g, "").replace(/\s+/g, " ").trim().slice(0, 1200);
+}
+
+/**
+ * Read-aloud. `serverTts` = the backend has natural neural voices (Azure: Uzbek Madina/Sardor, Russian, English) --
+ * then every language is read by /api/assistant/tts; otherwise the browser's own voice is used, and only when it has
+ * one for the language (most browsers have no Uzbek voice, so the button stays hidden there).
+ * `on` = read each new answer automatically (remembered per browser); `play(key, text)` reads one message on demand.
+ */
+export function useSpeech(locale: string, serverTts: boolean) {
   const [on, setOn] = useState(false);
-  const supported = typeof window !== "undefined" && "speechSynthesis" in window;
+  const [browserVoice, setBrowserVoice] = useState(false);
+  const [playing, setPlaying] = useState<string | null>(null);
+  const [loading, setLoading] = useState<string | null>(null);
+  const audio = useRef<HTMLAudioElement | null>(null);
+  const urls = useRef(new Map<string, string>());
+  const lang = LANG[locale] ?? "uz-UZ";
 
   useEffect(() => {
     try {
@@ -76,6 +90,68 @@ export function useSpeech(locale: string) {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    const check = () => setBrowserVoice(window.speechSynthesis.getVoices().some((v) => v.lang.toLowerCase().startsWith(lang.slice(0, 2))));
+    check();
+    window.speechSynthesis.addEventListener("voiceschanged", check);
+    return () => window.speechSynthesis.removeEventListener("voiceschanged", check);
+  }, [lang]);
+
+  const supported = serverTts || browserVoice;
+
+  const stop = useCallback(() => {
+    audio.current?.pause();
+    if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
+    setPlaying(null);
+    setLoading(null);
+  }, []);
+
+  const browserSay = useCallback((key: string, text: string) => {
+    if (!browserVoice) return false;
+    const u = new SpeechSynthesisUtterance(cleanForSpeech(text));
+    const voice = window.speechSynthesis.getVoices().find((v) => v.lang.toLowerCase().startsWith(lang.slice(0, 2)));
+    u.lang = voice?.lang ?? lang;
+    if (voice) u.voice = voice;
+    u.onend = () => setPlaying((k) => (k === key ? null : k));
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+    setPlaying(key);
+    return true;
+  }, [browserVoice, lang]);
+
+  const play = useCallback(async (key: string, text: string) => {
+    if (!text) return;
+    if (playing === key || loading === key) return stop();
+    stop();
+    if (!serverTts) {
+      browserSay(key, text);
+      return;
+    }
+    let url = urls.current.get(key);
+    if (!url) {
+      setLoading(key);
+      try {
+        const res = await fetch("/api/assistant/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text, locale }) });
+        if (!res.ok || !(res.headers.get("content-type") ?? "").startsWith("audio/")) throw new Error(String(res.status));
+        url = URL.createObjectURL(await res.blob());
+        urls.current.set(key, url);
+      } catch {
+        setLoading(null);
+        browserSay(key, text);
+        return;
+      }
+      setLoading(null);
+    }
+    if (!audio.current) audio.current = new Audio();
+    const a = audio.current;
+    a.src = url;
+    a.onended = () => setPlaying((k) => (k === key ? null : k));
+    a.onerror = () => setPlaying(null);
+    setPlaying(key);
+    a.play().catch(() => setPlaying(null));
+  }, [browserSay, loading, locale, playing, serverTts, stop]);
+
   const toggle = useCallback(() => {
     setOn((v) => {
       const next = !v;
@@ -84,22 +160,18 @@ export function useSpeech(locale: string) {
       } catch {
         /* storage blocked */
       }
-      if (!next && supported) window.speechSynthesis.cancel();
+      if (!next) stop();
       return next;
     });
-  }, [supported]);
+  }, [stop]);
 
-  const speak = useCallback((text: string) => {
-    if (!on || !supported || !text) return;
-    const clean = text.replace(/\*\*|~~|(^|\s)_|_(\s|$)/g, " ").replace(/[•#]/g, "").replace(/\s+/g, " ").trim().slice(0, 1200);
-    const u = new SpeechSynthesisUtterance(clean);
-    const lang = LANG[locale] ?? "uz-UZ";
-    const voice = window.speechSynthesis.getVoices().find((v) => v.lang.toLowerCase().startsWith(lang.slice(0, 2)));
-    u.lang = voice?.lang ?? lang;
-    if (voice) u.voice = voice;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-  }, [on, supported, locale]);
+  useEffect(() => {
+    const cache = urls.current;
+    return () => {
+      audio.current?.pause();
+      cache.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, []);
 
-  return { supported, on, toggle, speak };
+  return { supported, on, toggle, play, stop, playing, loading };
 }

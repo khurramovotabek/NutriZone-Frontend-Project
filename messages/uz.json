@@ -3272,7 +3272,7 @@
     "launcher": "AI maslahatchi",
     "open": "AI maslahatchini ochish",
     "title": "NutriZone AI maslahatchi",
-    "subtitle": "Mahsulot tanlashda yordam beraman",
+    "subtitle": "Mahsulot tanlash, maslahat va filiallar",
     "close": "Yopish",
     "newChat": "Yangi suhbat",
     "welcomeTitle": "Assalomu alaykum! 👋",
@@ -3312,7 +3312,18 @@
     "listening": "Tinglayapman… gapiring",
     "speakOn": "Javoblarni ovozda o'qish",
     "speakOff": "Ovozli javobni o'chirish",
-    "voiceUnsupported": "Bu brauzer ovozli kiritishni qo'llamaydi"
+    "voiceUnsupported": "Bu brauzer ovozli kiritishni qo'llamaydi",
+    "listen": "Tinglash",
+    "stopListen": "To'xtatish",
+    "voiceLoading": "Ovoz tayyorlanmoqda…",
+    "online": "Onlayn · 3 tilda · ovozli javob",
+    "caps": {
+      "pick": "Maqsadingizga mos mahsulot",
+      "usage": "Qanday ichish — aniq maslahat",
+      "stores": "Filiallar va mavjudlik",
+      "voice": "O'zbek, rus, ingliz tillarida ovoz bilan"
+    },
+    "capsTitle": "Nimalarda yordam beraman"
   },
   "seo": {
     "homeTitle": "{brand} — sport ozuqalari Toshkentda: protein, gainer, kreatin",

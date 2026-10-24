@@ -11,8 +11,9 @@ import { forwardedForHeader } from "@/lib/client-ip";
  * - The browser gets an anonymous, random, httpOnly id (cookie `nz_ai`) that owns its conversations; the backend
  *   only stores its hash. A signed-in shopper's token is forwarded too, so the conversation is linked to the account.
  * - `chat` answers with a text/event-stream that is passed through chunk by chunk (no buffering).
+ * - `tts` answers with audio/mpeg (an answer read aloud by a natural voice), passed through as is.
  */
-const ALLOWED = /^(status|chat|conversations\/[0-9a-f-]{36}(\/feedback)?)$/;
+const ALLOWED = /^(status|chat|tts|conversations\/[0-9a-f-]{36}(\/feedback)?)$/;
 const CLIENT_COOKIE = "nz_ai";
 const YEAR = 60 * 60 * 24 * 365;
 
@@ -44,7 +45,9 @@ async function forward(req: NextRequest, path: string[], method: "GET" | "POST")
   }
 
   let out: NextResponse;
-  if (res.ok && (res.headers.get("content-type") ?? "").startsWith("text/event-stream")) {
+  if (res.ok && (res.headers.get("content-type") ?? "").startsWith("audio/")) {
+    out = new NextResponse(res.body, { status: 200, headers: { "Content-Type": res.headers.get("content-type") ?? "audio/mpeg", "Cache-Control": "private, max-age=86400" } });
+  } else if (res.ok && (res.headers.get("content-type") ?? "").startsWith("text/event-stream")) {
     out = new NextResponse(res.body, {
       status: 200,
       headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store, no-transform", "X-Accel-Buffering": "no" },

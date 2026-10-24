@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ASSISTANT_OPEN_EVENT } from "@/lib/assistant-events";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUp, Bot, LoaderCircle, Mic, MicOff, RotateCcw, Sparkles, Square, ThumbsDown, ThumbsUp, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowUp, Bot, Dumbbell, FlaskConical, Languages, LoaderCircle, MapPin, Mic, MicOff, RotateCcw, Sparkles, Square, ThumbsDown, ThumbsUp, Volume2, VolumeX, X } from "lucide-react";
 import ProductMini from "./ProductMini";
 import RichText from "./RichText";
 import { useAssistant } from "./useAssistant";
@@ -12,23 +12,26 @@ import { useDictation, useSpeech } from "./useVoice";
 
 const HIDDEN = [/^\/profile\/store/, /^\/checkout/];
 const SUGGESTIONS = ["s1", "s2", "s3", "s4"] as const;
+const CAPS = [["pick", Dumbbell], ["usage", FlaskConical], ["stores", MapPin], ["voice", Languages]] as const;
 
 /**
  * Storefront AI shopping assistant (apps/assistant: free local advisor, or Claude when a key is configured): a launcher button and a chat panel -- full screen on
  * phones, a docked card on wide screens. Answers stream in; recommended products arrive as cards with add-to-cart.
- * Voice: dictation (mic) and read-aloud answers via the browser's Web Speech API. Quick replies (chips) under the
+ * Voice: dictation (mic, browser) and read-aloud answers -- natural neural voices from /api/assistant/tts (Uzbek too)
+ * when the backend has them, else the browser's voice. Quick replies (chips) under the
  * latest answer. Hidden where it would get in the way (store owner panel, checkout) or when the backend switches it off.
  */
 export default function AssistantWidget() {
   const t = useTranslations("assistant");
   const pathname = usePathname();
   const [enabled, setEnabled] = useState(false);
+  const [serverTts, setServerTts] = useState(false);
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const ai = useAssistant();
   const locale = useLocale();
   const dictation = useDictation(locale);
-  const speech = useSpeech(locale);
+  const speech = useSpeech(locale, serverTts);
   const spokenRef = useRef(-1);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -37,7 +40,11 @@ export default function AssistantWidget() {
     let alive = true;
     fetch("/api/assistant/status", { cache: "no-store" })
       .then((r) => r.json())
-      .then((b) => alive && setEnabled(Boolean(b?.data?.enabled)))
+      .then((b) => {
+        if (!alive) return;
+        setEnabled(Boolean(b?.data?.enabled));
+        setServerTts(Boolean(b?.data?.tts));
+      })
       .catch(() => alive && setEnabled(false));
     return () => {
       alive = false;
@@ -50,7 +57,7 @@ export default function AssistantWidget() {
     const last = ai.messages[lastIdx];
     if (ai.busy || !last || last.role !== "assistant" || !last.text || last.error || spokenRef.current === lastIdx) return;
     spokenRef.current = lastIdx;
-    speech.speak(last.text);
+    if (speech.on) speech.play(`m${lastIdx}`, last.text);
   }, [ai.busy, ai.messages, speech]);
 
   // keep the newest message in view while it streams
@@ -133,25 +140,29 @@ export default function AssistantWidget() {
           role="dialog"
           aria-modal="false"
           aria-label={t("title")}
-          className="fixed inset-0 z-[60] flex flex-col bg-surface sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[min(680px,calc(100vh-3rem))] sm:w-[400px] sm:overflow-hidden sm:rounded-3xl sm:border sm:border-border sm:shadow-2xl"
+          className="fixed inset-0 z-[60] flex flex-col bg-surface sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[min(720px,calc(100vh-3rem))] sm:w-[420px] sm:overflow-hidden sm:rounded-3xl sm:border sm:border-border sm:shadow-2xl"
         >
-          <header className="flex items-center gap-3 border-b border-border px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3">
-            <span className="nz-cta flex h-10 w-10 items-center justify-center rounded-2xl text-white"><Bot className="h-5 w-5" aria-hidden="true" /></span>
-            <div className="min-w-0 flex-1">
-              <h2 className="text-sm font-bold text-ink">{t("title")}</h2>
-              <p className="flex items-center gap-1.5 text-xs text-ink-soft"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />{t("subtitle")}</p>
+          <header className="relative flex items-center gap-3 overflow-hidden border-b border-white/10 bg-[linear-gradient(135deg,#0b1220_0%,#13213f_55%,#1d4ed8_130%)] px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] text-white sm:pt-3">
+            <span aria-hidden="true" className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-blue-500/30 blur-3xl" />
+            <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 to-amber-500 text-slate-900 shadow-lg shadow-amber-500/30">
+              <Bot className="h-5.5 w-5.5" aria-hidden="true" />
+              <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-[#13213f]" aria-hidden="true" />
+            </span>
+            <div className="relative min-w-0 flex-1">
+              <h2 className="truncate text-sm font-extrabold tracking-tight">{t("title")}</h2>
+              <p className="truncate text-[11px] text-white/70">{speech.supported ? t("online") : t("subtitle")}</p>
             </div>
             {speech.supported && (
-              <button type="button" onClick={speech.toggle} aria-pressed={speech.on} aria-label={speech.on ? t("speakOff") : t("speakOn")} title={speech.on ? t("speakOff") : t("speakOn")} className={`flex h-9 w-9 items-center justify-center rounded-xl hover:bg-surface-2 ${speech.on ? "text-primary" : "text-ink-muted hover:text-ink"}`}>
+              <button type="button" onClick={speech.toggle} aria-pressed={speech.on} aria-label={speech.on ? t("speakOff") : t("speakOn")} title={speech.on ? t("speakOff") : t("speakOn")} className={`relative flex h-9 w-9 items-center justify-center rounded-xl hover:bg-white/10 ${speech.on ? "text-amber-300" : "text-white/70 hover:text-white"}`}>
                 {speech.on ? <Volume2 className="h-4 w-4" aria-hidden="true" /> : <VolumeX className="h-4 w-4" aria-hidden="true" />}
               </button>
             )}
             {ai.messages.length > 0 && (
-              <button type="button" onClick={ai.reset} aria-label={t("newChat")} title={t("newChat")} className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted hover:bg-surface-2 hover:text-ink">
+              <button type="button" onClick={ai.reset} aria-label={t("newChat")} title={t("newChat")} className="relative flex h-9 w-9 items-center justify-center rounded-xl text-white/70 hover:bg-white/10 hover:text-white">
                 <RotateCcw className="h-4 w-4" aria-hidden="true" />
               </button>
             )}
-            <button type="button" onClick={() => setOpen(false)} aria-label={t("close")} className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted hover:bg-surface-2 hover:text-ink">
+            <button type="button" onClick={() => { speech.stop(); setOpen(false); }} aria-label={t("close")} className="relative flex h-9 w-9 items-center justify-center rounded-xl text-white/70 hover:bg-white/10 hover:text-white">
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
           </header>
@@ -159,14 +170,24 @@ export default function AssistantWidget() {
           <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-4" aria-live="polite">
             {ai.messages.length === 0 ? (
               <div className="grid gap-4">
-                <div className="rounded-2xl bg-primary-soft/60 p-4">
-                  <p className="text-sm font-semibold text-ink">{t("welcomeTitle")}</p>
-                  <p className="mt-1 text-sm text-ink-muted">{t("welcomeBody")}</p>
+                <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary-soft via-surface to-surface p-4">
+                  <Sparkles className="absolute right-3 top-3 h-5 w-5 text-amber-400" aria-hidden="true" />
+                  <p className="text-base font-extrabold text-ink">{t("welcomeTitle")}</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{t("welcomeBody")}</p>
+                  <p className="mt-4 text-[11px] font-bold uppercase tracking-wider text-ink-soft">{t("capsTitle")}</p>
+                  <ul className="mt-2 grid grid-cols-2 gap-2">
+                    {CAPS.map(([k, Icon]) => (
+                      <li key={k} className="flex items-start gap-2 rounded-xl bg-surface/80 p-2 text-xs font-medium leading-snug text-ink ring-1 ring-border">
+                        <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />{t(`caps.${k}`)}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
                 <div className="grid gap-2">
                   {SUGGESTIONS.map((k) => (
-                    <button key={k} type="button" onClick={() => submit(t(`suggest.${k}`))} className="rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-sm text-ink transition-colors hover:border-primary hover:text-primary">
-                      {t(`suggest.${k}`)}
+                    <button key={k} type="button" onClick={() => submit(t(`suggest.${k}`))} className="group flex items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-3.5 py-3 text-left text-sm font-medium text-ink transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
+                      <span>{t(`suggest.${k}`)}</span>
+                      <ArrowUp className="h-4 w-4 shrink-0 rotate-45 text-ink-soft transition-colors group-hover:text-primary" aria-hidden="true" />
                     </button>
                   ))}
                 </div>
@@ -179,10 +200,12 @@ export default function AssistantWidget() {
                     return <li key={i} className="ml-auto max-w-[85%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-primary px-3.5 py-2.5 text-sm text-white">{m.text}</li>;
                   }
                   return (
-                    <li key={i} className="grid max-w-[95%] gap-2">
+                    <li key={i} className="grid max-w-[95%] grid-cols-[28px_minmax(0,1fr)] gap-x-2 gap-y-2">
+                      <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-amber-300 to-amber-500 text-slate-900" aria-hidden="true"><Bot className="h-3.5 w-3.5" /></span>
+                      <div className="grid min-w-0 gap-2">
                       {(m.text || !last || !ai.busy) && (
-                        <div className={`break-words rounded-2xl rounded-bl-md px-3.5 py-2.5 text-sm leading-relaxed ${m.error ? "border border-red-400/40 bg-red-500/8 text-ink" : "bg-surface-2 text-ink"}`}>
-                          {m.text ? <RichText text={m.text} /> : <span className="text-ink-soft">…</span>}
+                        <div className={`break-words rounded-2xl rounded-tl-md px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${m.error ? "border border-red-400/40 bg-red-500/8 text-ink" : "border border-border bg-surface-2 text-ink"}`}>
+                          {m.text ? <RichText text={m.text} /> : <span className="inline-flex gap-1 py-1" aria-hidden="true"><span className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-soft [animation-delay:-0.3s]" /><span className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-soft [animation-delay:-0.15s]" /><span className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-soft" /></span>}
                         </div>
                       )}
                       {last && ai.busy && (stageText || !m.text) && (
@@ -202,8 +225,16 @@ export default function AssistantWidget() {
                         <div className="flex items-center gap-1 text-ink-soft">
                           <button type="button" onClick={() => ai.rate(m, "up")} aria-pressed={m.feedback === "up"} aria-label={t("helpful")} className={`rounded-lg p-1.5 hover:bg-surface-2 ${m.feedback === "up" ? "text-emerald-500" : ""}`}><ThumbsUp className="h-3.5 w-3.5" aria-hidden="true" /></button>
                           <button type="button" onClick={() => ai.rate(m, "down")} aria-pressed={m.feedback === "down"} aria-label={t("notHelpful")} className={`rounded-lg p-1.5 hover:bg-surface-2 ${m.feedback === "down" ? "text-red-500" : ""}`}><ThumbsDown className="h-3.5 w-3.5" aria-hidden="true" /></button>
+                          {speech.supported && m.text && (
+                            <button type="button" onClick={() => speech.play(`m${i}`, m.text)} aria-pressed={speech.playing === `m${i}`} aria-label={speech.playing === `m${i}` ? t("stopListen") : t("listen")} title={speech.loading === `m${i}` ? t("voiceLoading") : speech.playing === `m${i}` ? t("stopListen") : t("listen")}
+                              className={`ml-1 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold hover:bg-surface-2 ${speech.playing === `m${i}` ? "text-primary" : ""}`}>
+                              {speech.loading === `m${i}` ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : speech.playing === `m${i}` ? <Square className="h-3 w-3" aria-hidden="true" /> : <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />}
+                              {speech.playing === `m${i}` ? t("stopListen") : t("listen")}
+                            </button>
+                          )}
                         </div>
                       )}
+                      </div>
                     </li>
                   );
                 })}

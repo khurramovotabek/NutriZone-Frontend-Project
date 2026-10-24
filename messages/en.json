@@ -3272,7 +3272,7 @@
     "launcher": "AI advisor",
     "open": "Open the AI advisor",
     "title": "NutriZone AI advisor",
-    "subtitle": "I'll help you choose",
+    "subtitle": "Product picks, advice and stores",
     "close": "Close",
     "newChat": "New chat",
     "welcomeTitle": "Hi there! 👋",
@@ -3312,7 +3312,18 @@
     "listening": "Listening… speak now",
     "speakOn": "Read answers aloud",
     "speakOff": "Stop reading answers",
-    "voiceUnsupported": "This browser doesn't support voice input"
+    "voiceUnsupported": "This browser doesn't support voice input",
+    "listen": "Listen",
+    "stopListen": "Stop",
+    "voiceLoading": "Preparing audio…",
+    "online": "Online · 3 languages · voice answers",
+    "caps": {
+      "pick": "Products for your goal",
+      "usage": "How to take them — clear advice",
+      "stores": "Stores and availability",
+      "voice": "Voice in Uzbek, Russian and English"
+    },
+    "capsTitle": "How I can help"
   },
   "seo": {
     "homeTitle": "{brand} — Sports Nutrition in Tashkent: Protein, Gainers, Creatine",
