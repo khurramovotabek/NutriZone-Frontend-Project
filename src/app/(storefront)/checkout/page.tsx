@@ -64,6 +64,12 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // each step starts at its top: the step buttons sit at the bottom of a long form, and on phones the next step
+  // otherwise opened scrolled to its end (payment methods out of view)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
+
   async function refreshPreview() {
     const res = await fetch("/api/checkout/preview");
     const body = await res.json();
