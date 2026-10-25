@@ -1,5 +1,7 @@
 "use client";
 
+import { clientCookieAttrs, markEmbedded } from "./cookie-policy";
+
 /** The parts of Telegram's Mini App API (telegram-web-app.js) the storefront uses. https://core.telegram.org/bots/webapps */
 type BottomButton = {
   setText: (text: string) => BottomButton;
@@ -67,6 +69,7 @@ export function supports(app: TelegramWebApp, version: string): boolean {
 
 /** /tg remembers for this tab that the storefront is open inside Telegram (later pages have no initData in the URL). */
 export function markMiniApp(): void {
+  markEmbedded();
   try {
     sessionStorage.setItem(FLAG, "1");
   } catch {
@@ -102,7 +105,7 @@ export function adoptTelegramLanguage(app: TelegramWebApp): boolean {
   if (document.cookie.split("; ").some((c) => c.startsWith("nz_locale="))) return false;
   const code = (app.initDataUnsafe?.user?.language_code || "").toLowerCase().slice(0, 2);
   const locale = code === "ru" || code === "en" || code === "uz" ? code : code === "kk" || code === "ky" || code === "tg" || code === "be" || code === "uk" ? "ru" : "uz";
-  document.cookie = `nz_locale=${locale}; path=/; max-age=31536000; SameSite=Lax`;
+  document.cookie = `nz_locale=${locale}; path=/; max-age=31536000${clientCookieAttrs()}`;
   return true;
 }
 

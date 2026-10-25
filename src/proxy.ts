@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { clientIpFrom } from "@/lib/client-ip";
 import { isSafeRedirectPath } from "@/lib/safe-redirect";
 import { LOCALE_COOKIE, LOCALE_HEADER, splitLocalePath } from "@/i18n/config";
+import { EMBED_COOKIE, cookieAttrs } from "@/lib/cookie-policy";
 
 /**
  * Two jobs, both UX conveniences (the Django backend stays the only security authority):
@@ -22,7 +23,6 @@ const GUEST_ONLY_PREFIXES = ["/login", "/verify-otp"];
 const ACCESS_COOKIE = "nz_access_token";
 const REFRESH_COOKIE = "nz_refresh_token";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
-const isProd = process.env.NODE_ENV === "production";
 
 type Tokens = { access_token: string; refresh_token: string };
 type Exchange = { tokens: Tokens | null; at: number };
@@ -101,15 +101,17 @@ export async function proxy(req: NextRequest) {
   } else {
     response = pass();
   }
+  // Lax on the website, partitioned inside the Telegram Web Mini App iframe (cookie-policy.ts)
+  const attrs = cookieAttrs(req.cookies.get(EMBED_COOKIE)?.value === "1");
   if (pathLocale && req.cookies.get(LOCALE_COOKIE)?.value !== pathLocale) {
-    response.cookies.set(LOCALE_COOKIE, pathLocale, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
+    response.cookies.set(LOCALE_COOKIE, pathLocale, { ...attrs, path: "/", maxAge: 60 * 60 * 24 * 365 });
   }
 
   if (fresh) {
-    response.cookies.set(ACCESS_COOKIE, fresh.access_token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 15 });
-    response.cookies.set(REFRESH_COOKIE, fresh.refresh_token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
+    response.cookies.set(ACCESS_COOKIE, fresh.access_token, { httpOnly: true, ...attrs, path: "/", maxAge: 60 * 15 });
+    response.cookies.set(REFRESH_COOKIE, fresh.refresh_token, { httpOnly: true, ...attrs, path: "/", maxAge: 60 * 60 * 24 * 30 });
   } else if (dropSession) {
-    response.cookies.delete(REFRESH_COOKIE);
+    response.cookies.set(REFRESH_COOKIE, "", { httpOnly: true, ...attrs, path: "/", maxAge: 0 });
   }
   return response;
 }

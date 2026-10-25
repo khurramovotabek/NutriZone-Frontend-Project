@@ -7,6 +7,7 @@ import { Coins, Loader2, MessageCircle, Phone, ShieldCheck, Zap } from "lucide-r
 import AuthLoadingScreen from "@/components/AuthLoadingScreen";
 import BrandMark from "@/components/BrandMark";
 import { safeRedirectPath } from "@/lib/safe-redirect";
+import { markEmbedded } from "@/lib/cookie-policy";
 import { adoptTelegramLanguage, haptic, loadTelegramScript, markMiniApp, supports, type TelegramWebApp } from "@/lib/telegram-webapp";
 
 const BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME;
@@ -77,6 +78,7 @@ function MiniAppEntry() {
         return;
       }
       appRef.current = app;
+      markEmbedded(); // before signing in: inside Telegram Web the session cookies must be partitioned to stick
       adoptTelegramLanguage(app); // the storefront opens in the shopper's Telegram language (router.refresh in enter())
       app.ready();
       app.expand();

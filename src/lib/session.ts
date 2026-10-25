@@ -8,25 +8,36 @@
  */
 import { cookies } from "next/headers";
 import type { TokenPair } from "./auth-api";
+import { EMBED_COOKIE, cookieAttrs } from "./cookie-policy";
 
 const ACCESS_COOKIE = "nz_access_token";
 const REFRESH_COOKIE = "nz_refresh_token";
 
-const isProd = process.env.NODE_ENV === "production";
+type CookieStore = Awaited<ReturnType<typeof cookies>>;
+
+/** Lax on the website, partitioned inside the Telegram Web Mini App iframe (see cookie-policy.ts). */
+function attrs(store: CookieStore) {
+  return cookieAttrs(store.get(EMBED_COOKIE)?.value === "1");
+}
+
+/** Expires a cookie with the same attributes it was set with (a partitioned cookie is only removed by a partitioned delete). */
+function expire(store: CookieStore, name: string) {
+  store.set(name, "", { httpOnly: true, ...attrs(store), path: "/", maxAge: 0 });
+}
 
 export async function setSessionCookies(tokens: TokenPair) {
   const store = await cookies();
   // Access token lifetime confirmed by decoding the real JWT captured
   // during reconnaissance: exp - iat = exactly 900 seconds.
-  store.set(ACCESS_COOKIE, tokens.access_token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 15 });
+  store.set(ACCESS_COOKIE, tokens.access_token, { httpOnly: true, ...attrs(store), path: "/", maxAge: 60 * 15 });
   // Refresh token lifetime confirmed the same way: exp - iat = exactly 30 days.
-  store.set(REFRESH_COOKIE, tokens.refresh_token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
+  store.set(REFRESH_COOKIE, tokens.refresh_token, { httpOnly: true, ...attrs(store), path: "/", maxAge: 60 * 60 * 24 * 30 });
 }
 
 export async function clearSessionCookies() {
   const store = await cookies();
-  store.delete(ACCESS_COOKIE);
-  store.delete(REFRESH_COOKIE);
+  expire(store, ACCESS_COOKIE);
+  expire(store, REFRESH_COOKIE);
 }
 
 export async function getAccessToken(): Promise<string | null> {
@@ -48,8 +59,8 @@ export async function setCartCookies(code: string, token: string) {
   // it's the sole cart-ownership mechanism today -- customer_id is
   // never populated on creation, see cart-api.ts's own module
   // docstring) -- stored HttpOnly for the same reason as auth tokens.
-  store.set(CART_CODE_COOKIE, code, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
-  store.set(CART_TOKEN_COOKIE, token, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
+  store.set(CART_CODE_COOKIE, code, { httpOnly: true, ...attrs(store), path: "/", maxAge: 60 * 60 * 24 * 30 });
+  store.set(CART_TOKEN_COOKIE, token, { httpOnly: true, ...attrs(store), path: "/", maxAge: 60 * 60 * 24 * 30 });
 }
 
 export async function getCartCode(): Promise<string | null> {

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { onCartUpdated } from "@/lib/cart-events";
+import { markEmbedded } from "@/lib/cookie-policy";
 import { haptic, isMiniAppSession, loadTelegramScript, paintTelegramChrome, supports, type TelegramWebApp } from "@/lib/telegram-webapp";
 
 type CartSummary = { count: number; total: number };
@@ -74,6 +75,7 @@ export default function TelegramMiniAppBridge() {
       main.enable().show();
     };
 
+    markEmbedded(); // a reopened Mini App tab may start on any page, not /tg
     void loadTelegramScript().then((app) => {
       if (cancelled || !app) return;
       appRef.current = app;

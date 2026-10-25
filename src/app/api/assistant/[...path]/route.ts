@@ -4,6 +4,7 @@ import { API_BASE_URL } from "@/lib/api";
 import { LOCALE_COOKIE } from "@/i18n/config";
 import { getAccessToken } from "@/lib/session";
 import { forwardedForHeader } from "@/lib/client-ip";
+import { EMBED_COOKIE, cookieAttrs } from "@/lib/cookie-policy";
 
 /**
  * Same-origin proxy for the AI shopping assistant: /api/assistant/<path> -> {API}/api/v1/assistant/<path>.
@@ -56,7 +57,7 @@ async function forward(req: NextRequest, path: string[], method: "GET" | "POST")
     const data = await res.json().catch(() => null);
     out = NextResponse.json(data ?? { success: false, error: { code: "UNKNOWN", message: "Unexpected response." } }, { status: res.status });
   }
-  if (fresh) out.cookies.set(CLIENT_COOKIE, clientId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: YEAR });
+  if (fresh) out.cookies.set(CLIENT_COOKIE, clientId, { httpOnly: true, ...cookieAttrs(req.cookies.get(EMBED_COOKIE)?.value === "1"), path: "/", maxAge: YEAR });
   return out;
 }
 

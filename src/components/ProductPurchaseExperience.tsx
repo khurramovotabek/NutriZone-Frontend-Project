@@ -283,7 +283,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
       {/* Mobile sticky buy bar -- appears once the real buy box scrolls out of view, so the primary CTA never becomes hard to reach on a long product page. Adds the currently *selected* variant (Flavor/Size stay in sync with the main panel above) via the same real AddToCartButton every product card already uses -- never a second, divergent add-to-cart implementation. */}
       {showStickyBar && selected && (
         <div
-          className="animate-nz-fade-in fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 p-3 backdrop-blur-md sm:hidden"
+          className="nz-tg-above-tabbar animate-nz-fade-in fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 p-3 backdrop-blur-md sm:hidden"
           style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
         >
           <div className="mx-auto flex max-w-6xl items-center gap-3">
