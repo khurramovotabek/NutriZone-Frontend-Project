@@ -257,8 +257,9 @@ export default function HeroSlider({ banners }: { banners: Banner[] }) {
       </p>
 
       <div key={`content-${index}`} className="animate-nz-banner-fade-in relative flex h-full flex-col justify-end p-6 sm:p-10 lg:p-14">
-        <h2 className="max-w-xl text-2xl font-bold leading-tight text-white drop-shadow-lg sm:text-4xl">{banner.title}</h2>
-        {banner.subtitle && <p className="mt-2 line-clamp-3 max-w-lg text-sm text-white/85 drop-shadow sm:line-clamp-none sm:text-base">{banner.subtitle}</p>}
+        {/* text-shadow, not a drop-shadow filter: Chrome painted a filtered text layer twice after the slide fade ("ustma-ust" text) */}
+        <h2 className="max-w-xl text-2xl font-bold leading-tight text-white [text-shadow:0_2px_12px_rgb(0_0_0/0.45)] sm:text-4xl">{banner.title}</h2>
+        {banner.subtitle && <p className="mt-2 line-clamp-3 max-w-lg text-sm text-white/85 [text-shadow:0_1px_3px_rgb(0_0_0/0.5)] sm:line-clamp-none sm:text-base">{banner.subtitle}</p>}
         {banner.cta_text && banner.cta_url && (
           // a "go to Telegram" call-to-action is pointless inside the Telegram Mini App -- hidden there (html[data-tg])
           <Link href={banner.cta_url} className={`nz-cta nz-shimmer-btn mt-5 inline-flex w-fit items-center rounded-xl px-6 py-3 text-sm font-bold${/^https?:\/\/(t\.me|telegram\.me)\//.test(banner.cta_url) ? " nz-tg-hide" : ""}`}>
