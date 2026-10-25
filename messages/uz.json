@@ -3381,5 +3381,31 @@
     "goTo": "{page}-sahifaga o'tish",
     "showing": "{total} ta mahsulotdan {from}–{to} ko'rsatilmoqda",
     "pageOf": "{page}-sahifa, jami {total}"
+  },
+  "guides": {
+    "title": "Maslahatlar markazi",
+    "eyebrow": "Sport ovqatlanishi va vitaminlar",
+    "subtitle": "Protein, kreatin, vitaminlar va to'g'ri ovqatlanish bo'yicha aniq, dalillarga asoslangan javoblar — dozalar, qachon ichish va kimga mos.",
+    "metaTitle": "Sport ovqatlanishi va vitaminlar bo'yicha maslahatlar — protein, kreatin, D vitamini | NUTRIZONE",
+    "metaDescription": "Kreatin qanday ichiladi, kuniga qancha oqsil kerak, D vitamini, magniy, ozish va massa olish — sport dietologi darajasidagi bepul maslahatlar o'zbek tilida.",
+    "topics": {
+      "usage": "Qo'llash va dozalar",
+      "product": "Mahsulotlar haqida",
+      "faq": "Ko'p so'raladigan savollar",
+      "policy": "Xarid va yetkazib berish"
+    },
+    "breadcrumb": "Maslahatlar",
+    "home": "Bosh sahifa",
+    "relatedProducts": "Mos mahsulotlar",
+    "allProducts": "Barchasini ko'rish",
+    "relatedGuides": "Yana o'qing",
+    "ask": "AI maslahatchidan so'rang",
+    "askHint": "Bo'yingiz, vazningiz va maqsadingizni yozing — shaxsiy reja va mahsulotlarni tanlab beradi.",
+    "disclaimer": "Bu umumiy sport ovqatlanishi maslahati, tibbiy tavsiya emas. Kasalligingiz bo'lsa, homilador bo'lsangiz yoki dori ichsangiz, avval shifokor bilan maslahatlashing.",
+    "updated": "Yangilangan: {date}",
+    "read": "O'qish",
+    "empty": "Hozircha maslahatlar yo'q.",
+    "loadError": "Maslahatlarni yuklab bo'lmadi.",
+    "count": "{count} ta maslahat"
   }
 }

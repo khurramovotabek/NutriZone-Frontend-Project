@@ -14,19 +14,41 @@ function inline(text: string, keyBase: string): ReactNode[] {
   });
 }
 
+const LIST_LINE = /^([-•*]|\d+[.)])\s+/;
+
+/** Paragraph blocks, with a run of list lines inside a block ("Intro:\n• a\n• b") split off as its own list. */
+function splitBlocks(text: string): string[] {
+  const out: string[] = [];
+  for (const block of text.replace(/\r/g, "").split(/\n{2,}/)) {
+    let run: string[] = [];
+    let runIsList: boolean | null = null;
+    for (const line of block.split("\n").map((l) => l.trim()).filter(Boolean)) {
+      const isList = LIST_LINE.test(line);
+      if (runIsList !== null && isList !== runIsList) {
+        out.push(run.join("\n"));
+        run = [];
+      }
+      run.push(line);
+      runIsList = isList;
+    }
+    if (run.length) out.push(run.join("\n"));
+  }
+  return out;
+}
+
 export default function RichText({ text }: { text: string }) {
-  const blocks = text.replace(/\r/g, "").split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  const blocks = splitBlocks(text);
   return (
     <div className="grid gap-2">
       {blocks.map((block, b) => {
         const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
-        const isList = lines.length > 0 && lines.every((l) => /^([-•*]|\d+[.)])\s+/.test(l));
+        const isList = lines.length > 0 && lines.every((l) => LIST_LINE.test(l));
         if (isList) {
           const ordered = /^\d/.test(lines[0]);
           const Tag = ordered ? "ol" : "ul";
           return (
             <Tag key={b} className={`grid gap-1 pl-5 ${ordered ? "list-decimal" : "list-disc"} marker:text-primary`}>
-              {lines.map((l, i) => <li key={i}>{inline(l.replace(/^([-•*]|\d+[.)])\s+/, ""), `${b}-${i}`)}</li>)}
+              {lines.map((l, i) => <li key={i}>{inline(l.replace(LIST_LINE, ""), `${b}-${i}`)}</li>)}
             </Tag>
           );
         }

@@ -3381,5 +3381,31 @@
     "goTo": "Go to page {page}",
     "showing": "Showing {from}–{to} of {total}",
     "pageOf": "Page {page} of {total}"
+  },
+  "guides": {
+    "title": "Advice centre",
+    "eyebrow": "Sports nutrition and vitamins",
+    "subtitle": "Clear, evidence-based answers on protein, creatine, vitamins and nutrition — doses, when to take them and who they suit.",
+    "metaTitle": "Sports nutrition and vitamin advice — protein, creatine, vitamin D | NUTRIZONE",
+    "metaDescription": "How to take creatine, how much protein you need, vitamin D, magnesium, fat loss and muscle gain — free sports-dietitian-level advice.",
+    "topics": {
+      "usage": "How to take it",
+      "product": "About products",
+      "faq": "Common questions",
+      "policy": "Buying and delivery"
+    },
+    "breadcrumb": "Advice",
+    "home": "Home",
+    "relatedProducts": "Matching products",
+    "allProducts": "See all",
+    "relatedGuides": "Read next",
+    "ask": "Ask the AI advisor",
+    "askHint": "Tell it your height, weight and goal — it builds a personal plan and picks products.",
+    "disclaimer": "General sports-nutrition guidance, not medical advice. If you have a condition, are pregnant or take medication, check with your doctor first.",
+    "updated": "Updated: {date}",
+    "read": "Read",
+    "empty": "No advice yet.",
+    "loadError": "Couldn't load the advice.",
+    "count": "{count} guides"
   }
 }

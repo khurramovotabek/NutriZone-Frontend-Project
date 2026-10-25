@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getBlogPosts, getBrands, getCategories, searchProducts } from "@/lib/api";
 import { getStores } from "@/lib/store-api";
+import { getGuides } from "@/lib/guides-api";
 import { absoluteUrl } from "@/lib/site-url";
 import { sitemapAlternates } from "@/lib/seo";
 import { SUPPORTED_LOCALES, localizedPath } from "@/i18n/config";
@@ -48,18 +49,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...localized("/brands", { changeFrequency: "weekly", priority: 0.7 }),
     ...localized("/loyalty", { changeFrequency: "monthly", priority: 0.6 }),
     ...localized("/blog", { changeFrequency: "weekly", priority: 0.6 }),
+    ...localized("/guides", { changeFrequency: "weekly", priority: 0.8 }),
     ...localized("/about", { changeFrequency: "monthly", priority: 0.4 }),
     ...localized("/contact", { changeFrequency: "monthly", priority: 0.4 }),
     ...localized("/privacy", { changeFrequency: "yearly", priority: 0.2 }),
     ...localized("/terms", { changeFrequency: "yearly", priority: 0.2 }),
   ];
 
-  const [products, categories, brands, stores, posts] = await Promise.all([
+  const [products, categories, brands, stores, posts, guides] = await Promise.all([
     productEntries(),
     safely(() => getCategories().then((r) => r.data), []),
     safely(() => getBrands().then((r) => r.data), []),
     safely(() => getStores().then((r) => r.results), []),
     safely(() => getBlogPosts(100).then((r) => r.data), []),
+    safely(() => getGuides("uz"), []),
   ]);
 
   return [
@@ -68,6 +71,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...categories.flatMap((c) => localized(`/categories/${c.id}`, { changeFrequency: "weekly", priority: 0.8 })),
     ...brands.flatMap((b) => localized(`/brands/${b.id}`, { changeFrequency: "weekly", priority: 0.7 })),
     ...stores.flatMap((s) => localized(`/store/${s.slug}`, { changeFrequency: "weekly", priority: 0.7 })),
+    ...guides.flatMap((g) => localized(`/guides/${g.slug}`, { lastModified: new Date(g.updated_at), changeFrequency: "monthly", priority: 0.7 })),
     ...posts.flatMap((p) => localized(`/blog/${p.slug}`, { lastModified: p.published_at ? new Date(p.published_at) : undefined, changeFrequency: "monthly", priority: 0.5 })),
   ];
 }

@@ -31,6 +31,7 @@ export default async function Footer() {
   const t = await getTranslations("footer");
   const tNav = await getTranslations("navigation");
   const tBlog = await getTranslations("blog");
+  const tGuides = await getTranslations("guides");
   const year = new Date().getFullYear();
   const [brand, site] = await Promise.all([getBrand(), siteSettings()]);
   const signedIn = Boolean((await getAccessToken()) ?? (await getRefreshToken()));
@@ -71,6 +72,7 @@ export default async function Footer() {
               <li><Link href="/brands" className={link}>{t("brands")}</Link></li>
               <li><Link href="/stores" className={link}>{t("stores")}</Link></li>
               <li><Link href="/loyalty" className={link}>{t("loyaltyProgram")}</Link></li>
+              <li><Link href="/guides" className={link}>{tGuides("title")}</Link></li>
               <li><Link href="/blog" className={link}>{tBlog("title")}</Link></li>
               <li><Link href="/about" className={link}>{tNav("about")}</Link></li>
             </ul>
