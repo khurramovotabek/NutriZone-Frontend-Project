@@ -1089,14 +1089,18 @@ html[data-tg="1"] body { overscroll-behavior-y: none; }
 /* ---------- Telegram Mini App: bottom tab bar (MiniAppTabBar) ---------- */
 html[data-tg="1"] .nz-tg-hide { display: none !important; }
 .nz-tg-tabbar {
-  position: fixed; inset: auto 0 0 0; z-index: 45; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  position: fixed; inset: auto 0 0 0; z-index: 45; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
   padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--color-surface, #0b1220) 82%, transparent);
   backdrop-filter: saturate(160%) blur(18px); -webkit-backdrop-filter: saturate(160%) blur(18px);
   border-top: 1px solid color-mix(in srgb, var(--color-border, #1f2937) 80%, transparent);
   box-shadow: 0 -10px 30px -18px rgb(0 0 0 / 0.55);
 }
-.nz-tg-tabbar a { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0 4px; border-radius: 14px; color: var(--color-ink-soft, #94a3b8); text-decoration: none; transition: color .15s, background .15s, transform .15s; -webkit-tap-highlight-color: transparent; }
-.nz-tg-tabbar a:active { transform: scale(.94); }
+.nz-tg-tabbar a, .nz-tg-tabbar button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0 4px; border-radius: 14px; color: var(--color-ink-soft, #94a3b8); text-decoration: none; transition: color .15s, background .15s, transform .15s; -webkit-tap-highlight-color: transparent; }
+.nz-tg-tabbar a:active, .nz-tg-tabbar button:active { transform: scale(.94); }
+.nz-tg-tabbar button.nz-tg-tab-ai { border: 0; background: transparent; cursor: pointer; font: inherit; color: var(--color-primary, #3b82f6); }
+.nz-tg-tab-ai .nz-tg-tab-icon { width: 34px; height: 26px; border-radius: 999px; color: #fff; background: linear-gradient(135deg, var(--color-primary, #3b82f6), #10b981); box-shadow: 0 6px 16px -8px var(--color-primary, #3b82f6); }
+.nz-tg-tab-ai .nz-tg-tab-icon svg { width: 17px !important; height: 17px !important; }
+html[data-tg="1"] .nz-ai-fab { display: none !important; }
 .nz-tg-tabbar a.is-active { color: var(--color-primary, #3b82f6); background: color-mix(in srgb, var(--color-primary, #3b82f6) 12%, transparent); }
 .nz-tg-tab-icon { position: relative; display: grid; place-items: center; }
 .nz-tg-tab-label { font-size: 10.5px; font-weight: 650; letter-spacing: .01em; line-height: 1.1; }

@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Home, LayoutGrid, Package, ShoppingBag, UserRound } from "lucide-react";
+import { Home, LayoutGrid, Package, ShoppingBag, Sparkles, UserRound } from "lucide-react";
+import { openAssistant } from "@/lib/assistant-events";
 import { onCartUpdated } from "@/lib/cart-events";
 import { haptic, isMiniAppSession } from "@/lib/telegram-webapp";
 
@@ -54,9 +55,27 @@ export default function MiniAppTabBar() {
   if (!on || pathname.startsWith("/checkout")) return null;
   return (
     <nav className="nz-tg-tabbar" aria-label={t("tabNav")}>
-      {TABS.map(({ href, key, icon: Icon, match }) => {
+      {TABS.map(({ href, key, icon: Icon, match }, index) => {
         const active = match(pathname);
-        return (
+        // the AI advisor sits in the middle of the bar (its floating launcher is hidden in the Mini App, where it covered prices and buttons)
+        const advisor =
+          index === 2 ? (
+            <button
+              key="ai"
+              type="button"
+              onClick={() => {
+                haptic("select");
+                openAssistant();
+              }}
+              className="nz-tg-tab-ai"
+            >
+              <span className="nz-tg-tab-icon">
+                <Sparkles className="h-[22px] w-[22px]" strokeWidth={2} aria-hidden="true" />
+              </span>
+              <span className="nz-tg-tab-label">{t("tabAssistant")}</span>
+            </button>
+          ) : null;
+        return [advisor, (
           <Link key={href} href={href} onClick={() => haptic("select")} className={active ? "is-active" : ""} aria-current={active ? "page" : undefined}>
             <span className="nz-tg-tab-icon">
               <Icon className="h-[22px] w-[22px]" strokeWidth={active ? 2.2 : 1.7} aria-hidden="true" />
@@ -64,7 +83,7 @@ export default function MiniAppTabBar() {
             </span>
             <span className="nz-tg-tab-label">{t(key)}</span>
           </Link>
-        );
+        )];
       })}
     </nav>
   );
