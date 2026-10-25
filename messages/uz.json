@@ -3034,6 +3034,22 @@
       "items": "{count} dona",
       "swapHint": "Joriy savat avtomatik kutishga o'tadi.",
       "noneHeld": "Kutishda savat yo'q"
+    },
+    "priceEdit": {
+      "title": "Narxni o'zgartirish",
+      "listPrice": "Asl narx",
+      "newPrice": "Yangi narx (so'm)",
+      "pcs": "dona",
+      "discount": "Mijozga {amount} so'm chegirma",
+      "markup": "Asl narxdan {amount} so'm qimmat",
+      "reason": "Sabab (ixtiyoriy)",
+      "reasonHint": "Masalan: doimiy mijoz, ulgurji",
+      "journalNote": "O'zgarish egaga «Narx o'zgarishlari» jurnalida ko'rinadi.",
+      "reset": "Asl narxga qaytarish",
+      "save": "Saqlash",
+      "cancel": "Bekor qilish",
+      "invalid": "Narxni to'g'ri kiriting",
+      "saved": "Narx o'zgartirildi"
     }
   },
   "receipt": {

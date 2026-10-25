@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Ban, Barcode, Clock3, Flame, Hash, Keyboard, Loader2, Lock, Maximize2, Minimize2, Minus, Package, Plus, Printer, Search, ShoppingBasket, Store as StoreIcon, Trash2 } from "lucide-react";
+import { Ban, Barcode, Clock3, Flame, Hash, Keyboard, Loader2, Lock, Maximize2, Minimize2, Minus, Package, Pencil, Plus, Printer, Search, ShoppingBasket, Store as StoreIcon, Trash2 } from "lucide-react";
 import MediaImage from "@/components/MediaImage";
 import { duration, money, pos, timeOnly } from "./api";
-import type { PosCatalogItem, PosConfig, PosError, PosPerson, PosSale, PosSession } from "./types";
+import type { PosCatalogItem, PosConfig, PosError, PosLine, PosPerson, PosSale, PosSession } from "./types";
 import CashierSwitcher from "./CashierSwitcher";
 import EarningsCard from "./EarningsCard";
 import CloseRegisterDialog from "./CloseRegisterDialog";
@@ -14,6 +14,7 @@ import CustomerPicker from "./CustomerPicker";
 import RegisterGate from "./RegisterGate";
 import { usePosErrors } from "./usePosErrors";
 import PaymentDialog from "./PaymentDialog";
+import PriceEditDialog from "./PriceEditDialog";
 import ReceiptDialog from "./ReceiptDialog";
 import { loadPrinterSettings, receiptTokenFrom, savePrinterSettings, type PrinterSettings } from "./printer";
 import ScanToCart, { type LastScan } from "./ScanToCart";
@@ -61,6 +62,7 @@ export default function PosTerminal() {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [loadingCatalog, setLoadingCatalog] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
+  const [priceLine, setPriceLine] = useState<PosLine | null>(null);
   const [toast, setToast] = useState<{ tone: "error" | "ok"; text: string } | null>(null);
   const [paying, setPaying] = useState(false);
   const [receipt, setReceipt] = useState<PosSale | null>(null);
@@ -240,6 +242,17 @@ export default function PosTerminal() {
   function setQty(lineId: string, quantity: number) {
     if (!sale) return;
     apply(`line-${lineId}`, () => pos<PosSale>(`sales/${sale.id}/items/${lineId}`, { method: "PATCH", body: { quantity } }));
+  }
+
+  async function setPrice(lineId: string, price: number, reason: string): Promise<string | null> {
+    if (!sale) return null;
+    setBusy(`line-${lineId}`);
+    const res = await pos<PosSale>(`sales/${sale.id}/items/${lineId}`, { method: "PATCH", body: { unit_price: price, reason } });
+    setBusy(null);
+    if (!res.ok) return explain(res.error);
+    setSale(res.data);
+    say("ok", t("priceEdit.saved"));
+    return null;
   }
 
   function removeLine(lineId: string) {
@@ -713,7 +726,18 @@ export default function PosTerminal() {
                         <p className="truncate text-sm font-semibold text-ink">{line.name}</p>
                         <p className="text-[11px] text-ink-soft tabular-nums">
                           {line.variant_label ? `${line.variant_label} · ` : ""}
-                          {money(line.unit_price)} × {line.quantity}
+                          <button
+                            type="button"
+                            onClick={() => setPriceLine(line)}
+                            disabled={lineBusy}
+                            title={t("priceEdit.title")}
+                            className={`inline-flex items-center gap-1 rounded-md px-1 hover:bg-primary/10 hover:text-primary ${line.list_price ? "font-bold text-amber-600 dark:text-amber-400" : ""}`}
+                          >
+                            {line.list_price && <s className="font-normal text-ink-soft">{money(line.list_price)}</s>}
+                            {money(line.unit_price)}
+                            <Pencil className="h-2.5 w-2.5 opacity-60" strokeWidth={2.5} aria-hidden="true" />
+                          </button>{" "}
+                          × {line.quantity}
                         </p>
                         {line.batches && line.batches.length > 0 && (
                           <div className="mt-0.5 flex flex-wrap gap-1">
@@ -795,6 +819,7 @@ export default function PosTerminal() {
         </div>
       )}
 
+      {priceLine && <PriceEditDialog line={priceLine} onSave={(price, reason) => setPrice(priceLine.id, price, reason)} onClose={() => setPriceLine(null)} />}
       {paying && sale && config && (
         <PaymentDialog
           sale={sale}

@@ -32,6 +32,9 @@ export interface PosLine {
   quantity: number;
   unit_price: string;
   line_total: string;
+  /** Set when the cashier changed this line's price: the catalogue price it replaced (journaled). */
+  list_price?: string | null;
+  price_reason?: string;
   refunded_quantity?: number;
   /** Units scanned with a batch barcode -- these exact batches leave the shelf. */
   batches?: PosLineBatch[];

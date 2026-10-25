@@ -3034,6 +3034,22 @@
       "items": "{count} pcs",
       "swapHint": "The current basket goes on hold automatically.",
       "noneHeld": "No baskets on hold"
+    },
+    "priceEdit": {
+      "title": "Change price",
+      "listPrice": "List price",
+      "newPrice": "New price (so'm)",
+      "pcs": "pcs",
+      "discount": "{amount} so'm off for the customer",
+      "markup": "{amount} so'm above the list price",
+      "reason": "Reason (optional)",
+      "reasonHint": "E.g. regular customer, wholesale",
+      "journalNote": "The owner sees this in the “Price changes” journal.",
+      "reset": "Back to list price",
+      "save": "Save",
+      "cancel": "Cancel",
+      "invalid": "Enter a valid price",
+      "saved": "Price changed"
     }
   },
   "receipt": {
