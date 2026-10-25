@@ -325,7 +325,8 @@
       "all": "All products",
       "brands": "Brands",
       "stores": "Stores",
-      "coins": "NutriZone Coins"
+      "coins": "NutriZone Coins",
+      "guides": "Advice"
     },
     "showcase": {
       "eyebrow": "Shop window",
@@ -3371,6 +3372,31 @@
       "a4": "Our loyalty programme: every purchase earns cashback coins, and the rate grows with your tier. 1 coin = 1 so'm — pay part of your next order with coins.",
       "q5": "How can I pay?",
       "a5": "In cash or by card. The payment methods available right now are shown at checkout."
+    },
+    "popular": {
+      "title": "Popular searches",
+      "label": {
+        "sport": "Sports nutrition in Tashkent",
+        "protein": "Protein prices",
+        "creatine": "Creatine",
+        "gainer": "Mass gainers",
+        "bcaa": "BCAA amino acids",
+        "vitamins": "Vitamins for athletes",
+        "omega": "Omega-3",
+        "preworkout": "Pre-workout",
+        "guides": "Sports nutrition advice"
+      },
+      "q": {
+        "sport": "sport",
+        "protein": "protein",
+        "creatine": "creatine",
+        "gainer": "gainer",
+        "bcaa": "bcaa",
+        "vitamins": "vitamin",
+        "omega": "omega",
+        "preworkout": "pre workout",
+        "guides": ""
+      }
     }
   },
   "pagination": {

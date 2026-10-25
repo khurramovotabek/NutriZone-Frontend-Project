@@ -96,12 +96,11 @@ export default function AccountSettingsPage() {
       .catch(() => {});
   }, []);
 
-  // Keep the notification-language preference on the backend in sync
-  // with the UI locale cookie -- best-effort, never blocks the page.
+  // The profile language changes only through an explicit switch (switchLocale PATCHes it); merely opening this
+  // page used to overwrite the language chosen at registration with whatever the browser cookie said.
   useEffect(() => {
-    fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ language: locale }) })
-      .catch(() => {})
-      .finally(() => setSyncedLocale(locale));
+    const id = window.setTimeout(() => setSyncedLocale(locale), 600);
+    return () => window.clearTimeout(id);
   }, [locale]);
 
   function selectLocale(next: Locale) {

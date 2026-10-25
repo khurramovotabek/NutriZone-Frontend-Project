@@ -9,6 +9,8 @@
 import { cookies } from "next/headers";
 import type { TokenPair } from "./auth-api";
 import { EMBED_COOKIE, cookieAttrs } from "./cookie-policy";
+import { API_BASE_URL } from "./api";
+import { LOCALE_COOKIE, SUPPORTED_LOCALES, type Locale } from "@/i18n/config";
 
 const ACCESS_COOKIE = "nz_access_token";
 const REFRESH_COOKIE = "nz_refresh_token";
@@ -32,6 +34,24 @@ export async function setSessionCookies(tokens: TokenPair) {
   store.set(ACCESS_COOKIE, tokens.access_token, { httpOnly: true, ...attrs(store), path: "/", maxAge: 60 * 15 });
   // Refresh token lifetime confirmed the same way: exp - iat = exactly 30 days.
   store.set(REFRESH_COOKIE, tokens.refresh_token, { httpOnly: true, ...attrs(store), path: "/", maxAge: 60 * 60 * 24 * 30 });
+  await adoptProfileLanguage(store, tokens.access_token);
+}
+
+/**
+ * Signing in switches the site to the language the customer chose (when registering in the bot, or later with a
+ * language switcher) -- the profile is the one source of truth, so the bot, the Mini App, notifications and the site
+ * always speak the same language. Best effort: a failed lookup keeps the current language.
+ */
+async function adoptProfileLanguage(store: CookieStore, accessToken: string) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/identity/users/me`, { headers: { Authorization: `Bearer ${accessToken}` }, cache: "no-store" });
+    const language = (await res.json().catch(() => null))?.data?.language as Locale | undefined;
+    if (res.ok && language && SUPPORTED_LOCALES.includes(language)) {
+      store.set(LOCALE_COOKIE, language, { ...attrs(store), path: "/", maxAge: 60 * 60 * 24 * 365 });
+    }
+  } catch {
+    // keep the current language
+  }
 }
 
 export async function clearSessionCookies() {

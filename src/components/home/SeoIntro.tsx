@@ -3,6 +3,7 @@ import { ChevronDown, Store, Coins, ShieldCheck } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 export const FAQ_KEYS = ["1", "2", "3", "4", "5"] as const;
+const POPULAR = ["sport", "protein", "creatine", "gainer", "bcaa", "vitamins", "omega", "preworkout", "guides"] as const;
 
 /**
  * "Original sports nutrition in Tashkent" -- the home page's own words about what the store sells, where and
@@ -33,6 +34,19 @@ export default async function SeoIntro({ brand }: { brand: string }) {
             <Coins className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
             NutriZone Coins
           </Link>
+        </div>
+        {/* what people type into Google ("sport pitaniya", "kreatin narxi") as real links -- keyword anchors for search engines, shortcuts for people */}
+        <div className="mt-6">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-ink-soft">{t("popular.title")}</h3>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {POPULAR.map((key) => (
+              <li key={key}>
+                <Link href={key === "guides" ? "/guides" : `/products?q=${encodeURIComponent(t(`popular.q.${key}`))}`} className="inline-block rounded-full border border-border px-3 py-1.5 text-xs font-semibold text-ink-muted transition-colors hover:border-primary/40 hover:text-primary">
+                  {t(`popular.label.${key}`)}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
       <div className="nz-glass rounded-3xl p-6 sm:p-8">

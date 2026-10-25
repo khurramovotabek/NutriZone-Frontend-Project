@@ -325,7 +325,8 @@
       "all": "Barcha mahsulotlar",
       "brands": "Brendlar",
       "stores": "Do'konlar",
-      "coins": "NutriZone Coins"
+      "coins": "NutriZone Coins",
+      "guides": "Maslahatlar"
     },
     "showcase": {
       "eyebrow": "Do'kon vitrinasi",
@@ -3371,6 +3372,31 @@
       "a4": "Bu sodiqlik dasturi: har bir xariddan keshbek coin olasiz, darajangiz oshgani sari foiz ham oshadi. 1 coin = 1 so'm — keyingi buyurtmaning bir qismini coin bilan to'laysiz.",
       "q5": "Qanday to'lash mumkin?",
       "a5": "Naqd pul yoki karta orqali. Hozir mavjud to'lov usullari buyurtmani rasmiylashtirishda ko'rsatiladi."
+    },
+    "popular": {
+      "title": "Ommabop qidiruvlar",
+      "label": {
+        "sport": "Sport pitaniya Toshkentda",
+        "protein": "Protein narxlari",
+        "creatine": "Kreatin (creatine)",
+        "gainer": "Geyner massa uchun",
+        "bcaa": "BCAA aminokislotalar",
+        "vitamins": "Vitaminlar sportchilar uchun",
+        "omega": "Omega-3",
+        "preworkout": "Pre-workout",
+        "guides": "Sport ovqatlanishi maslahatlari"
+      },
+      "q": {
+        "sport": "sport",
+        "protein": "protein",
+        "creatine": "creatine",
+        "gainer": "gainer",
+        "bcaa": "bcaa",
+        "vitamins": "vitamin",
+        "omega": "omega",
+        "preworkout": "pre workout",
+        "guides": ""
+      }
     }
   },
   "pagination": {
