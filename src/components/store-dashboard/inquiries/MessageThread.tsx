@@ -97,6 +97,13 @@ export default function MessageThread({
   const [showJump, setShowJump] = useState(false);
   const prevLastId = useRef<string | null>(null);
 
+  // Scrolls only the message pane -- `scrollIntoView()` also scrolls every scrollable ancestor, which on phones
+  // dragged the whole dashboard page toward the footer while typing.
+  function scrollPaneToBottom(smooth: boolean) {
+    const pane = scrollRef.current;
+    if (pane) pane.scrollTo({ top: pane.scrollHeight, behavior: smooth ? "smooth" : "auto" });
+  }
+
   // Auto-scrolls to the newest message when a conversation first loads,
   // or when a genuinely NEW message arrives while the viewer is already
   // near the bottom. If they've scrolled up to read older messages,
@@ -106,7 +113,7 @@ export default function MessageThread({
   useEffect(() => {
     if (!otherTyping) return;
     const container = scrollRef.current;
-    if (container && container.scrollHeight - container.scrollTop - container.clientHeight < 160) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (container && container.scrollHeight - container.scrollTop - container.clientHeight < 160) scrollPaneToBottom(true);
   }, [otherTyping]);
 
   useEffect(() => {
@@ -120,7 +127,7 @@ export default function MessageThread({
     const nearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 120;
 
     if (!isNewArrival || nearBottom) {
-      bottomRef.current?.scrollIntoView({ behavior: isNewArrival ? "smooth" : "auto" });
+      scrollPaneToBottom(isNewArrival);
       setShowJump(false);
     } else {
       setShowJump(true);
@@ -135,7 +142,7 @@ export default function MessageThread({
   }
 
   function jumpToLatest() {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollPaneToBottom(true);
     setShowJump(false);
   }
 
@@ -168,7 +175,7 @@ export default function MessageThread({
 
   return (
     <div className="relative flex-1 overflow-hidden">
-      <div ref={scrollRef} onScroll={handleScroll} className="nz-chat-wallpaper h-full space-y-5 overflow-y-auto overscroll-contain p-4">
+      <div ref={scrollRef} onScroll={handleScroll} className="nz-chat-wallpaper h-full space-y-5 overflow-y-auto overscroll-contain p-3 sm:p-4">
         {hasOlder && (
           <div className="flex justify-center">
             <button

@@ -52,7 +52,7 @@ export default function OrderAttachPicker({ onPick, disabled }: { onPick: (order
   }, [open]);
 
   return (
-    <div ref={containerRef} className="relative shrink-0">
+    <div ref={containerRef} className="shrink-0 sm:relative">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -60,12 +60,12 @@ export default function OrderAttachPicker({ onPick, disabled }: { onPick: (order
         aria-label={t("attachOrder")}
         title={t("attachOrder")}
         aria-expanded={open}
-        className="flex h-9 w-9 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink disabled:opacity-50"
+        className="flex h-9 w-8 sm:w-9 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink disabled:opacity-50"
       >
         <ReceiptText className="h-4.5 w-4.5" strokeWidth={1.75} aria-hidden="true" />
       </button>
       {open && (
-        <div className="nz-glass-strong animate-nz-fade-in absolute bottom-full left-0 z-30 mb-2 w-72 overflow-hidden rounded-2xl">
+        <div className="nz-glass-strong animate-nz-fade-in absolute inset-x-2 bottom-full z-30 mb-2 overflow-hidden sm:inset-x-auto sm:left-0 sm:w-72 rounded-2xl">
           <p className="border-b border-border/70 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-ink-soft">{t("attachOrderTitle")}</p>
           {!orders && !failed ? (
             <div className="flex justify-center py-6">

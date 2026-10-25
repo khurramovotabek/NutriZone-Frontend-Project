@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { ArrowLeft, Info, MessageCircle, Phone, Send, ShoppingBag, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { AttachmentUpload, Conversation, ConversationDetail, CustomerProfile, Message } from "@/lib/account-api";
@@ -8,6 +9,7 @@ import { Button, Card, EmptyState, ErrorState, Skeleton } from "@/components/ui"
 import MediaImage from "@/components/MediaImage";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import { useChatInboxSocket } from "@/hooks/useChatInboxSocket";
+import { useMobileChatViewport } from "@/hooks/useMobileChatViewport";
 import { PresenceDot, ReadTicks } from "@/components/chat/ChatBits";
 import { chatListTime } from "@/components/chat/ConversationListItem";
 import MessageThread from "./MessageThread";
@@ -22,18 +24,18 @@ const STATUS_BADGE: Record<string, string> = {
   archived: "bg-surface-2 text-ink-soft border-border",
 };
 
-function relativeTime(iso: string | null): string {
+/** "5 daqiqa oldin" / "5 минут назад" / "5 minutes ago" in the interface language. */
+function relativeTime(iso: string | null, locale: string): string {
   if (!iso) return "";
   const date = new Date(iso);
-  const diffMs = Date.now() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return "now";
-  if (diffMin < 60) return `${diffMin}m`;
+  const diffMin = Math.floor((Date.now() - date.getTime()) / 60000);
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  if (diffMin < 60) return rtf.format(-Math.max(diffMin, 0), "minute");
   const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr}h`;
+  if (diffHr < 24) return rtf.format(-diffHr, "hour");
   const diffDay = Math.floor(diffHr / 24);
-  if (diffDay < 7) return `${diffDay}d`;
-  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  if (diffDay < 7) return rtf.format(-diffDay, "day");
+  return date.toLocaleDateString(locale, { month: "short", day: "numeric" });
 }
 
 /**
@@ -333,10 +335,24 @@ export default function InquiriesWorkspace({
 
   const conversationTypeLabel = (type: string) =>
     type === "customer_support" ? t("inquiryTypeCustomerSupport") : type === "customer_sales" ? t("inquiryTypeCustomerSales") : t("inquiryTypeInternalSupport");
+  const statusLabel = (status: string) =>
+    status === "open" ? t("inquiryTabOpen") : status === "closed" ? t("inquiryTabClosed") : status === "archived" ? t("inquiryTabArchived") : status;
   const roleLabel = (role: string) => (role === "customer" ? t("inquiryRoleCustomer") : t("inquiryRoleOperator"));
 
-  return (
-    <Card className="flex h-[75vh] min-h-[520px] max-h-[820px] overflow-hidden p-0">
+  // On phones an open conversation (thread or customer details) is a full-screen sheet pinned to the visible
+  // viewport, like the customer's own chat: the composer stays above the keyboard and the dashboard hero behind it
+  // never scrolls into view. Rendered into <body> so glass/transform ancestors can't capture `position: fixed`.
+  const sheet = useMobileChatViewport(Boolean(selectedId) && mobileView !== "list");
+
+  const card = (
+    <Card
+      className={
+        sheet.fullscreen
+          ? "fixed inset-x-0 top-0 z-[70] flex h-[100dvh] overflow-hidden rounded-none border-0 bg-bg p-0 backdrop-blur-none"
+          : "flex h-[calc(100dvh-9rem)] min-h-[440px] max-h-[820px] overflow-hidden p-0 sm:h-[75vh] sm:min-h-[520px]"
+      }
+      style={sheet.style}
+    >
       {/* Conversation list */}
       <div className={`w-full shrink-0 flex-col border-r border-border sm:w-[300px] ${mobileView === "list" ? "flex" : "hidden sm:flex"}`}>
         <div className="flex shrink-0 items-center gap-1 overflow-x-auto border-b border-border p-2 [scrollbar-width:none]! [&::-webkit-scrollbar]:hidden">
@@ -455,8 +471,8 @@ export default function InquiriesWorkspace({
         ) : (
           <>
             <div className="flex shrink-0 items-center gap-2 border-b border-border p-3">
-              <button type="button" onClick={() => setMobileView("list")} className="text-ink-muted transition-colors hover:text-primary sm:hidden">
-                <ArrowLeft className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+              <button type="button" onClick={() => setMobileView("list")} aria-label={tChat("back")} className="-ml-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-2 hover:text-primary sm:hidden">
+                <ArrowLeft className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
               </button>
               <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-2 text-ink-soft">
                 {selectedCard?.other_participant_avatar_url ? (
@@ -482,7 +498,7 @@ export default function InquiriesWorkspace({
                     otherParticipant && <PresenceDot online={otherOnline} />
                   )}
                   {selectedDetail && (
-                    <span className={`inline-flex items-center rounded-full border px-1.5 py-0 text-[11px] ${STATUS_BADGE[selectedDetail.status] ?? STATUS_BADGE.closed}`}>{selectedDetail.status}</span>
+                    <span className={`inline-flex items-center rounded-full border px-1.5 py-0 text-[11px] ${STATUS_BADGE[selectedDetail.status] ?? STATUS_BADGE.closed}`}>{statusLabel(selectedDetail.status)}</span>
                   )}
                 </div>
               </div>
@@ -494,7 +510,7 @@ export default function InquiriesWorkspace({
                 }}
                 aria-label={t("inquiryDetailsTitle")}
                 aria-pressed={showContext}
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors ${showContext ? "bg-primary-soft text-primary" : "text-ink-muted hover:bg-surface-2 hover:text-ink"}`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors sm:h-8 sm:w-8 ${showContext ? "bg-primary-soft text-primary" : "text-ink-muted hover:bg-surface-2 hover:text-ink"}`}
               >
                 <Info className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
               </button>
@@ -545,8 +561,8 @@ export default function InquiriesWorkspace({
       {selectedId && (
         <div className={`w-full shrink-0 flex-col border-l border-border sm:w-[260px] ${mobileView === "context" ? "flex" : "hidden"} ${showContext ? "sm:flex" : "sm:hidden"}`}>
           <div className="flex shrink-0 items-center gap-2 border-b border-border p-3 sm:hidden">
-            <button type="button" onClick={() => setMobileView("thread")} className="text-ink-muted transition-colors hover:text-primary">
-              <ArrowLeft className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            <button type="button" onClick={() => setMobileView("thread")} aria-label={tChat("back")} className="-ml-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-2 hover:text-primary">
+              <ArrowLeft className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
             </button>
             <p className="text-sm font-semibold text-ink">{t("inquiryDetailsTitle")}</p>
           </div>
@@ -644,11 +660,11 @@ export default function InquiriesWorkspace({
                   <dl className="space-y-2 text-sm">
                     <div className="flex items-center justify-between gap-2">
                       <dt className="text-ink-soft">{t("inquiryStatusLabel")}</dt>
-                      <dd className="font-medium capitalize text-ink">{selectedDetail.status}</dd>
+                      <dd className="font-medium text-ink">{statusLabel(selectedDetail.status)}</dd>
                     </div>
                     <div className="flex items-center justify-between gap-2">
                       <dt className="text-ink-soft">{t("inquiryLastActivity")}</dt>
-                      <dd className="font-medium text-ink">{relativeTime(selectedDetail.last_activity_at)}</dd>
+                      <dd className="font-medium text-ink">{relativeTime(selectedDetail.last_activity_at, locale)}</dd>
                     </div>
                   </dl>
                 </div>
@@ -665,7 +681,7 @@ export default function InquiriesWorkspace({
                             className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-sm text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink"
                           >
                             <span className="truncate">{conversationTypeLabel(c.conversation_type)}</span>
-                            <span className={`shrink-0 rounded-full border px-1.5 text-[11px] ${STATUS_BADGE[c.status] ?? STATUS_BADGE.closed}`}>{c.status}</span>
+                            <span className={`shrink-0 rounded-full border px-1.5 text-[11px] ${STATUS_BADGE[c.status] ?? STATUS_BADGE.closed}`}>{statusLabel(c.status)}</span>
                           </button>
                         </li>
                       ))}
@@ -679,4 +695,6 @@ export default function InquiriesWorkspace({
       )}
     </Card>
   );
+
+  return sheet.fullscreen ? createPortal(card, document.body) : card;
 }

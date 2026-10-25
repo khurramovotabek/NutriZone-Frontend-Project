@@ -1907,6 +1907,7 @@
     "inquiryNoneForFilter": "No conversations here",
     "inquiryNoneForFilterHint": "There are no conversations with this status yet.",
     "inquirySending": "Sending...",
+    "inquirySend": "Send",
     "inquiryKeyboardHint": "Enter to send · Shift+Enter for a new line",
     "inquiryLoadOlder": "Load older messages",
     "inquiryJumpToLatest": "New messages",

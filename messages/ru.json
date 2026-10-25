@@ -1907,6 +1907,7 @@
     "inquiryNoneForFilter": "Здесь нет переписок",
     "inquiryNoneForFilterHint": "Переписок с этим статусом пока нет.",
     "inquirySending": "Отправка...",
+    "inquirySend": "Отправить",
     "inquiryKeyboardHint": "Enter — отправить · Shift+Enter — новая строка",
     "inquiryLoadOlder": "Загрузить более ранние сообщения",
     "inquiryJumpToLatest": "Новые сообщения",

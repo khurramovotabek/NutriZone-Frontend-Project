@@ -78,7 +78,7 @@ export default function MessageComposer({
   }
 
   return (
-    <div className="shrink-0 border-t border-border p-3" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
+    <div className="relative shrink-0 border-t border-border p-2.5 sm:p-3" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
       <div className="nz-glass-input flex items-end gap-2 rounded-xl p-1.5">
         <MediaAttachmentPicker conversationId={conversationId} onAttachment={handleAttachment} disabled={disabled} />
         <StickerPicker onPick={handleSticker} onPickEmoji={handleAttachment} disabled={disabled} />
@@ -95,24 +95,27 @@ export default function MessageComposer({
             const el = e.currentTarget;
             el.style.height = "auto";
             el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
+            el.style.overflowY = el.scrollHeight > 128 ? "auto" : "hidden"; // no stray scrollbar on a one-line draft
           }}
           placeholder={placeholder ?? t("inquiryMessagePlaceholder")}
           aria-label={t("inquiryMessagePlaceholder")}
           disabled={disabled}
           rows={1}
-          className="max-h-32 min-h-[2.25rem] flex-1 resize-none overflow-y-auto bg-transparent px-2.5 py-1.5 text-sm text-ink placeholder:text-ink-soft focus:outline-none"
+          enterKeyHint="send"
+          className="max-h-32 min-h-[2.25rem] min-w-0 flex-1 resize-none overflow-y-hidden bg-transparent px-2.5 py-1.5 text-base text-ink sm:text-sm placeholder:text-ink-soft focus:outline-none"
         />
         <button
           type="button"
           onClick={handleSubmit}
           disabled={disabled || sending || !draft.trim()}
-          aria-label={t("inquiryMessagePlaceholder")}
+          aria-label={t("inquirySend")}
           className="nz-cta flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-opacity disabled:opacity-50"
         >
           {sending ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden="true" /> : <Send className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />}
         </button>
       </div>
-      <div className="mt-1.5 flex items-center justify-between px-1">
+      {/* the keyboard hint is desktop-only; on phones this row only appears for an error (no dead 20px strip) */}
+      <div className={`mt-1.5 items-center justify-between px-1 ${error ? "flex" : "hidden sm:flex"}`}>
         <p className="hidden text-[11px] text-ink-soft sm:block">{t("inquiryKeyboardHint")}</p>
         {error && (
           <p role="alert" className="text-xs text-red-600 dark:text-red-400">

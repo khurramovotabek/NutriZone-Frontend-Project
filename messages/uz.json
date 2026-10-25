@@ -1907,6 +1907,7 @@
     "inquiryNoneForFilter": "Bu yerda suhbatlar yo'q",
     "inquiryNoneForFilterHint": "Ushbu holatdagi suhbatlar hali mavjud emas.",
     "inquirySending": "Yuborilmoqda...",
+    "inquirySend": "Yuborish",
     "inquiryKeyboardHint": "Yuborish uchun Enter · Yangi qator uchun Shift+Enter",
     "inquiryLoadOlder": "Eski xabarlarni yuklash",
     "inquiryJumpToLatest": "Yangi xabarlar",

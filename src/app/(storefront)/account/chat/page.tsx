@@ -87,7 +87,8 @@ const NEAR_BOTTOM_THRESHOLD = 120;
 /** Text to drop into the composer (a support topic); `nonce` lets the same text be applied twice. */
 type ComposerPrefill = { text: string; nonce: number } | null;
 
-function ConversationThread({ conversation, currentUserId, onBack, prefill = null }: { conversation: Conversation; currentUserId: string | null; onBack: () => void; prefill?: ComposerPrefill }) {
+/** `compact`: the phone full-screen sheet -- a short composer placeholder, since "<long store name> ga yozing…" wrapped to two lines there. */
+function ConversationThread({ conversation, currentUserId, onBack, prefill = null, compact = false }: { conversation: Conversation; currentUserId: string | null; onBack: () => void; prefill?: ComposerPrefill; compact?: boolean }) {
   const t = useTranslations("account.chatPage");
   const tCommon = useTranslations("common");
   const tChat = useTranslations("chat");
@@ -388,6 +389,7 @@ function ConversationThread({ conversation, currentUserId, onBack, prefill = nul
       el.focus();
       el.style.height = "auto";
       el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+      el.style.overflowY = el.scrollHeight > 120 ? "auto" : "hidden";
     }, 0);
   }
 
@@ -569,7 +571,7 @@ function ConversationThread({ conversation, currentUserId, onBack, prefill = nul
           {tRt("offHours", { hours: support.support_hours.label })}
         </p>
       )}
-      <form onSubmit={handleSend} className="flex shrink-0 items-end gap-2 border-t border-border p-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] sm:p-3">
+      <form onSubmit={handleSend} className="relative flex shrink-0 items-end gap-1 border-t border-border p-2.5 sm:gap-2 pb-[max(0.625rem,env(safe-area-inset-bottom))] sm:p-3">
         <MediaAttachmentPicker conversationId={conversation.id} onAttachment={handleAttachment} disabled={sending} />
         <StickerPicker onPick={sendSticker} onPickEmoji={handleAttachment} disabled={sending} />
         <OrderAttachPicker onPick={(number) => insertIntoDraft(t("orderRef", { number }), "append")} disabled={sending} />
@@ -587,11 +589,12 @@ function ConversationThread({ conversation, currentUserId, onBack, prefill = nul
             chat.sendTyping(e.target.value.trim().length > 0);
             e.target.style.height = "auto";
             e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+            e.target.style.overflowY = e.target.scrollHeight > 120 ? "auto" : "hidden"; // no stray scrollbar on a one-line draft
           }}
           onKeyDown={handleComposerKeyDown}
-          placeholder={tChat("composeTo", { name: conversation.conversation_type === "customer_sales" ? store?.name || tChat("storeConversationLabel") : tChat("supportTitle") })}
+          placeholder={compact ? t("messagePlaceholder") : tChat("composeTo", { name: conversation.conversation_type === "customer_sales" ? store?.name || tChat("storeConversationLabel") : tChat("supportTitle") })}
           disabled={sending}
-          className="nz-glass-input max-h-[120px] min-w-0 flex-1 resize-none rounded-2xl px-3.5 py-2 text-base leading-relaxed sm:rounded-lg sm:text-sm"
+          className="nz-glass-input max-h-[120px] min-w-0 flex-1 resize-none overflow-y-hidden rounded-2xl px-3 py-2 sm:px-3.5 text-base leading-relaxed sm:rounded-lg sm:text-sm"
         />
         <Button type="submit" variant="primary" disabled={sending || !draft.trim()} aria-label={t("send")}>
           <Send className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
@@ -836,7 +839,7 @@ function ChatPageInner() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("searchConversations")}
               aria-label={t("searchConversations")}
-              className="nz-glass-input w-full rounded-full py-1.5 pl-7 pr-2 text-xs"
+              className="nz-glass-input w-full rounded-full py-1.5 pl-7 pr-2 text-base sm:text-xs"
             />
           </div>
         </div>
@@ -892,7 +895,7 @@ function ChatPageInner() {
             </div>
           </div>
         ) : (
-          <ConversationThread conversation={activeConversation} currentUserId={currentUserId} onBack={() => setActiveConversation(null)} prefill={prefill} />
+          <ConversationThread conversation={activeConversation} currentUserId={currentUserId} onBack={() => setActiveConversation(null)} prefill={prefill} compact={sheet.fullscreen} />
         )}
       </div>
     </Card>

@@ -91,19 +91,19 @@ export function StickerPicker({ onPick, onPickEmoji, disabled }: { onPick: (code
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative shrink-0">
+    <div ref={rootRef} className="shrink-0 sm:relative">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         disabled={disabled}
         aria-label={t("stickers")}
         aria-expanded={open}
-        className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors disabled:opacity-50 ${open ? "bg-primary-soft text-primary" : "text-ink-soft hover:bg-surface-2 hover:text-primary"}`}
+        className={`flex h-9 w-8 sm:w-9 items-center justify-center rounded-lg transition-colors disabled:opacity-50 ${open ? "bg-primary-soft text-primary" : "text-ink-soft hover:bg-surface-2 hover:text-primary"}`}
       >
         <Smile className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
       </button>
       {open && (
-        <div role="dialog" aria-label={t("stickers")} className="nz-glass-strong animate-nz-fade-in absolute bottom-12 left-0 z-30 w-[min(92vw,21rem)] rounded-2xl p-3 shadow-2xl">
+        <div role="dialog" aria-label={t("stickers")} className="nz-glass-strong animate-nz-fade-in absolute inset-x-2 bottom-full z-30 mb-2 rounded-2xl sm:inset-x-auto sm:bottom-12 sm:left-0 sm:mb-0 sm:w-[21rem] p-3 shadow-2xl">
           <div className="mb-2.5 flex items-center gap-1 rounded-xl bg-surface-2 p-1" role="tablist">
             {(["sales", ...(onPickEmoji ? ["emoji"] : [])] as ("sales" | "emoji")[]).map((key) => (
               <button

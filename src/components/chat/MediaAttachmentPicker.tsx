@@ -69,7 +69,7 @@ export default function MediaAttachmentPicker({
         onClick={() => fileInputRef.current?.click()}
         disabled={disabled || uploading}
         aria-label={t("attachMedia")}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink disabled:opacity-50"
+        className="flex h-9 w-8 sm:w-9 shrink-0 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink disabled:opacity-50"
       >
         {uploading ? <Loader2 className="h-4.5 w-4.5 animate-spin" strokeWidth={1.75} aria-hidden="true" /> : <ImageIcon className="h-4.5 w-4.5" strokeWidth={1.75} aria-hidden="true" />}
       </button>
