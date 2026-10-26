@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { clientIpFrom } from "@/lib/client-ip";
 import { isSafeRedirectPath } from "@/lib/safe-redirect";
-import { LOCALE_COOKIE, LOCALE_HEADER, splitLocalePath } from "@/i18n/config";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, LOCALE_HEADER, splitLocalePath } from "@/i18n/config";
 import { EMBED_COOKIE, cookieAttrs } from "@/lib/cookie-policy";
 
 /**
@@ -17,6 +17,7 @@ import { EMBED_COOKIE, cookieAttrs } from "@/lib/cookie-policy";
  * 3. Language addresses: /ru/… and /en/… are served by the same pages as the plain (Uzbek) path -- the
  *    language is passed on in LOCALE_HEADER (src/i18n/config.ts) and next.config.ts strips the prefix, so
  *    each language has its own indexable URL. The visitor's language cookie follows the address they opened.
+ *    /uz/… is not an address of its own: it redirects (308) to the plain path and sets the Uzbek cookie.
  */
 const PROTECTED_PREFIXES = ["/account", "/profile", "/checkout", "/orders"];
 const GUEST_ONLY_PREFIXES = ["/login", "/verify-otp"];
@@ -60,6 +61,15 @@ function exchange(refreshToken: string, ip: string | null): Promise<Exchange> {
 }
 
 export async function proxy(req: NextRequest) {
+  // Uzbek lives at the plain path; /uz and /uz/… (typed, or linked from outside) go there for good, in Uzbek.
+  const uzPath = /^\/uz(\/.*)?$/.exec(req.nextUrl.pathname);
+  if (uzPath) {
+    const target = req.nextUrl.clone();
+    target.pathname = uzPath[1] || "/";
+    const response = NextResponse.redirect(target, 308);
+    response.cookies.set(LOCALE_COOKIE, DEFAULT_LOCALE, { ...cookieAttrs(req.cookies.get(EMBED_COOKIE)?.value === "1"), path: "/", maxAge: 60 * 60 * 24 * 365 });
+    return response;
+  }
   const { locale: pathLocale, path: pathname } = splitLocalePath(req.nextUrl.pathname);
   const pass = () => {
     // The language header is ours alone: set from the address, never passed on from a client.
