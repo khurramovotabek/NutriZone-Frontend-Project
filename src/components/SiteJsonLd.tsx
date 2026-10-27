@@ -12,7 +12,7 @@ export default function SiteJsonLd({
 }: { name: string; logoUrl: string | null; site: PublicSiteSettings | null; telegramUrl: string | null; locale: Locale; description: string; faq: { q: string; a: string }[] }) {
   const sameAs = [telegramUrl, site?.instagram_url].filter(Boolean);
   const host = SITE_URL.replace(/^https?:\/\//, "");
-  const alternateName = Array.from(new Set([host, "NutriZone", "Nutri Zone", "Nutrizone.uz", "Нутризон", "NutriZone Uzbekistan"].filter((n) => n.toLowerCase() !== name.toLowerCase())));
+  const alternateName = Array.from(new Set([host, "NutriZone", "Nutri Zone", "Nutrizone.uz", "Нутризон", "NutriZone Uzbekistan", "LifeSport", "Life Sport", "LifeSport Pit", "Life Sport Pit", "Лайфспорт"].filter((n) => n.toLowerCase() !== name.toLowerCase())));
   const orgId = `${SITE_URL}/#organization`;
   const data = [
     {
@@ -31,7 +31,7 @@ export default function SiteJsonLd({
       areaServed: { "@type": "Country", name: "Uzbekistan" },
       currenciesAccepted: "UZS",
       knowsLanguage: ["uz", "ru", "en"],
-      ...(site?.support_phone ? { contactPoint: { "@type": "ContactPoint", telephone: site.support_phone, contactType: "customer service", areaServed: "UZ", availableLanguage: ["Uzbek", "Russian", "English"] } } : {}),
+      ...(site?.support_phone ? { contactPoint: { "@type": "ContactPoint", telephone: site.support_phone, contactType: "customer service", areaServed: "UZ", availableLanguage: ["Uzbek", "Russian", "English"], ...(site?.telegram_username ? { url: `https://t.me/${site.telegram_username.replace(/^@/, "")}` } : {}) } } : {}),
     },
     {
       "@context": "https://schema.org",
