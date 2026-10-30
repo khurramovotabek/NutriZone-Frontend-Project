@@ -261,7 +261,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   ratingAverage={product.rating_average}
                   ratingCount={product.rating_count}
                   isAuthenticated={Boolean(accessToken)}
-                  loginHref={`/login?next=${encodeURIComponent(`/products/${slug}`)}`}
+                  loginHref={`/login?next=${encodeURIComponent(`/products/${slug}#reviews`)}`}
                 />
               ),
             },
