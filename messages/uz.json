@@ -512,7 +512,29 @@
     "gridView": "Katak ko'rinishi",
     "listView": "Ro'yxat ko'rinishi",
     "aboutCategory": "{name} haqida",
-    "readMore": "Batafsil"
+    "readMore": "Batafsil",
+    "sizeBand": {
+      "upto-300g": "300 g gacha",
+      "300g-1kg": "300 g – 1 kg",
+      "1-2kg": "1 – 2 kg",
+      "2-3kg": "2 – 3 kg",
+      "3kg-plus": "3 kg dan ortiq",
+      "upto-60pcs": "60 tagacha",
+      "61-120pcs": "61 – 120 ta",
+      "121-200pcs": "121 – 200 ta",
+      "200pcs-plus": "200 tadan ko'p",
+      "upto-250ml": "250 ml gacha",
+      "250ml-1l": "250 ml – 1 l",
+      "1l-plus": "1 l va ko'proq"
+    },
+    "sizeKind": {
+      "mass": "Kukun va vazn",
+      "count": "Kapsula, tabletka",
+      "volume": "Suyuqlik"
+    },
+    "searchFlavours": "Ta'mni qidirish...",
+    "showResults": "{count} ta mahsulotni ko'rsatish",
+    "showResultsNone": "Natijalarni ko'rsatish"
   },
   "brands": {
     "title": "Brendlar",

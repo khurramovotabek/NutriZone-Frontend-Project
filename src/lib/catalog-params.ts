@@ -91,3 +91,9 @@ export function toggle(values: string[], value: string): string[] {
 export function activeFilterCount(state: CatalogState): number {
   return (state.category ? 1 : 0) + state.brands.length + state.flavours.length + state.sizes.length + state.goals.length + (state.min || state.max ? 1 : 0) + (state.rating ? 1 : 0) + (state.stock ? 1 : 0) + (state.sale ? 1 : 0);
 }
+
+/** Size range ids (backend SIZE_BANDS; labels catalog.sizeBand.<id>) -- filter[size] takes them next to exact keys like "2270g". */
+export const SIZE_BANDS = ["upto-300g", "300g-1kg", "1-2kg", "2-3kg", "3kg-plus", "upto-60pcs", "61-120pcs", "121-200pcs", "200pcs-plus", "upto-250ml", "250ml-1l", "1l-plus"] as const;
+export function isSizeBand(id: string): boolean {
+  return (SIZE_BANDS as readonly string[]).includes(id);
+}

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { PackageX, Percent, SearchX, X } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getBrands, getCategories, searchProducts } from "@/lib/api";
-import { GOAL_CODES, catalogHref, parseCatalogParams, toggle } from "@/lib/catalog-params";
+import { GOAL_CODES, catalogHref, isSizeBand, parseCatalogParams, toggle } from "@/lib/catalog-params";
 import { formatSizeKey } from "@/lib/format-weight";
 import CatalogSortSelect from "@/components/CatalogSortSelect";
 import ProductCard from "@/components/ProductCard";
@@ -87,7 +87,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       : []),
     ...(state.rating ? [{ key: "rating", label: `★ ${t("ratingAndUp", { stars: state.rating })}`, href: catalogHref(state, { rating: undefined }) }] : []),
     ...state.flavours.map((id) => ({ key: `f-${id}`, label: flavourName(id), href: catalogHref(state, { flavours: state.flavours.filter((f) => f !== id) }) })),
-    ...state.sizes.map((size) => ({ key: `s-${size}`, label: formatSizeKey(size), href: catalogHref(state, { sizes: state.sizes.filter((s) => s !== size) }) })),
+    ...state.sizes.map((size) => ({ key: `s-${size}`, label: isSizeBand(size) ? t(`sizeBand.${size}`) : formatSizeKey(size), href: catalogHref(state, { sizes: state.sizes.filter((s) => s !== size) }) })),
     ...state.goals.map((g) => ({ key: `g-${g}`, label: `${tGoals("chip")}: ${tGoals(`${g}.title`)}`, href: catalogHref(state, { goals: state.goals.filter((x) => x !== g) }) })),
     ...(state.stock ? [{ key: "stock", label: t("inStockOnly"), href: catalogHref(state, { stock: false }) }] : []),
     ...(state.sale ? [{ key: "sale", label: t("onSaleOnly"), href: catalogHref(state, { sale: false }) }] : []),
@@ -99,7 +99,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       <ScrollSideNav />
       <div className="flex flex-col gap-8 lg:flex-row">
         <Suspense fallback={null}>
-          <CatalogFilterPanel state={state} facets={facets} categories={categories} />
+          <CatalogFilterPanel state={state} facets={facets} categories={categories} resultCount={data?.pagination?.total_count} />
         </Suspense>
 
         <div className="min-w-0 flex-1">

@@ -512,7 +512,29 @@
     "gridView": "Grid view",
     "listView": "List view",
     "aboutCategory": "About {name}",
-    "readMore": "Read more"
+    "readMore": "Read more",
+    "sizeBand": {
+      "upto-300g": "Up to 300 g",
+      "300g-1kg": "300 g – 1 kg",
+      "1-2kg": "1 – 2 kg",
+      "2-3kg": "2 – 3 kg",
+      "3kg-plus": "Over 3 kg",
+      "upto-60pcs": "Up to 60 pcs",
+      "61-120pcs": "61 – 120 pcs",
+      "121-200pcs": "121 – 200 pcs",
+      "200pcs-plus": "Over 200 pcs",
+      "upto-250ml": "Up to 250 ml",
+      "250ml-1l": "250 ml – 1 l",
+      "1l-plus": "1 l and more"
+    },
+    "sizeKind": {
+      "mass": "Powder & weight",
+      "count": "Capsules, tablets",
+      "volume": "Liquid"
+    },
+    "searchFlavours": "Search flavours...",
+    "showResults": "Show {count} products",
+    "showResultsNone": "Show results"
   },
   "brands": {
     "title": "Brands",

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, ChevronDown, Loader2, SlidersHorizontal, Star, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { CatalogFacets, Category } from "@/lib/api";
-import { activeFilterCount, catalogHref, toggle, type CatalogState } from "@/lib/catalog-params";
+import { activeFilterCount, catalogHref, isSizeBand, toggle, type CatalogState } from "@/lib/catalog-params";
 import { formatSizeKey } from "@/lib/format-weight";
 
 const COLLAPSED_LIMIT = 6;
@@ -13,6 +13,8 @@ const COLLAPSED_LIMIT = 6;
 interface Props {
   state: CatalogState;
   facets: CatalogFacets | undefined;
+  /** Products the current filters return -- the phone sheet's "Show 48 products" button. */
+  resultCount?: number;
   /** Full category list -- the fallback when facets carry no category data (e.g. an API error). */
   categories: Category[];
 }
@@ -25,7 +27,7 @@ interface Props {
  * lib/catalog-params.ts); a change navigates, and the server page
  * re-renders the grid. Sticky sidebar on desktop, bottom sheet on mobile.
  */
-export default function CatalogFilterPanel({ state, facets, categories }: Props) {
+export default function CatalogFilterPanel({ state, facets, categories, resultCount }: Props) {
   const t = useTranslations("catalog");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -47,6 +49,7 @@ export default function CatalogFilterPanel({ state, facets, categories }: Props)
     startTransition(() => router.push(catalogHref(state, changes), { scroll: false }));
   }
 
+  const exactSizes = state.sizes.filter((s) => !isSizeBand(s));
   const categoryOptions = facets?.category?.length ? facets.category : categories.map((c) => ({ id: c.id, name: c.name, count: undefined as number | undefined }));
 
   const body = (
@@ -129,30 +132,42 @@ export default function CatalogFilterPanel({ state, facets, categories }: Props)
             isActive={(id) => state.flavours.includes(id)}
             onPick={(id) => go({ flavours: toggle(state.flavours, id) })}
             kind="checkbox"
+            searchPlaceholder={facets!.flavour!.length > COLLAPSED_LIMIT ? t("searchFlavours") : undefined}
             moreLabel={(n) => t("showMore", { count: n })}
             lessLabel={t("showLess")}
           />
         </Section>
       )}
 
-      {(facets?.size?.length ?? 0) > 0 && (
+      {((facets?.size_band?.length ?? 0) > 0 || exactSizes.length > 0) && (
         <Section title={t("filterSize")} badge={state.sizes.length}>
-          <div className="flex flex-wrap gap-1.5">
-            {facets!.size!.map((s) => {
-              const active = state.sizes.includes(s.id);
+          <div className="space-y-3">
+            {SIZE_KINDS.map((kind) => {
+              const bands = (facets?.size_band ?? []).filter((b) => b.kind === kind);
+              if (!bands.length) return null;
               return (
-                <button
-                  key={s.id}
-                  type="button"
-                  disabled={!active && s.count === 0}
-                  onClick={() => go({ sizes: toggle(state.sizes, s.id) })}
-                  aria-pressed={active}
-                  className={`rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-all disabled:opacity-40 ${active ? "border-primary bg-primary-soft text-primary" : "border-border text-ink-muted hover:border-primary/50 hover:text-ink"}`}
-                >
-                  {formatSizeKey(s.id)} <span className="text-ink-soft">({s.count})</span>
-                </button>
+                <div key={kind}>
+                  <p className="mb-1.5 text-[11px] font-medium text-ink-soft">{t(`sizeKind.${kind}`)}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {bands.map((b) => (
+                      <Chip key={b.id} active={state.sizes.includes(b.id)} count={b.count} onClick={() => go({ sizes: toggle(state.sizes, b.id) })}>
+                        {t(`sizeBand.${b.id}`)}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
               );
             })}
+            {/* an exact pack size from an older link stays visible so it can be removed */}
+            {exactSizes.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {exactSizes.map((id) => (
+                  <Chip key={id} active onClick={() => go({ sizes: state.sizes.filter((s) => s !== id) })}>
+                    {formatSizeKey(id)}
+                  </Chip>
+                ))}
+              </div>
+            )}
           </div>
         </Section>
       )}
@@ -201,13 +216,23 @@ export default function CatalogFilterPanel({ state, facets, categories }: Props)
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label={t("filters")}>
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileOpen(false)} aria-hidden="true" />
-          <div className="nz-glass-strong animate-nz-sheet-up absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
-            <div className="mb-2 flex justify-end">
-              <button type="button" onClick={() => setMobileOpen(false)} aria-label={t("closeFilters")} className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-surface-2">
+          <div className="nz-glass-strong animate-nz-sheet-up absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col rounded-t-3xl">
+            <div className="flex shrink-0 justify-center pt-2.5" aria-hidden="true">
+              <span className="h-1 w-10 rounded-full bg-border-hover" />
+            </div>
+            <div className="flex shrink-0 justify-end px-4">
+              <button type="button" onClick={() => setMobileOpen(false)} aria-label={t("closeFilters")} className="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-surface-2">
                 <X className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
               </button>
             </div>
-            {body}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4">{body}</div>
+            {/* results stay one tap away however far the shopper scrolled through the filters */}
+            <div className="shrink-0 border-t border-border px-5 pb-[calc(0.875rem+env(safe-area-inset-bottom))] pt-3.5">
+              <button type="button" onClick={() => setMobileOpen(false)} className="nz-cta flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-semibold">
+                {pending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+                {resultCount !== undefined ? t("showResults", { count: resultCount }) : t("showResultsNone")}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -228,6 +253,27 @@ function Section({ title, badge = 0, last = false, children }: { title: string; 
       </button>
       {open && <div className="mt-2.5">{children}</div>}
     </section>
+  );
+}
+
+const SIZE_KINDS = ["mass", "count", "volume"] as const;
+
+function Chip({ active, count, onClick, children }: { active: boolean; count?: number; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`inline-flex h-9 items-center gap-1.5 rounded-full border pl-3.5 text-[13px] font-medium transition-all ${count === undefined ? "pr-3.5" : "pr-1.5"} ${
+        active ? "border-primary bg-primary text-white shadow-[0_6px_16px_-8px_rgba(var(--nz-primary-rgb),0.9)]" : "border-border bg-surface/60 text-ink-muted hover:border-primary/50 hover:text-ink"
+      }`}
+    >
+      {active && count === undefined && <X className="-ml-0.5 h-3.5 w-3.5" strokeWidth={2.25} aria-hidden="true" />}
+      {children}
+      {count !== undefined && (
+        <span className={`min-w-6 rounded-full px-1.5 py-0.5 text-center text-[11px] font-semibold tabular-nums ${active ? "bg-white/20 text-white" : "bg-surface-2 text-ink-soft"}`}>{count}</span>
+      )}
+    </button>
   );
 }
 

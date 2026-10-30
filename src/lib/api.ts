@@ -32,6 +32,8 @@ export interface CatalogFacets {
   flavour?: { id: string; name: string; color_hex: string; image_url: string | null; count: number }[];
   /** Canonical size keys ("250g", "2270g") -- format with `formatSizeKey`. */
   size?: { id: string; count: number }[];
+  /** Size ranges (catalog.sizeBand.<id>) a shopper picks instead of exact pack sizes; their ids go in filter[size] too. */
+  size_band?: { id: string; kind: "mass" | "count" | "volume"; count: number }[];
   /** Training goals with how many products serve each. */
   goal?: { id: string; name: string; count: number }[];
   /** Products with an average rating of at least `min` stars. */
