@@ -1,6 +1,7 @@
 import type { PublicSiteSettings } from "@/lib/settings-api";
 import { SITE_URL, absoluteUrl } from "@/lib/site-url";
 import { localizedPath, type Locale } from "@/i18n/config";
+import { RETURN_POLICY } from "@/components/ProductJsonLd";
 
 /**
  * schema.org for the home page: the store as an Organization/OnlineStore (one @id that product offers and
@@ -30,6 +31,7 @@ export default function SiteJsonLd({
       ...(site?.address ? { address: { "@type": "PostalAddress", streetAddress: site.address, addressLocality: "Tashkent", addressCountry: "UZ" } } : { address: { "@type": "PostalAddress", addressLocality: "Tashkent", addressCountry: "UZ" } }),
       areaServed: { "@type": "Country", name: "Uzbekistan" },
       currenciesAccepted: "UZS",
+      hasMerchantReturnPolicy: RETURN_POLICY,
       knowsLanguage: ["uz", "ru", "en"],
       ...(site?.support_phone ? { contactPoint: { "@type": "ContactPoint", telephone: site.support_phone, contactType: "customer service", areaServed: "UZ", availableLanguage: ["Uzbek", "Russian", "English"], ...(site?.telegram_username ? { url: `https://t.me/${site.telegram_username.replace(/^@/, "")}` } : {}) } } : {}),
     },

@@ -33,7 +33,8 @@ async function productEntries(): Promise<MetadataRoute.Sitemap> {
     const res = await safely(() => searchProducts({ page, pageSize: 100, sort: "-created_at" }), null);
     if (!res) break;
     for (const p of res.data) {
-      out.push(...localized(productPaths(p), { lastModified: p.created_at ? new Date(p.created_at) : undefined, changeFrequency: "daily", priority: 0.8 }));
+      // the product photo rides along as an image-sitemap entry, so Google Images finds it with its page
+      out.push(...localized(productPaths(p), { lastModified: p.created_at ? new Date(p.created_at) : undefined, changeFrequency: "daily", priority: 0.8, ...(p.primary_image_path ? { images: [p.primary_image_path] } : {}) }));
     }
     if (page >= (res.pagination?.total_pages ?? 1)) break;
   }

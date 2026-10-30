@@ -1,7 +1,8 @@
 import { segmentMetadata } from "@/lib/page-meta";
+import { AppMessages } from "@/i18n/ClientMessages";
 
 export const generateMetadata = segmentMetadata("account");
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <AppMessages>{children}</AppMessages>;
 }

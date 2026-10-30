@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -9,6 +8,7 @@ import { SITE_URL } from "@/lib/site-url";
 import { DEFAULT_OG_IMAGE, OG_LOCALE } from "@/lib/seo";
 import type { Locale } from "@/i18n/config";
 import TopLoader from "@/components/TopLoader";
+import { PublicMessages } from "@/i18n/ClientMessages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [{ name }, t, locale, codes] = await Promise.all([getBrand(), getTranslations("seo"), getLocale(), getSearchVerification()]);
@@ -55,11 +55,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full flex flex-col text-ink">
         <TopLoader />
-        <NextIntlClientProvider>
+        <PublicMessages>
           <BrandProvider brand={brand}>
             <ThemeProvider>{children}</ThemeProvider>
           </BrandProvider>
-        </NextIntlClientProvider>
+        </PublicMessages>
       </body>
     </html>
   );

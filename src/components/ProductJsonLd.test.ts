@@ -23,4 +23,19 @@ describe("productJsonLd", () => {
     expect(ld.aggregateRating).toBeUndefined();
     expect(ld.brand).toBeUndefined();
   });
+
+  it("marks a family of variants up as a ProductGroup, each variant with its own offer and GTIN", () => {
+    const v = (id: string, flavour: string, size: number, price: string, stock: number, gtin: string | null) => ({
+      id, sku: `SKU-${id}`, gtin, is_default: id === "v1", status: "active", weight_value: size, weight_unit: "g", package: null,
+      flavour: { id: flavour, name: flavour, color_hex: null, image_url: null }, gallery: [], video_url: null, price, currency: "UZS", stock_status: "in_stock", stock_quantity: stock,
+    });
+    const product = { ...base, variants: [v("v1", "Shokolad", 900, "450000.00", 3, "4006381333931"), v("v2", "Vanil", 2270, "890000.00", 0, null)] } as unknown as ProductCard;
+    const ld = productJsonLd(product, "Optimum", "Best whey") as { "@type": string; variesBy: string[]; hasVariant: Record<string, unknown>[] };
+    expect(ld["@type"]).toBe("ProductGroup");
+    expect(ld.variesBy).toEqual(["https://schema.org/size"]);
+    expect(ld.hasVariant[0]).toMatchObject({ name: "Gold Whey (Shokolad, 900 g)", sku: "SKU-v1", gtin: "4006381333931", size: "900 g" });
+    expect(ld.hasVariant[0].offers).toMatchObject({ price: "450000", availability: "https://schema.org/InStock", hasMerchantReturnPolicy: { merchantReturnDays: 14 } });
+    expect(ld.hasVariant[1].gtin).toBeUndefined();
+    expect(ld.hasVariant[1].offers).toMatchObject({ price: "890000", availability: "https://schema.org/OutOfStock" });
+  });
 });

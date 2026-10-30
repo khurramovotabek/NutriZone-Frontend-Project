@@ -142,6 +142,8 @@ export interface ProductCard {
   variants?: {
     id: string;
     sku: string;
+    /** the variant's barcode when it is a valid GTIN-8/12/13/14 (search engines' product matching) */
+    gtin?: string | null;
     is_default: boolean;
     status: string;
     /**
