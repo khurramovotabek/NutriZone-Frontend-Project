@@ -11,8 +11,8 @@ import { getBrand } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [t, tSeo, { name }] = await Promise.all([getTranslations("contact"), getTranslations("seo"), getBrand()]);
-  return pageMetadata({ path: "/contact", title: t("title"), description: tSeo("contactDescription", { brand: name }) });
+  const [tSeo, { name }] = await Promise.all([getTranslations("seo"), getBrand()]);
+  return pageMetadata({ path: "/contact", title: tSeo("contactTitle"), description: tSeo("contactDescription", { brand: name }) });
 }
 
 export default async function ContactPage() {

@@ -82,6 +82,8 @@ export interface StoreAvailability {
 export interface ProductCard {
   id: string;
   slug: string;
+  /** URL slug per language (uz/ru/en) -- hreflang alternates and sitemap; older API responses lack it */
+  slugs?: Partial<Record<string, string>>;
   name: string;
   status: string;
   brand_id: string | null;
@@ -360,6 +362,9 @@ export async function searchProducts(params: SearchParams): Promise<ApiEnvelope<
 
 export interface Category {
   id: string;
+  /** readable URL slug in the requested language, and per language (src/lib/entity-paths.ts) */
+  slug?: string;
+  slugs?: Partial<Record<string, string>>;
   parent_id: string | null;
   name: string;
   sort_order: number;
@@ -399,6 +404,9 @@ export async function getBanners(locale?: string): Promise<ApiEnvelope<Banner[]>
 
 export interface Brand {
   id: string;
+  /** readable URL slug, and per language (src/lib/entity-paths.ts) */
+  slug?: string;
+  slugs?: Partial<Record<string, string>>;
   name: string;
   logo_url: string | null;
   /** In the requested locale when written, else Uzbek, else any language; "" when none. */

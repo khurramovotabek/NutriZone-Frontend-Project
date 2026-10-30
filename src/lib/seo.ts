@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { getLocale } from "next-intl/server";
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, localizedPath, type Locale } from "@/i18n/config";
+import { DEFAULT_LOCALE, LOCALE_HEADER, SUPPORTED_LOCALES, localizedPath, type Locale } from "@/i18n/config";
 import { absoluteUrl } from "@/lib/site-url";
 import { getBrand } from "@/lib/brand";
 
@@ -14,24 +15,51 @@ export const DEFAULT_OG_IMAGE = "/og-image";
 
 export const OG_LOCALE: Record<Locale, string> = { uz: "uz_UZ", ru: "ru_RU", en: "en_US" };
 
+/** A page's unprefixed path per language: the same path everywhere, or a per-language map
+ *  (a product has its own slug in each language -- /products/…-kapsula, /ru/products/…-kapsul). */
+export type LocalePaths = string | Partial<Record<Locale, string>>;
+
+function pathFor(paths: LocalePaths, l: Locale): string {
+  if (typeof paths === "string") return paths;
+  return paths[l] ?? paths[DEFAULT_LOCALE] ?? Object.values(paths).find(Boolean) ?? "/";
+}
+
+/** Per-language product paths from the API's `slugs` map (falls back to the one slug the response has). */
+export function productPaths(product: { slug: string; slugs?: Partial<Record<string, string>> }): LocalePaths {
+  const out: Partial<Record<Locale, string>> = {};
+  for (const l of SUPPORTED_LOCALES) out[l] = `/products/${product.slugs?.[l] || product.slugs?.[DEFAULT_LOCALE] || product.slug}`;
+  return out;
+}
+
 /** canonical = this page in the current language; alternates = the same page in every language (+ x-default = Uzbek). */
-export function languageAlternates(path: string, locale: Locale): NonNullable<Metadata["alternates"]> {
+export function languageAlternates(paths: LocalePaths, locale: Locale): NonNullable<Metadata["alternates"]> {
   const languages: Record<string, string> = {};
-  for (const l of SUPPORTED_LOCALES) languages[l] = localizedPath(path, l);
-  languages["x-default"] = localizedPath(path, DEFAULT_LOCALE);
-  return { canonical: localizedPath(path, locale), languages };
+  for (const l of SUPPORTED_LOCALES) languages[l] = localizedPath(pathFor(paths, l), l);
+  languages["x-default"] = localizedPath(pathFor(paths, DEFAULT_LOCALE), DEFAULT_LOCALE);
+  return { canonical: localizedPath(pathFor(paths, locale), locale), languages };
 }
 
 /** Absolute alternates for the sitemap (`<xhtml:link rel="alternate" hreflang=…>`). */
-export function sitemapAlternates(path: string): { languages: Record<string, string> } {
+export function sitemapAlternates(paths: LocalePaths): { languages: Record<string, string> } {
   const languages: Record<string, string> = {};
-  for (const l of SUPPORTED_LOCALES) languages[l] = absoluteUrl(localizedPath(path, l));
-  languages["x-default"] = absoluteUrl(localizedPath(path, DEFAULT_LOCALE));
+  for (const l of SUPPORTED_LOCALES) languages[l] = absoluteUrl(localizedPath(pathFor(paths, l), l));
+  languages["x-default"] = absoluteUrl(localizedPath(pathFor(paths, DEFAULT_LOCALE), DEFAULT_LOCALE));
   return { languages };
 }
 
+/** `path` keeping this request's language prefix (/ru/… stays /ru/…) -- the target of a page's own redirect. */
+export async function samePrefixPath(path: string): Promise<string> {
+  const l = (await headers()).get(LOCALE_HEADER) as Locale | null;
+  return l && (SUPPORTED_LOCALES as readonly string[]).includes(l) ? localizedPath(path, l) : path;
+}
+
+/** The sitemap URL of one language version. */
+export function sitemapUrl(paths: LocalePaths, l: Locale): string {
+  return absoluteUrl(localizedPath(pathFor(paths, l), l));
+}
+
 interface PageSeo {
-  path: string;
+  path: LocalePaths;
   title?: string | Metadata["title"];
   description?: string | null;
   image?: string | null;
@@ -44,7 +72,7 @@ interface PageSeo {
 /** Metadata for an indexable page: title/description, canonical + hreflang, Open Graph and Twitter card. */
 export async function pageMetadata({ path, title, description, image, imageAlt, keywords, noindex, type = "website" }: PageSeo): Promise<Metadata> {
   const [locale, { name: siteName }] = await Promise.all([getLocale() as Promise<Locale>, getBrand()]);
-  const url = localizedPath(path, locale);
+  const url = localizedPath(pathFor(path, locale), locale);
   const desc = description ? clip(description, 300) : undefined;
   const ogTitle = typeof title === "string" ? title : title && typeof title === "object" && "absolute" in title ? String(title.absolute) : undefined;
   const ogImage = image || DEFAULT_OG_IMAGE;

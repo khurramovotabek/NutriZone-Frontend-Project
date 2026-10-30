@@ -2,6 +2,7 @@ import { getCategories } from "@/lib/api";
 import { getGuides } from "@/lib/guides-api";
 import { absoluteUrl } from "@/lib/site-url";
 import { getPublicSiteSettings } from "@/lib/settings-api";
+import { categoryPath } from "@/lib/entity-paths";
 
 /**
  * /llms.txt (llmstxt.org): a plain-language map of the site for AI answer engines (ChatGPT search, Perplexity, Gemini,
@@ -53,7 +54,7 @@ export async function GET() {
     `- [Loyalty — NutriZone Coins](${absoluteUrl("/loyalty")}): 1–8% cashback on every purchase`,
     `- [Contact](${absoluteUrl("/contact")})`,
     "",
-    ...(top.length ? ["## Categories", ...top.map((c) => `- [${c.name}](${absoluteUrl(`/categories/${c.id}`)})`), ""] : []),
+    ...(top.length ? ["## Categories", ...top.map((c) => `- [${c.name}](${absoluteUrl(categoryPath(c))})`), ""] : []),
     "## Expert guides (sports nutrition and vitamins)",
     `- [All guides](${absoluteUrl("/guides")}) — also in [Russian](${absoluteUrl("/ru/guides")}) and [English](${absoluteUrl("/en/guides")})`,
     ...guidesUz.map((g) => `- [${g.title}](${absoluteUrl(`/guides/${g.slug}`)})${en.get(g.slug) ? ` — ${en.get(g.slug)} ([English](${absoluteUrl(`/en/guides/${g.slug}`)}))` : ""}`),

@@ -3350,20 +3350,20 @@
     "keywords": "sports nutrition Uzbekistan, sports nutrition Tashkent, whey protein, protein powder, mass gainer, creatine, BCAA, amino acids, vitamins, fat burner, supplement store Tashkent, {brand}, nutrizone.uz",
     "catalogTitle": "Sports Nutrition Catalog — Prices in Tashkent",
     "catalogDescription": "Protein, gainers, creatine, BCAA, vitamins and more: prices, flavours and availability. Genuine products, fast delivery and pickup from our stores.",
-    "productTitle": "{name} — Buy in Tashkent, Price",
+    "productTitle": "{name} — Price in Tashkent",
     "productDescription": "{name}{brandPart} — {price}. Genuine product, delivery across Tashkent and Uzbekistan, store pickup. NutriZone Coins cashback on every purchase.",
     "productDescriptionNoPrice": "{name}{brandPart} — genuine product. Delivery across Tashkent and Uzbekistan, store pickup. NutriZone Coins cashback on every purchase.",
     "categoryTitle": "{name} — Buy in Tashkent, Prices",
     "categoryDescription": "{name}: genuine products, prices, flavours and availability. {brand} — sports nutrition store in Tashkent with delivery and store pickup.",
-    "brandTitle": "{name} — Genuine Products and Prices in Tashkent",
+    "brandTitle": "{name} — Genuine, Prices in Tashkent",
     "brandDescription": "{name} products: genuine sports nutrition and vitamins, prices and availability. {brand} — delivery and stores in Tashkent.",
-    "brandsTitle": "Sports Nutrition Brands — Optimum Nutrition and More",
+    "brandsTitle": "Sports Nutrition Brands — Genuine Products",
     "brandsDescription": "All brands at {brand}: Optimum Nutrition, Applied Nutrition, MuscleTech, BSN, Myprotein and more. Genuine products and prices.",
-    "storesTitle": "Stores and Addresses — Sports Nutrition Shops in Tashkent",
+    "storesTitle": "Sports Nutrition Stores in Tashkent",
     "storesDescription": "{brand} stores on the map: address, opening hours, phone and directions. Find the nearest store and pick up your order.",
     "storeTitle": "{name} — Address, Opening Hours and Phone",
     "storeDescription": "{name}: {address}. Opening hours, phone, directions and products in stock. {brand} sports nutrition store.",
-    "loyaltyTitle": "NutriZone Coins — Cashback on Every Purchase and Loyalty Tiers",
+    "loyaltyTitle": "NutriZone Coins — Cashback on Every Purchase",
     "loyaltyDescription": "NutriZone Coins: cashback coins on every purchase, a higher rate at higher tiers and a bonus for inviting friends. 1 coin = 1 so'm — spend it on your next order.",
     "blogTitle": "Sports Nutrition Articles",
     "blogDescription": "How to choose and take protein, creatine, gainers and vitamins, plus practical articles on training and recovery.",
@@ -3413,7 +3413,9 @@
         "preworkout": "pre workout",
         "guides": ""
       }
-    }
+    },
+    "aboutTitle": "About Us — Genuine Sports Nutrition Store",
+    "contactTitle": "Contact — Phone, Telegram and Address"
   },
   "pagination": {
     "prev": "Previous",
@@ -3428,7 +3430,7 @@
     "title": "Advice centre",
     "eyebrow": "Sports nutrition and vitamins",
     "subtitle": "Clear, evidence-based answers on protein, creatine, vitamins and nutrition — doses, when to take them and who they suit.",
-    "metaTitle": "Sports nutrition and vitamin advice — protein, creatine, vitamin D | NUTRIZONE",
+    "metaTitle": "Sports Nutrition Advice: Protein, Creatine | NUTRIZONE",
     "metaDescription": "How to take creatine, how much protein you need, vitamin D, magnesium, fat loss and muscle gain — free sports-dietitian-level advice.",
     "topics": {
       "usage": "How to take it",

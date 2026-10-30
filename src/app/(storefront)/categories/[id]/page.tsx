@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { ChevronRight, Package, SlidersHorizontal, X } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -10,7 +10,8 @@ import ProductGrid from "@/components/ProductGrid";
 import CatalogPagination from "@/components/CatalogPagination";
 import { EmptyState, ErrorState } from "@/components/ui";
 import { getBrand } from "@/lib/brand";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, samePrefixPath } from "@/lib/seo";
+import { categoryPath, entityPaths, entitySlug, matchesParam } from "@/lib/entity-paths";
 import { localizedPath } from "@/i18n/config";
 import { absoluteUrl } from "@/lib/site-url";
 import type { Locale } from "@/i18n/config";
@@ -29,31 +30,36 @@ interface Props {
  * name/image from that same list, and its real product count from
  * the existing, already-accurate `GET /products?filter[category_id]=` pagination.
  */
-async function resolveCategory(id: string) {
+async function resolveCategory(param: string) {
   const { data: categories } = await getCategories(await getLocale());
-  return { category: categories.find((c) => c.id === id) ?? null, allCategories: categories };
+  return { category: categories.find((c) => matchesParam(c, param)) ?? null, allCategories: categories };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
+  const { id: param } = await params;
   const locale = await getLocale();
-  const [{ category }, t, { name: brand }, about] = await Promise.all([resolveCategory(id), getTranslations("seo"), getBrand(), getCategoryDescription(id, locale)]);
+  const [{ category }, t, { name: brand }] = await Promise.all([resolveCategory(param), getTranslations("seo"), getBrand()]);
   if (!category) return { title: (await getTranslations("meta"))("category") };
+  const about = await getCategoryDescription(category.id, locale);
   const description = about ? clip(about.split(/\n\s*\n/)[0], 160) : t("categoryDescription", { name: category.name, brand });
-  return pageMetadata({ path: `/categories/${category.id}`, title: t("categoryTitle", { name: category.name }), description, image: category.image_url });
+  return pageMetadata({ path: entityPaths(categoryPath, category), title: t("categoryTitle", { name: category.name }), description, image: category.image_url });
 }
 
 const PAGE_SIZE = 12;
 
 export default async function CategoryDetailPage({ params, searchParams }: Props) {
-  const { id } = await params;
+  const { id: param } = await params;
   const { page: pageParam } = await searchParams;
   const page = Number(pageParam ?? "1") || 1;
   const t = await getTranslations("catalog");
   const tNav = await getTranslations("navigation");
 
-  const [{ category, allCategories }, about] = await Promise.all([resolveCategory(id), getCategoryDescription(id, await getLocale())]);
+  const { category, allCategories } = await resolveCategory(param);
   if (!category) notFound();
+  // one address per category and language: the old /categories/<uuid> links and another language's slug move here for good
+  if (decodeURIComponent(param) !== entitySlug(category)) permanentRedirect(await samePrefixPath(`${categoryPath(category)}${page > 1 ? `?page=${page}` : ""}`));
+  const id = category.id;
+  const about = await getCategoryDescription(id, await getLocale());
   const aboutParagraphs = about.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
   let products: Awaited<ReturnType<typeof getProducts>>["data"] = [];
@@ -82,8 +88,8 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <JsonLd data={[
-        breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: t("title"), path: "/products" }, ...ancestors.map((a) => ({ name: a.name, path: `/categories/${a.id}` })), { name: category.name, path: `/categories/${category.id}` }], pageLocale),
-        { "@context": "https://schema.org", "@type": "CollectionPage", name: category.name, url: absoluteUrl(localizedPath(`/categories/${category.id}`, pageLocale)), isPartOf: { "@id": absoluteUrl("/#website") } },
+        breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: t("title"), path: "/products" }, ...ancestors.map((a) => ({ name: a.name, path: categoryPath(a) })), { name: category.name, path: categoryPath(category) }], pageLocale),
+        { "@context": "https://schema.org", "@type": "CollectionPage", name: category.name, url: absoluteUrl(localizedPath(categoryPath(category), pageLocale)), isPartOf: { "@id": absoluteUrl("/#website") } },
       ]} />
       <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/" className="transition-colors hover:text-primary">
@@ -96,7 +102,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
         {ancestors.map((a) => (
           <span key={a.id} className="contents">
             <ChevronRight className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-            <Link href={`/categories/${a.id}`} className="truncate transition-colors hover:text-primary">{a.name}</Link>
+            <Link href={categoryPath(a)} className="truncate transition-colors hover:text-primary">{a.name}</Link>
           </span>
         ))}
         <ChevronRight className="h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
@@ -150,7 +156,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
       {subCategories.length > 0 && (
         <nav aria-label={category.name} className="mt-4 flex flex-wrap gap-2">
           {subCategories.map((c) => (
-            <Link key={c.id} href={`/categories/${c.id}`} className="nz-glass rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-primary hover:text-primary">
+            <Link key={c.id} href={categoryPath(c)} className="nz-glass rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-primary hover:text-primary">
               {c.name}
             </Link>
           ))}
@@ -177,7 +183,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
               totalPages={totalPages}
               totalCount={totalCount}
               pageSize={PAGE_SIZE}
-              hrefFor={(p) => (p > 1 ? `/categories/${id}?page=${p}` : `/categories/${id}`)}
+              hrefFor={(p) => (p > 1 ? `${categoryPath(category)}?page=${p}` : categoryPath(category))}
               label={t("paginationLabel")}
             />
           </>
@@ -189,7 +195,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
           <h2 className="text-xl font-semibold tracking-tight text-ink">{t("otherCategories")}</h2>
           <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {otherCategories.map((c) => (
-              <Link key={c.id} href={`/categories/${c.id}`} className="nz-glass nz-glass-interactive group flex flex-col items-center justify-center gap-3 rounded-2xl p-5 text-center">
+              <Link key={c.id} href={categoryPath(c)} className="nz-glass nz-glass-interactive group flex flex-col items-center justify-center gap-3 rounded-2xl p-5 text-center">
                 <div className="relative h-11 w-11 overflow-hidden rounded-xl bg-surface-2">
                   <MediaImage src={c.image_url} alt="" fit="cover" fallbackIcon={<Package className="h-5 w-5 text-ink-muted" strokeWidth={1.5} aria-hidden="true" />} />
                 </div>

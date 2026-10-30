@@ -17,7 +17,8 @@ import ReviewsSection from "@/components/ReviewsSection";
 import SupplementFactsSection from "@/components/SupplementFactsSection";
 import TrustBar from "@/components/TrustBar";
 import ProductJsonLd from "@/components/ProductJsonLd";
-import { clip, pageMetadata } from "@/lib/seo";
+import { clip, pageMetadata, productPaths } from "@/lib/seo";
+import { categoryPath } from "@/lib/entity-paths";
 import { ErrorState, Skeleton } from "@/components/ui";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         ? t("productDescription", { name: product.name, brandPart, price })
         : t("productDescriptionNoPrice", { name: product.name, brandPart });
     return pageMetadata({
-      path: `/products/${product.slug}`,
+      path: productPaths(product),
       title: t("productTitle", { name: product.name }),
       description,
       image: product.primary_image_path,
@@ -75,10 +76,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   // Real category name resolved from the product's own real category_id
   // -- gracefully omitted (not fabricated) if it can't be resolved.
   let categoryName: string | null = null;
+  let categoryHref: string | null = null;
   if (product.category_id) {
     try {
       const { data: categories } = await getCategories(await getLocale());
-      categoryName = categories.find((c) => c.id === product.category_id)?.name ?? null;
+      const category = categories.find((c) => c.id === product.category_id);
+      categoryName = category?.name ?? null;
+      categoryHref = category ? categoryPath(category) : null;
     } catch {
       // Breadcrumb/category chip is a bonus, not critical path -- product still renders without it.
     }
@@ -151,7 +155,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
-      <ProductJsonLd product={product} brandName={brandName} description={product.description} categoryName={categoryName} locale={(await getLocale()) as Locale} catalogName={tCatalog("title")} />
+      <ProductJsonLd product={product} brandName={brandName} description={product.description} categoryName={categoryName} categoryHref={categoryHref} locale={(await getLocale()) as Locale} catalogName={tCatalog("title")} />
       <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/products" className="transition-colors hover:text-primary">
           {tCatalog("title")}
@@ -159,7 +163,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         {categoryName && (
           <>
             <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
-            <Link href={`/products?category=${product.category_id}`} className="transition-colors hover:text-primary">
+            <Link href={categoryHref ?? `/products?category=${product.category_id}`} className="transition-colors hover:text-primary">
               {categoryName}
             </Link>
           </>

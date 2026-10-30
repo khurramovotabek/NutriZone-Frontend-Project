@@ -46,11 +46,11 @@ export function productJsonLd(product: ProductCard, brandName: string | null, de
 }
 
 export default function ProductJsonLd({
-  product, brandName, description, categoryName, locale = "uz", catalogName,
-}: { product: ProductCard; brandName: string | null; description?: string | null; categoryName?: string | null; locale?: Locale; catalogName?: string }) {
+  product, brandName, description, categoryName, categoryHref, locale = "uz", catalogName,
+}: { product: ProductCard; brandName: string | null; description?: string | null; categoryName?: string | null; categoryHref?: string | null; locale?: Locale; catalogName?: string }) {
   const trail = [
     ...(catalogName ? [{ name: catalogName, path: "/products" }] : []),
-    ...(categoryName && product.category_id ? [{ name: categoryName, path: `/categories/${product.category_id}` }] : []),
+    ...(categoryName && product.category_id ? [{ name: categoryName, path: categoryHref ?? `/categories/${product.category_id}` }] : []),
     { name: product.name, path: `/products/${product.slug}` },
   ];
   const data = [productJsonLd(product, brandName, description, locale), breadcrumbJsonLd(trail, locale)];

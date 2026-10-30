@@ -2,16 +2,16 @@ import type { MetadataRoute } from "next";
 import { getBlogPosts, getBrands, getCategories, searchProducts } from "@/lib/api";
 import { getStores } from "@/lib/store-api";
 import { getGuides } from "@/lib/guides-api";
-import { absoluteUrl } from "@/lib/site-url";
-import { sitemapAlternates } from "@/lib/seo";
-import { SUPPORTED_LOCALES, localizedPath } from "@/i18n/config";
+import { productPaths, sitemapAlternates, sitemapUrl, type LocalePaths } from "@/lib/seo";
+import { SUPPORTED_LOCALES } from "@/i18n/config";
+import { brandPath, categoryPath, entityPaths } from "@/lib/entity-paths";
 
 type Entry = MetadataRoute.Sitemap[number];
 
 /** One entry per language (/x, /ru/x, /en/x), each listing all three as hreflang alternates. */
-function localized(path: string, rest: Omit<Entry, "url" | "alternates"> = {}): MetadataRoute.Sitemap {
+function localized(path: LocalePaths, rest: Omit<Entry, "url" | "alternates"> = {}): MetadataRoute.Sitemap {
   const alternates = sitemapAlternates(path);
-  return SUPPORTED_LOCALES.map((l) => ({ url: absoluteUrl(localizedPath(path, l)), alternates, ...rest }));
+  return SUPPORTED_LOCALES.map((l) => ({ url: sitemapUrl(path, l), alternates, ...rest }));
 }
 
 // Rebuilt at most hourly (never only at build time -- new products must appear without a redeploy).
@@ -33,7 +33,7 @@ async function productEntries(): Promise<MetadataRoute.Sitemap> {
     const res = await safely(() => searchProducts({ page, pageSize: 100, sort: "-created_at" }), null);
     if (!res) break;
     for (const p of res.data) {
-      out.push(...localized(`/products/${p.slug}`, { lastModified: p.created_at ? new Date(p.created_at) : undefined, changeFrequency: "daily", priority: 0.8 }));
+      out.push(...localized(productPaths(p), { lastModified: p.created_at ? new Date(p.created_at) : undefined, changeFrequency: "daily", priority: 0.8 }));
     }
     if (page >= (res.pagination?.total_pages ?? 1)) break;
   }
@@ -68,8 +68,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticPages,
     ...products,
-    ...categories.flatMap((c) => localized(`/categories/${c.id}`, { changeFrequency: "weekly", priority: 0.8 })),
-    ...brands.flatMap((b) => localized(`/brands/${b.id}`, { changeFrequency: "weekly", priority: 0.7 })),
+    ...categories.flatMap((c) => localized(entityPaths(categoryPath, c), { changeFrequency: "weekly", priority: 0.8 })),
+    ...brands.flatMap((b) => localized(entityPaths(brandPath, b), { changeFrequency: "weekly", priority: 0.7 })),
     ...stores.flatMap((s) => localized(`/store/${s.slug}`, { changeFrequency: "weekly", priority: 0.7 })),
     ...guides.flatMap((g) => localized(`/guides/${g.slug}`, { lastModified: new Date(g.updated_at), changeFrequency: "monthly", priority: 0.7 })),
     ...posts.flatMap((p) => localized(`/blog/${p.slug}`, { lastModified: p.published_at ? new Date(p.published_at) : undefined, changeFrequency: "monthly", priority: 0.5 })),

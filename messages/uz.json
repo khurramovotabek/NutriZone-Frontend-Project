@@ -3350,20 +3350,20 @@
     "keywords": "sport ozuqalari, sport pitaniya, protein, protein narxi, whey protein, gainer, geyner, kreatin, creatine, BCAA, aminokislotalar, vitaminlar, yog' yoquvchi, sport ozuqa do'koni Toshkent, {brand}, nutrizone.uz",
     "catalogTitle": "Sport ozuqalari katalogi — narxlar Toshkentda",
     "catalogDescription": "Protein, gainer, kreatin, BCAA, vitaminlar va boshqa sport ozuqalari: narxlar, ta'mlar va mavjudlik. Original mahsulotlar, tez yetkazib berish va filiallardan olib ketish.",
-    "productTitle": "{name} — narxi va sotib olish Toshkentda",
+    "productTitle": "{name} narxi Toshkentda",
     "productDescription": "{name}{brandPart} — {price}. Original mahsulot, Toshkent va O'zbekiston bo'ylab yetkazib berish, filiallardan olib ketish. Har xariddan NutriZone Coins keshbek.",
     "productDescriptionNoPrice": "{name}{brandPart} — original mahsulot. Toshkent va O'zbekiston bo'ylab yetkazib berish, filiallardan olib ketish. Har xariddan NutriZone Coins keshbek.",
     "categoryTitle": "{name} — sotib olish Toshkentda, narxlar",
     "categoryDescription": "{name}: original mahsulotlar, narxlar, ta'mlar va mavjudlik. {brand} — Toshkentdagi sport ozuqalari do'koni: yetkazib berish va filiallardan olib ketish.",
-    "brandTitle": "{name} — original mahsulotlar va narxlar Toshkentda",
+    "brandTitle": "{name} — original, narxlari Toshkentda",
     "brandDescription": "{name} mahsulotlari: original sport ozuqalari va vitaminlar, narxlar va mavjudlik. {brand} — rasmiy kanallardan olingan mahsulotlar, yetkazib berish va filiallar.",
-    "brandsTitle": "Sport ozuqalari brendlari — Optimum Nutrition va boshqalar",
+    "brandsTitle": "Sport ozuqalari brendlari — original mahsulotlar",
     "brandsDescription": "{brand} dagi barcha brendlar: Optimum Nutrition, Applied Nutrition, MuscleTech, BSN, Myprotein va boshqalar. Original mahsulotlar va narxlar.",
-    "storesTitle": "Filiallar va manzillar — sport ozuqalari do'konlari Toshkentda",
+    "storesTitle": "Sport ozuqalari do'konlari Toshkentda — manzillar",
     "storesDescription": "{brand} filiallari xaritada: manzil, ish vaqti, telefon va yo'nalish. Yaqin filialni toping va buyurtmani o'zingiz olib keting.",
     "storeTitle": "{name} — manzil, ish vaqti va telefon",
     "storeDescription": "{name}: {address}. Ish vaqti, telefon, xaritada yo'nalish va filialdagi mahsulotlar. {brand} sport ozuqalari do'koni.",
-    "loyaltyTitle": "NutriZone Coins — har xariddan keshbek va sodiqlik darajalari",
+    "loyaltyTitle": "NutriZone Coins — har xariddan keshbek",
     "loyaltyDescription": "NutriZone Coins: har bir xariddan keshbek coin, darajalar oshgani sari katta foiz, do'stlarni taklif qilish bonusi. 1 coin = 1 so'm — keyingi xaridda ishlating.",
     "blogTitle": "Sport ovqatlanishi bo'yicha maqolalar",
     "blogDescription": "Protein, kreatin, gainer va vitaminlarni qanday tanlash va qabul qilish, mashg'ulot va tiklanish bo'yicha foydali maqolalar.",
@@ -3413,7 +3413,9 @@
         "preworkout": "pre workout",
         "guides": ""
       }
-    }
+    },
+    "aboutTitle": "Biz haqimizda — original sport ozuqalari do'koni",
+    "contactTitle": "Aloqa — telefon, Telegram va manzil"
   },
   "pagination": {
     "prev": "Oldingi",
@@ -3428,7 +3430,7 @@
     "title": "Maslahatlar markazi",
     "eyebrow": "Sport ovqatlanishi va vitaminlar",
     "subtitle": "Protein, kreatin, vitaminlar va to'g'ri ovqatlanish bo'yicha aniq, dalillarga asoslangan javoblar — dozalar, qachon ichish va kimga mos.",
-    "metaTitle": "Sport ovqatlanishi va vitaminlar bo'yicha maslahatlar — protein, kreatin, D vitamini | NUTRIZONE",
+    "metaTitle": "Sport ozuqalari bo'yicha maslahatlar: protein, kreatin | NUTRIZONE",
     "metaDescription": "Kreatin qanday ichiladi, kuniga qancha oqsil kerak, D vitamini, magniy, ozish va massa olish — sport dietologi darajasidagi bepul maslahatlar o'zbek tilida.",
     "topics": {
       "usage": "Qo'llash va dozalar",

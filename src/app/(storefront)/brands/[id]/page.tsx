@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowUpRight, BadgeCheck, ChevronRight, Package, Percent, Tag } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -12,7 +12,8 @@ import ProductGrid from "@/components/ProductGrid";
 import CatalogPagination from "@/components/CatalogPagination";
 import { EmptyState, ErrorState } from "@/components/ui";
 import { getBrand } from "@/lib/brand";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, samePrefixPath } from "@/lib/seo";
+import { brandPath, entityPaths, entitySlug, matchesParam } from "@/lib/entity-paths";
 import { localizedPath } from "@/i18n/config";
 import { absoluteUrl } from "@/lib/site-url";
 import type { Locale } from "@/i18n/config";
@@ -28,20 +29,20 @@ const PAGE_SIZE = 12;
 const SORTS: CatalogSort[] = ["-created_at", "-popularity", "-discount", "price", "-price", "-rating"];
 
 /** `GET /brands` (there is no per-brand endpoint) is the single source of a brand's name, logo, description and count. */
-async function resolveBrand(id: string, locale?: string) {
+async function resolveBrand(param: string, locale?: string) {
   const { data: brands } = await getBrands(locale);
-  return { brand: brands.find((b) => b.id === id) ?? null, allBrands: brands };
+  return { brand: brands.find((b) => matchesParam(b, param)) ?? null, allBrands: brands };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const [{ brand }, t, site] = await Promise.all([resolveBrand(id), getTranslations("seo"), getBrand()]);
   if (!brand) return { title: (await getTranslations("meta"))("brand") };
-  return pageMetadata({ path: `/brands/${brand.id}`, title: t("brandTitle", { name: brand.name }), description: brand.description?.trim() || t("brandDescription", { name: brand.name, brand: site.name }) });
+  return pageMetadata({ path: entityPaths(brandPath, brand), title: t("brandTitle", { name: brand.name }), description: brand.description?.trim() || t("brandDescription", { name: brand.name, brand: site.name }) });
 }
 
 export default async function BrandDetailPage({ params, searchParams }: Props) {
-  const { id } = await params;
+  const { id: param } = await params;
   const query = await searchParams;
   const page = Math.max(1, Number(query.page ?? "1") || 1);
   const sort: CatalogSort = SORTS.includes(query.sort as CatalogSort) ? (query.sort as CatalogSort) : "-created_at";
@@ -51,8 +52,23 @@ export default async function BrandDetailPage({ params, searchParams }: Props) {
   const tBrands = await getTranslations("brands");
   const tNav = await getTranslations("navigation");
 
-  const { brand, allBrands } = await resolveBrand(id, locale);
+  const { brand, allBrands } = await resolveBrand(param, locale);
   if (!brand) notFound();
+  const id = brand.id;
+  const self = brandPath(brand, locale);
+  const href = (changes: { page?: number; sort?: CatalogSort; sale?: boolean }) => {
+    const p = new URLSearchParams();
+    const nextSort = changes.sort ?? sort;
+    const nextSale = changes.sale ?? onSale;
+    if (nextSort !== "-created_at") p.set("sort", nextSort);
+    if (nextSale) p.set("sale", "1");
+    if ((changes.page ?? 1) > 1) p.set("page", String(changes.page));
+    const qs = p.toString();
+    return `${self}${qs ? `?${qs}` : ""}`;
+  };
+  // before any data loads, so it is a real 308 and not a redirect inside an already-streamed page
+  // one address per brand and language: old /brands/<uuid> links and another language's slug move here for good
+  if (decodeURIComponent(param) !== entitySlug(brand, locale)) permanentRedirect(await samePrefixPath(href({ page })));
 
   let products: Awaited<ReturnType<typeof searchProducts>>["data"] = [];
   let totalCount = 0;
@@ -69,17 +85,6 @@ export default async function BrandDetailPage({ params, searchParams }: Props) {
     loadError = true;
   }
 
-  const href = (changes: { page?: number; sort?: CatalogSort; sale?: boolean }) => {
-    const p = new URLSearchParams();
-    const nextSort = changes.sort ?? sort;
-    const nextSale = changes.sale ?? onSale;
-    if (nextSort !== "-created_at") p.set("sort", nextSort);
-    if (nextSale) p.set("sale", "1");
-    if ((changes.page ?? 1) > 1) p.set("page", String(changes.page));
-    const qs = p.toString();
-    return `/brands/${id}${qs ? `?${qs}` : ""}`;
-  };
-
   const sortLabels: Record<string, string> = {
     "-created_at": t("sortNewest"),
     "-popularity": t("sortPopular"),
@@ -94,8 +99,8 @@ export default async function BrandDetailPage({ params, searchParams }: Props) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <JsonLd data={[
-        breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: tBrands("title"), path: "/brands" }, { name: brand.name, path: `/brands/${brand.id}` }], locale as Locale),
-        { "@context": "https://schema.org", "@type": "CollectionPage", name: brand.name, url: absoluteUrl(localizedPath(`/brands/${brand.id}`, locale as Locale)), about: { "@type": "Brand", name: brand.name }, isPartOf: { "@id": absoluteUrl("/#website") } },
+        breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: tBrands("title"), path: "/brands" }, { name: brand.name, path: self }], locale as Locale),
+        { "@context": "https://schema.org", "@type": "CollectionPage", name: brand.name, url: absoluteUrl(localizedPath(self, locale as Locale)), about: { "@type": "Brand", name: brand.name }, isPartOf: { "@id": absoluteUrl("/#website") } },
       ]} />
       <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/" className="transition-colors hover:text-primary">

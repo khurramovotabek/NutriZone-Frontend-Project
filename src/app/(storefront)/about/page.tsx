@@ -23,12 +23,13 @@ import FullBleedImage from "@/components/FullBleedImage";
 import ContactSpotlight from "@/components/contact/ContactSpotlight";
 import { getBrand } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
+import { brandPath } from "@/lib/entity-paths";
 
 const STATS_MIN_PRODUCTS = 20;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [t, tSeo, { name }] = await Promise.all([getTranslations("about"), getTranslations("seo"), getBrand()]);
-  return pageMetadata({ path: "/about", title: t("metaTitle"), description: tSeo("aboutDescription", { brand: name }) });
+  const [tSeo, { name }] = await Promise.all([getTranslations("seo"), getBrand()]);
+  return pageMetadata({ path: "/about", title: tSeo("aboutTitle"), description: tSeo("aboutDescription", { brand: name }) });
 }
 
 /**
@@ -222,7 +223,7 @@ export default async function AboutPage() {
             <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
               {brands.slice(0, 12).map((brand) => (
                 <li key={brand.id}>
-                  <Link href={`/brands/${brand.id}`} className="nz-liquid nz-liquid-tile group flex flex-col overflow-hidden rounded-2xl" title={brand.name}>
+                  <Link href={brandPath(brand)} className="nz-liquid nz-liquid-tile group flex flex-col overflow-hidden rounded-2xl" title={brand.name}>
                     <div className="relative aspect-[16/10] overflow-hidden bg-white">
                       <FullBleedImage
                         src={brand.logo_url}

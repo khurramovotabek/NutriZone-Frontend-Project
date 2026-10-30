@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getBrands } from "@/lib/api";
 import FullBleedImage from "@/components/FullBleedImage";
 import SectionHeader from "@/components/SectionHeader";
+import { brandPath } from "@/lib/entity-paths";
 
 /** Official brands as a centred strip of logo tiles (white plates, like a shop window) -- neat with 2 brands or 20. */
 export default async function BrandStrip() {
@@ -22,7 +23,7 @@ export default async function BrandStrip() {
       <ul className="mt-6 flex flex-wrap justify-center gap-4">
         {brands.slice(0, 12).map((b) => (
           <li key={b.id} className="w-[calc(50%-0.5rem)] sm:w-52">
-            <Link href={`/brands/${b.id}`} className="group block">
+            <Link href={brandPath(b)} className="group block">
               <span className="relative block aspect-[16/10] overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-primary/10">
                 <FullBleedImage src={b.logo_url} alt={b.name} sizes="192px" className="p-4 transition-transform duration-300 group-hover:scale-105" fallbackIcon={<Tag className="h-8 w-8 text-slate-300" strokeWidth={1.5} aria-hidden="true" />} />
               </span>

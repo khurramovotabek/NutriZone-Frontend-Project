@@ -9,6 +9,7 @@ import { ChevronDown, ChevronRight, LayoutGrid, Package, X } from "lucide-react"
 import { useTranslations } from "next-intl";
 import type { Category } from "@/lib/api";
 import MediaImage from "@/components/MediaImage";
+import { categoryPath } from "@/lib/entity-paths";
 
 interface CategoryNode extends Category {
   children: CategoryNode[];
@@ -34,7 +35,7 @@ function buildCategoryTree(categories: Category[]): CategoryNode[] {
   return sort(roots);
 }
 
-const categoryHref = (c: Category) => `/categories/${c.id}`;
+const categoryHref = (c: Category) => categoryPath(c);
 
 /** A category's artwork (Dashboard → Kategoriyalar image) as a small rounded tile; the box icon when it has none. */
 function CategoryThumb({ category, size, className = "" }: { category: Category; size: number; className?: string }) {

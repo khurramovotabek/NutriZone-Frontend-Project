@@ -3,6 +3,7 @@ import { BookOpen, Coins, LayoutGrid, Package, Store, Tag } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getCategories } from "@/lib/api";
 import FullBleedImage from "@/components/FullBleedImage";
+import { categoryPath } from "@/lib/entity-paths";
 
 /**
  * The quick-navigation rail right under the hero: the catalogue, every top-level category (with its photo) and the
@@ -37,7 +38,7 @@ export default async function QuickNav() {
         </li>
         {categories.map((c) => (
           <li key={c.id}>
-            <Link href={`/categories/${c.id}`} className="nz-glass nz-glass-interactive group flex items-center gap-3 rounded-2xl py-2 pl-2 pr-4">
+            <Link href={categoryPath(c)} className="nz-glass nz-glass-interactive group flex items-center gap-3 rounded-2xl py-2 pl-2 pr-4">
               <span className="relative h-11 w-11 overflow-hidden rounded-xl bg-surface-2">
                 <FullBleedImage src={c.image_url} alt="" sizes="44px" className="transition-transform duration-300 group-hover:scale-110" fallbackIcon={<Package className="h-5 w-5 text-ink-soft" strokeWidth={1.5} aria-hidden="true" />} />
               </span>

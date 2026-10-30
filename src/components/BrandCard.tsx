@@ -5,6 +5,7 @@ import { ArrowRight, Package } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { Brand } from "@/lib/api";
 import BrandLogo from "@/components/BrandLogo";
+import { brandPath } from "@/lib/entity-paths";
 
 const BRAND_IMAGE_SIZES = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px";
 
@@ -19,7 +20,7 @@ export default function BrandCard({ brand, productCount, priority = false }: { b
   const count = productCount ?? brand.product_count ?? null;
 
   return (
-    <Link href={`/brands/${brand.id}`} className="group block h-full">
+    <Link href={brandPath(brand)} className="group block h-full">
       <article className="nz-glass nz-glass-interactive flex h-full flex-col overflow-hidden rounded-2xl">
         <div className="relative aspect-[16/10] overflow-hidden border-b border-border/60">
           <div className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.04]">

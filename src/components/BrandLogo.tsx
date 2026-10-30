@@ -38,7 +38,7 @@ export default function BrandLogo({ name, logoUrl, padding = "p-4", textSize = "
     <span className="relative block h-full w-full bg-white">
       <MediaImage
         src={logoUrl}
-        alt=""
+        alt={`${name} logo`} // image search indexes brand logos by their alt text
         fit="contain"
         padding={padding}
         sizes={sizes}

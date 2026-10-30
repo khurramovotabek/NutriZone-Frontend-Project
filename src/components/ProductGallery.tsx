@@ -107,7 +107,7 @@ export default function ProductGallery({ media, alt, badge }: { media: MediaLigh
                   <PlayCircle className="h-5 w-5 text-ink-soft" strokeWidth={1.5} aria-hidden="true" />
                 </span>
               ) : (
-                <ProductMediaImage src={item.url} size="small" alt="" fit="contain" padding="p-1.5" fallbackIcon={<Package className="h-4 w-4 text-ink-soft" strokeWidth={1.25} aria-hidden="true" />} />
+                <ProductMediaImage src={item.url} size="small" alt={`${alt} — ${idx + 1}`} fit="contain" padding="p-1.5" fallbackIcon={<Package className="h-4 w-4 text-ink-soft" strokeWidth={1.25} aria-hidden="true" />} />
               )}
             </button>
           ))}
