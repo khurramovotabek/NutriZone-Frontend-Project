@@ -10,7 +10,7 @@ import ProductGrid from "@/components/ProductGrid";
 import CatalogPagination from "@/components/CatalogPagination";
 import { EmptyState, ErrorState } from "@/components/ui";
 import { getBrand } from "@/lib/brand";
-import { pageMetadata, samePrefixPath } from "@/lib/seo";
+import { pageMetadata, paged, samePrefixPath } from "@/lib/seo";
 import { categoryPath, entityPaths, entitySlug, matchesParam } from "@/lib/entity-paths";
 import { localizedPath } from "@/i18n/config";
 import { absoluteUrl } from "@/lib/site-url";
@@ -35,14 +35,15 @@ async function resolveCategory(param: string) {
   return { category: categories.find((c) => matchesParam(c, param)) ?? null, allCategories: categories };
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { id: param } = await params;
+  const page = Number((await searchParams).page ?? "1") || 1;
   const locale = await getLocale();
   const [{ category }, t, { name: brand }] = await Promise.all([resolveCategory(param), getTranslations("seo"), getBrand()]);
   if (!category) return { title: (await getTranslations("meta"))("category") };
   const about = await getCategoryDescription(category.id, locale);
   const description = about ? clip(about.split(/\n\s*\n/)[0], 160) : t("categoryDescription", { name: category.name, brand });
-  return pageMetadata({ path: entityPaths(categoryPath, category), title: t("categoryTitle", { name: category.name }), description, image: category.image_url });
+  return pageMetadata({ path: paged(entityPaths(categoryPath, category), page), title: `${t("categoryTitle", { name: category.name })}${page > 1 ? ` — ${t("pageSuffix", { page })}` : ""}`, description, image: category.image_url });
 }
 
 const PAGE_SIZE = 12;

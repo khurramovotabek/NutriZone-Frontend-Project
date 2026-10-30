@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Globe, Printer, ReceiptText, RotateCcw, Search, ShieldCheck, Store as StoreIcon, Wallet } from "lucide-react";
 import { Card, EmptyState, Skeleton } from "@/components/ui";
 import { StatCard } from "@/components/charts/Charts";
+import LoadMore, { useSteppedList } from "@/components/LoadMore";
 
 type Days = 1 | 7 | 30;
 
@@ -47,6 +48,7 @@ export default function StoreReceiptsPage() {
   const [query, setQuery] = useState("");
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
+  const stepped = useSteppedList(data?.receipts ?? [], 25, `${days}|${query}`);
 
   useEffect(() => {
     const id = window.setTimeout(() => setQuery(q.trim()), 300);
@@ -110,7 +112,7 @@ export default function StoreReceiptsPage() {
           <EmptyState title={t("emptyTitle")} description={t("emptyBody")} icon={<ReceiptText className="h-7 w-7" strokeWidth={1.75} aria-hidden="true" />} />
         ) : (
           <ul className="mt-3 divide-y divide-border/70">
-            {data.receipts.map((r) => (
+            {stepped.shown.map((r) => (
               <li key={r.token} className="flex items-center gap-3 py-3">
                 <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${r.kind === "refund" ? "bg-amber-500/14 text-amber-600" : r.source === "online" ? "bg-primary-soft text-primary" : "bg-emerald-500/14 text-emerald-600 dark:text-emerald-400"}`}>
                   {r.kind === "refund" ? <RotateCcw className="h-4 w-4" aria-hidden="true" /> : r.source === "online" ? <Globe className="h-4 w-4" aria-hidden="true" /> : <StoreIcon className="h-4 w-4" aria-hidden="true" />}
@@ -137,6 +139,7 @@ export default function StoreReceiptsPage() {
             ))}
           </ul>
         )}
+        {data && data.receipts.length > 0 && <LoadMore className="mt-3" hasMore={stepped.hasMore} loading={false} onMore={stepped.more} shown={stepped.shown.length} total={stepped.total} />}
       </Card>
     </div>
   );

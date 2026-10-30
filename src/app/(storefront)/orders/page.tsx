@@ -15,6 +15,9 @@ import { useReorder } from "@/components/orders/useReorder";
 import { computeSpendSummary, formatMoney, orderItemCount, orderTotal } from "@/lib/account-insights";
 import { formatDate } from "@/lib/dates";
 import { useVariantDisplays, type VariantDisplay } from "@/lib/variant-display";
+import LoadMore, { useSteppedList } from "@/components/LoadMore";
+
+const ORDERS_STEP = 15;
 
 const FILTERS: OrderFilter[] = ["all", "active", "delivered", "cancelled"];
 
@@ -50,6 +53,27 @@ export default function OrdersPage() {
   const allVariantIds = useMemo(() => (orders ?? []).flatMap((o) => o.lines.filter((l) => l.status === "active").map((l) => l.product_variant_id)), [orders]);
   const displays = useVariantDisplays(allVariantIds, locale);
 
+  const list = orders ?? [];
+  const spend = computeSpendSummary(list);
+  const counts: Record<OrderFilter, number> = { all: list.length, active: 0, delivered: 0, cancelled: 0 };
+  for (const o of list) {
+    const bucket = orderFilterBucket(o.status);
+    if (bucket) counts[bucket] += 1;
+  }
+
+  const needle = query.trim().toLowerCase();
+  const visible = list
+    .filter((o) => filter === "all" || orderFilterBucket(o.status) === filter)
+    .filter((o) => {
+      if (!needle) return true;
+      if (o.order_number.toLowerCase().includes(needle)) return true;
+      return o.lines.some((l) => displays[l.product_variant_id]?.productName.toLowerCase().includes(needle));
+    })
+    .sort((a, b) => (newestFirst ? placedTime(b) - placedTime(a) : placedTime(a) - placedTime(b)));
+
+  // rendered in steps -- a long history stays light on a phone; a new filter, search or sort starts over
+  const stepped = useSteppedList(visible, ORDERS_STEP, `${filter}|${needle}|${newestFirst}`);
+
   if (loading) {
     return (
       <AccountLayout>
@@ -80,27 +104,9 @@ export default function OrdersPage() {
     );
   }
 
-  const list = orders ?? [];
-  const spend = computeSpendSummary(list);
-  const counts: Record<OrderFilter, number> = { all: list.length, active: 0, delivered: 0, cancelled: 0 };
-  for (const o of list) {
-    const bucket = orderFilterBucket(o.status);
-    if (bucket) counts[bucket] += 1;
-  }
-
-  const needle = query.trim().toLowerCase();
-  const visible = list
-    .filter((o) => filter === "all" || orderFilterBucket(o.status) === filter)
-    .filter((o) => {
-      if (!needle) return true;
-      if (o.order_number.toLowerCase().includes(needle)) return true;
-      return o.lines.some((l) => displays[l.product_variant_id]?.productName.toLowerCase().includes(needle));
-    })
-    .sort((a, b) => (newestFirst ? placedTime(b) - placedTime(a) : placedTime(a) - placedTime(b)));
-
   // Month headings ("2026-yil oktabr") over the visible, sorted list.
   const groups: { key: string; label: string; orders: Order[] }[] = [];
-  for (const o of visible) {
+  for (const o of stepped.shown) {
     const d = o.placed_at ? new Date(o.placed_at) : null;
     const key = d ? `${d.getFullYear()}-${d.getMonth()}` : "none";
     let group = groups[groups.length - 1];
@@ -230,6 +236,7 @@ export default function OrdersPage() {
                   </ul>
                 </section>
               ))}
+              <LoadMore hasMore={stepped.hasMore} loading={false} onMore={stepped.more} shown={stepped.shown.length} total={stepped.total} />
             </div>
           )}
         </>

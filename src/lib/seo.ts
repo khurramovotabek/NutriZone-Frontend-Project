@@ -47,6 +47,14 @@ export function sitemapAlternates(paths: LocalePaths): { languages: Record<strin
   return { languages };
 }
 
+/** Page 2+ of a listing is its own page for search engines: canonical to itself (not to page 1, which would
+ *  hide every product past the first page) and a distinct title. */
+export function paged(paths: LocalePaths, page: number): LocalePaths {
+  if (page <= 1) return paths;
+  if (typeof paths === "string") return `${paths}?page=${page}`;
+  return Object.fromEntries(Object.entries(paths).map(([l, p]) => [l, `${p}?page=${page}`]));
+}
+
 /** `path` keeping this request's language prefix (/ru/… stays /ru/…) -- the target of a page's own redirect. */
 export async function samePrefixPath(path: string): Promise<string> {
   const l = (await headers()).get(LOCALE_HEADER) as Locale | null;

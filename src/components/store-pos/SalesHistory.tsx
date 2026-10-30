@@ -10,6 +10,7 @@ import { dayKey, money, pos, timeOnly } from "./api";
 import type { PosError, PosHistoryRow, PosSale } from "./types";
 import ReceiptDialog from "./ReceiptDialog";
 import RefundDialog from "./RefundDialog";
+import LoadMore from "@/components/LoadMore";
 
 type Period = "today" | "7d" | "30d";
 
@@ -70,7 +71,7 @@ export default function SalesHistory({ explain }: { explain: (e: PosError) => st
   }, [query, q, reload]);
 
   async function more() {
-    if (!data) return;
+    if (!data || loadingMore) return;
     setLoadingMore(true);
     const res = await query(data.page + 1);
     setLoadingMore(false);
@@ -265,13 +266,7 @@ export default function SalesHistory({ explain }: { explain: (e: PosError) => st
               </ul>
             </section>
           ))}
-          {data.results.length < data.total_count && (
-            <div className="text-center">
-              <button type="button" onClick={more} disabled={loadingMore} className="nz-liquid-chip rounded-full px-5 py-2 text-sm font-medium">
-                {t("loadMore")}
-              </button>
-            </div>
-          )}
+          <LoadMore hasMore={data.results.length < data.total_count} loading={loadingMore} onMore={() => void more()} shown={data.results.length} total={data.total_count} />
         </div>
       )}
 

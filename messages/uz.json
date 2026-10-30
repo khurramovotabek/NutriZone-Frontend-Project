@@ -245,7 +245,16 @@
     "closeMenu": "Menyuni yopish",
     "imageUnavailable": "Rasm mavjud emas",
     "notFoundTitle": "Sahifa topilmadi",
-    "notFoundMessage": "Siz qidirayotgan sahifa mavjud emas yoki ko'chirilgan bo'lishi mumkin."
+    "notFoundMessage": "Siz qidirayotgan sahifa mavjud emas yoki ko'chirilgan bo'lishi mumkin.",
+    "list": {
+      "more": "Yana ko'rsatish",
+      "loading": "Yuklanmoqda…",
+      "shown": "{shown} / {total} ko'rsatildi",
+      "shownOnly": "{shown} ta ko'rsatildi",
+      "allShown": "Hammasi ko'rsatildi",
+      "retry": "Qayta urinish",
+      "error": "Yuklab bo'lmadi"
+    }
   },
   "home": {
     "hero": {
@@ -3415,7 +3424,8 @@
       }
     },
     "aboutTitle": "Biz haqimizda — original sport ozuqalari do'koni",
-    "contactTitle": "Aloqa — telefon, Telegram va manzil"
+    "contactTitle": "Aloqa — telefon, Telegram va manzil",
+    "pageSuffix": "{page}-sahifa"
   },
   "pagination": {
     "prev": "Oldingi",

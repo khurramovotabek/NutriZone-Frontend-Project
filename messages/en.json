@@ -245,7 +245,16 @@
     "closeMenu": "Close menu",
     "imageUnavailable": "Image unavailable",
     "notFoundTitle": "Page not found",
-    "notFoundMessage": "The page you're looking for doesn't exist or may have been moved."
+    "notFoundMessage": "The page you're looking for doesn't exist or may have been moved.",
+    "list": {
+      "more": "Show more",
+      "loading": "Loading…",
+      "shown": "Showing {shown} of {total}",
+      "shownOnly": "Showing {shown}",
+      "allShown": "All shown",
+      "retry": "Try again",
+      "error": "Couldn't load"
+    }
   },
   "home": {
     "hero": {
@@ -3415,7 +3424,8 @@
       }
     },
     "aboutTitle": "About Us — Genuine Sports Nutrition Store",
-    "contactTitle": "Contact — Phone, Telegram and Address"
+    "contactTitle": "Contact — Phone, Telegram and Address",
+    "pageSuffix": "page {page}"
   },
   "pagination": {
     "prev": "Previous",

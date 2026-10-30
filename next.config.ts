@@ -125,6 +125,11 @@ const nextConfig: NextConfig = {
     // AVIF first (smallest at the same visual quality), WebP as the
     // fallback -- negotiated per browser via the Accept header.
     formats: ["image/avif", "image/webp"],
+    // Fewer candidate widths (default: 16, up to 3840px): every <img> lists them all in its srcset, which
+    // was ~85 KB of the home page HTML. Phones top out around 412 CSS px x 3 DPR, so 1920 covers them and
+    // desktops; the small sizes match the cards, thumbnails and logos actually used.
+    imageSizes: [48, 96, 128, 256, 384],
+    deviceSizes: [640, 828, 1080, 1200, 1920],
     // Every backend media path is content-addressed (a sha256 of the
     // file -- e.g. image/c0/9e/c09eb9d0...jpg), so a URL's bytes never
     // change: the optimized variants can be cached for a long time

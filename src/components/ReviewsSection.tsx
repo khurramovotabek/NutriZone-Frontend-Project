@@ -9,6 +9,7 @@ import { Select } from "@/components/ui";
 import ReviewsList from "@/components/ReviewsList";
 import ReviewForm from "@/components/ReviewForm";
 import ReviewEditModal from "@/components/ReviewEditModal";
+import LoadMore from "@/components/LoadMore";
 
 const PAGE_SIZE = 10;
 
@@ -189,15 +190,8 @@ export default function ReviewsSection({ productId, initialReviews, initialTotal
           onEditRequest={setEditingReviewId}
         />
 
-        <div className="mt-4 flex flex-col items-center gap-2">
-          {hasMore && (
-            <button type="button" onClick={loadMore} disabled={loadingMore} className="nz-glass rounded-full px-5 py-2 text-sm font-medium text-ink transition-colors hover:text-primary disabled:pointer-events-none disabled:opacity-60">
-              {loadingMore ? t("loadingMore") : t("loadMore")}
-            </button>
-          )}
-          {!hasMore && reviews.length > 0 && <p className="text-xs text-ink-soft">{t("allLoaded")}</p>}
-          {loadMoreError && <p className="text-xs text-red-600 dark:text-red-400">{t("loadError")}</p>}
-        </div>
+        {/* manual only: the product page continues below the reviews, an endless feed would bury it */}
+        <LoadMore className="mt-4" hasMore={hasMore} loading={loadingMore} error={loadMoreError} onMore={loadMore} shown={reviews.length} total={totalCount} auto={false} />
       </div>
 
       {isAuthenticated ? (

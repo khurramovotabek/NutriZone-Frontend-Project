@@ -80,7 +80,8 @@ export default async function StorefrontLayout({ children }: { children: React.R
                   use rather than shrinking the tap targets on the icons. */}
               <span className="hidden transition-colors group-hover:text-primary sm:inline">{t("home")}</span>
             </Link>
-            <CatalogButton categories={categories} />
+            {/* every category goes into the page payload: drop the per-language slug map, the menu links in this language */}
+            <CatalogButton categories={categories.map(({ slugs: _slugs, ...c }) => c)} />
           </div>
           {/* min-w-0 + a shrinkable SearchBar: the nav absorbs longer labels (Russian, the signed-in cart/bell/avatar) by
               narrowing the search pill instead of pushing past the viewport -- previously ~7px over at 1440px in Russian. */}

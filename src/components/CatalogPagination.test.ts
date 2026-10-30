@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildPageNumbers } from "./CatalogPagination";
+import { buildCompactPageNumbers, buildPageNumbers } from "./CatalogPagination";
 
 describe("buildPageNumbers", () => {
   it("lists every page when there are few", () => {
@@ -16,5 +16,20 @@ describe("buildPageNumbers", () => {
     expect(buildPageNumbers(4, 34)).toEqual([1, 2, 3, 4, 5, "ellipsis", 34]);
     expect(buildPageNumbers(5, 34)).toEqual([1, "ellipsis", 4, 5, 6, "ellipsis", 34]);
     expect(buildPageNumbers(5, 8)).toEqual([1, "ellipsis", 4, 5, 6, 7, 8]);
+  });
+});
+
+describe("buildCompactPageNumbers (phones)", () => {
+  it("lists up to five pages in full", () => {
+    expect(buildCompactPageNumbers(2, 5)).toEqual([1, 2, 3, 4, 5]);
+  });
+  it("shows first, current and last with gaps", () => {
+    expect(buildCompactPageNumbers(1, 34)).toEqual([1, "ellipsis", 34]);
+    expect(buildCompactPageNumbers(17, 34)).toEqual([1, "ellipsis", 17, "ellipsis", 34]);
+    expect(buildCompactPageNumbers(34, 34)).toEqual([1, "ellipsis", 34]);
+  });
+  it("prints a single hidden page instead of a gap", () => {
+    expect(buildCompactPageNumbers(3, 9)).toEqual([1, 2, 3, "ellipsis", 9]);
+    expect(buildCompactPageNumbers(7, 9)).toEqual([1, "ellipsis", 7, 8, 9]);
   });
 });

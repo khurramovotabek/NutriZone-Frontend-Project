@@ -12,7 +12,7 @@ import ProductGrid from "@/components/ProductGrid";
 import CatalogPagination from "@/components/CatalogPagination";
 import { EmptyState, ErrorState } from "@/components/ui";
 import { getBrand } from "@/lib/brand";
-import { pageMetadata, samePrefixPath } from "@/lib/seo";
+import { pageMetadata, paged, samePrefixPath } from "@/lib/seo";
 import { brandPath, entityPaths, entitySlug, matchesParam } from "@/lib/entity-paths";
 import { localizedPath } from "@/i18n/config";
 import { absoluteUrl } from "@/lib/site-url";
@@ -34,11 +34,12 @@ async function resolveBrand(param: string, locale?: string) {
   return { brand: brands.find((b) => matchesParam(b, param)) ?? null, allBrands: brands };
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { id } = await params;
+  const page = Math.max(1, Number((await searchParams).page ?? "1") || 1);
   const [{ brand }, t, site] = await Promise.all([resolveBrand(id), getTranslations("seo"), getBrand()]);
   if (!brand) return { title: (await getTranslations("meta"))("brand") };
-  return pageMetadata({ path: entityPaths(brandPath, brand), title: t("brandTitle", { name: brand.name }), description: brand.description?.trim() || t("brandDescription", { name: brand.name, brand: site.name }) });
+  return pageMetadata({ path: paged(entityPaths(brandPath, brand), page), title: `${t("brandTitle", { name: brand.name })}${page > 1 ? ` — ${t("pageSuffix", { page })}` : ""}`, description: brand.description?.trim() || t("brandDescription", { name: brand.name, brand: site.name }) });
 }
 
 export default async function BrandDetailPage({ params, searchParams }: Props) {

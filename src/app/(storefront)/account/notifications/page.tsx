@@ -11,6 +11,7 @@ import { emitNotificationsChanged, markNotificationsRead, relativeTime } from "@
 import { Button, EmptyState, ErrorState, Skeleton } from "@/components/ui";
 import AccountLayout from "@/components/AccountLayout";
 import InboxIcon from "@/components/notifications/InboxIcon";
+import LoadMore from "@/components/LoadMore";
 
 type Filter = "all" | "unread";
 
@@ -201,20 +202,16 @@ export default function NotificationsPage() {
               </ul>
             </section>
           ))}
-          {hasMore && (
-            <div className="flex justify-center">
-              <Button
-                variant="secondary"
-                disabled={loadingMore}
-                onClick={async () => {
-                  setLoadingMore(true);
-                  await load(page + 1, filter).finally(() => setLoadingMore(false));
-                }}
-              >
-                {tn("loadMore")}
-              </Button>
-            </div>
-          )}
+          <LoadMore
+            hasMore={hasMore}
+            loading={loadingMore}
+            shown={items?.length ?? 0}
+            onMore={() => {
+              if (loadingMore) return;
+              setLoadingMore(true);
+              void load(page + 1, filter).finally(() => setLoadingMore(false));
+            }}
+          />
         </div>
       )}
     </AccountLayout>

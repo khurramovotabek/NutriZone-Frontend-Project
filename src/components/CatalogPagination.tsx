@@ -25,6 +25,18 @@ export function buildPageNumbers(current: number, total: number): (number | "ell
   return out;
 }
 
+/** The phone row: first, current and last page only ("1 … 5 … 34"), all of them when there are five or fewer. */
+export function buildCompactPageNumbers(current: number, total: number): (number | "ellipsis")[] {
+  if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages = Array.from(new Set([1, current, total])).sort((x, y) => x - y);
+  const out: (number | "ellipsis")[] = [];
+  pages.forEach((p, i) => {
+    if (i > 0 && p - pages[i - 1] > 1) out.push(p - pages[i - 1] === 2 ? p - 1 : "ellipsis");
+    out.push(p);
+  });
+  return out;
+}
+
 const SQUARE = "inline-flex h-10 min-w-10 items-center justify-center rounded-xl px-3 text-sm font-semibold tabular-nums transition-all duration-200";
 const IDLE = "text-ink-muted hover:-translate-y-0.5 hover:bg-surface-2 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 const OFF = "pointer-events-none text-ink-soft opacity-40";
@@ -71,7 +83,7 @@ export default async function CatalogPagination({
   return (
     <nav aria-label={label} className="mt-12 flex flex-col items-center gap-4">
       <div className="nz-glass flex items-center gap-1 rounded-2xl p-1.5 shadow-lg shadow-black/5">
-        {edge(1, current === 1, t("first"), <ChevronsLeft className="h-4 w-4" aria-hidden="true" />)}
+        {edge(1, current === 1, t("first"), <ChevronsLeft className="h-4 w-4" aria-hidden="true" />, "max-sm:hidden")}
         {current > 1 ? (
           <Link href={hrefFor(current - 1)} rel="prev" className={`${SQUARE} ${IDLE} gap-1.5`}>
             <ChevronLeft className="h-4 w-4" aria-hidden="true" />
@@ -108,9 +120,28 @@ export default async function CatalogPagination({
           )}
         </ul>
 
-        <span className="px-3 text-sm font-semibold tabular-nums text-ink sm:hidden" aria-current="page">
-          {current} <span className="font-normal text-ink-soft">/ {totalPages}</span>
-        </span>
+        {/* phones: first, current and last as tappable numbers instead of a bare "3 / 34" */}
+        <ul className="flex items-center gap-0.5 sm:hidden">
+          {buildCompactPageNumbers(current, totalPages).map((p, idx) =>
+            p === "ellipsis" ? (
+              <li key={`m-gap-${idx}`} aria-hidden="true" className="flex h-10 w-5 items-center justify-center text-xs text-ink-soft">
+                ···
+              </li>
+            ) : (
+              <li key={`m-${p}`}>
+                {p === current ? (
+                  <span aria-current="page" className={`${SQUARE} nz-cta !min-w-9 !px-2`}>
+                    {p}
+                  </span>
+                ) : (
+                  <Link href={hrefFor(p)} aria-label={t("goTo", { page: p })} className={`${SQUARE} ${IDLE} !min-w-9 !px-2`}>
+                    {p}
+                  </Link>
+                )}
+              </li>
+            ),
+          )}
+        </ul>
 
         <span className="mx-1 hidden h-6 w-px bg-border sm:block" aria-hidden="true" />
 
@@ -125,7 +156,7 @@ export default async function CatalogPagination({
             <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </span>
         )}
-        {edge(totalPages, current === totalPages, t("last"), <ChevronsRight className="h-4 w-4" aria-hidden="true" />)}
+        {edge(totalPages, current === totalPages, t("last"), <ChevronsRight className="h-4 w-4" aria-hidden="true" />, "max-sm:hidden")}
       </div>
 
       <div className="flex w-full max-w-xs flex-col items-center gap-2">

@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { EmptyState, ErrorState, Skeleton } from "@/components/ui";
 import AccountLayout from "@/components/AccountLayout";
 import { formatDate } from "@/lib/dates";
+import LoadMore, { useSteppedList } from "@/components/LoadMore";
 
 interface MyReceipt {
   number: string;
@@ -58,6 +59,7 @@ export default function MyReceiptsPage() {
   }, [reloadKey]);
 
   const shown = useMemo(() => (rows ?? []).filter((r) => filter === "all" || (filter === "pos" ? r.source !== "online" : r.source === "online")), [rows, filter]);
+  const stepped = useSteppedList(shown, 20, filter);
   const spent = useMemo(() => (rows ?? []).reduce((sum, r) => sum + (r.kind === "refund" ? -1 : 1) * Number(r.total), 0), [rows]);
 
   if (error) {
@@ -148,7 +150,7 @@ export default function MyReceiptsPage() {
             ))}
           </div>
           <ul className="mt-4 space-y-3">
-            {shown.map((r) => {
+            {stepped.shown.map((r) => {
               const SourceIcon = r.source === "online" ? Globe : Store;
               return (
                 <li key={r.token}>
@@ -189,6 +191,7 @@ export default function MyReceiptsPage() {
               );
             })}
           </ul>
+          <LoadMore className="mt-4" hasMore={stepped.hasMore} loading={false} onMore={stepped.more} shown={stepped.shown.length} total={stepped.total} />
           {shown.length === 0 && <p className="mt-6 text-center text-sm text-ink-muted">{t("filterEmpty")}</p>}
         </>
       )}
