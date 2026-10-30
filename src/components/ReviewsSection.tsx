@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { PenLine, Star } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getPublicProductReviews, type PublicReviewCard, type ReviewCard } from "@/lib/reviews-api";
 import { Select } from "@/components/ui";
@@ -159,6 +159,19 @@ export default function ReviewsSection({ productId, initialReviews, initialTotal
           </div>
         )}
 
+        {/* Phones stack the form below every review; a customer who came to write one (review-request
+            message, "how was it?") gets straight to it. */}
+        {reviews.length > 0 && (
+          <button
+            type="button"
+            onClick={() => document.getElementById("write-review")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            className="nz-cta mb-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-2xl px-5 text-sm font-semibold lg:hidden"
+          >
+            <PenLine className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            {t("writeReview")}
+          </button>
+        )}
+
         {reviews.length > 1 && (
           <div className="mb-4 flex flex-wrap items-center gap-3 text-sm">
             <label className="flex items-center gap-2">
@@ -194,15 +207,17 @@ export default function ReviewsSection({ productId, initialReviews, initialTotal
         <LoadMore className="mt-4" hasMore={hasMore} loading={loadingMore} error={loadMoreError} onMore={loadMore} shown={reviews.length} total={totalCount} auto={false} />
       </div>
 
-      {isAuthenticated ? (
-        <ReviewForm productId={productId} onSubmitted={handleReviewPublished} />
-      ) : (
-        <div className="nz-glass rounded-2xl p-5 text-sm text-ink-muted">
-          <Link href={loginHref} className="font-medium text-primary hover:underline">
-            {t("loginToReview")}
-          </Link>
-        </div>
-      )}
+      <div id="write-review" className="scroll-mt-24">
+        {isAuthenticated ? (
+          <ReviewForm productId={productId} onSubmitted={handleReviewPublished} />
+        ) : (
+          <div className="nz-glass rounded-2xl p-5 text-sm text-ink-muted">
+            <Link href={loginHref} className="font-medium text-primary hover:underline">
+              {t("loginToReview")}
+            </Link>
+          </div>
+        )}
+      </div>
 
       {editingReview && (
         <ReviewEditModal review={editingReview} onClose={() => setEditingReviewId(null)} onSaved={handleReviewSaved} onDeleted={handleReviewDeleted} />

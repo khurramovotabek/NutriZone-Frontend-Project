@@ -673,7 +673,7 @@
   "reviews": {
     "title": "Mijozlar sharhlari",
     "writeReview": "Sharh yozish",
-    "loginToReview": "Sharhlarni o'qish yoki yozish uchun tizimga kiring.",
+    "loginToReview": "Sharh yozish uchun tizimga kiring.",
     "rating": "Baho",
     "reviewTitle": "Sarlavha (ixtiyoriy)",
     "reviewBody": "Sizning sharhingiz",

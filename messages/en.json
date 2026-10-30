@@ -673,7 +673,7 @@
   "reviews": {
     "title": "Customer Reviews",
     "writeReview": "Write a Review",
-    "loginToReview": "Please log in to read or write reviews.",
+    "loginToReview": "Log in to write a review.",
     "rating": "Rating",
     "reviewTitle": "Title (optional)",
     "reviewBody": "Your review",
