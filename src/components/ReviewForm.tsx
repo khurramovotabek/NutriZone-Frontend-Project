@@ -153,9 +153,9 @@ export default function ReviewForm({ productId, onSubmitted }: Props) {
               onMouseEnter={() => setHoverRating(star)}
               onMouseLeave={() => setHoverRating(0)}
               onClick={() => setRating(star)}
-              className="p-0.5"
+              className="rounded-lg p-1 sm:p-0.5"
             >
-              <Star className={`h-6 w-6 ${(hoverRating || rating) >= star ? "fill-amber-400 text-amber-400" : "text-ink-soft"}`} strokeWidth={1.5} />
+              <Star className={`h-9 w-9 sm:h-6 sm:w-6 ${(hoverRating || rating) >= star ? "fill-amber-400 text-amber-400" : "text-ink-soft"}`} strokeWidth={1.5} />
             </button>
           ))}
         </div>
@@ -192,7 +192,7 @@ export default function ReviewForm({ productId, onSubmitted }: Props) {
                 type="button"
                 onClick={() => removeMedia(i)}
                 aria-label={t("removeMedia")}
-                className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white transition-opacity group-hover:opacity-100 sm:opacity-0"
+                className="absolute right-0.5 top-0.5 flex h-6 w-6 items-center sm:h-5 sm:w-5 justify-center rounded-full bg-black/60 text-white transition-opacity group-hover:opacity-100 sm:opacity-0"
               >
                 <X className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
               </button>
@@ -213,7 +213,7 @@ export default function ReviewForm({ productId, onSubmitted }: Props) {
       {mediaWarning && <p className="text-xs text-amber-600 dark:text-amber-400">{mediaWarning}</p>}
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
-      <Button type="submit" disabled={state === "submitting"}>
+      <Button type="submit" disabled={state === "submitting"} className="w-full sm:w-auto">
         {state === "submitting" ? t("submitting") : t("submit")}
       </Button>
     </form>
