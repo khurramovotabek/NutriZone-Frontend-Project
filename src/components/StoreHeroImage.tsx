@@ -23,6 +23,11 @@ export default function StoreHeroImage({ src, alt }: { src: string | null; alt: 
   const [useLarge, setUseLarge] = useState(Boolean(derivedLarge));
   const effectiveSrc = useLarge && derivedLarge ? derivedLarge : src;
 
+  // No cover yet: a quiet brand gradient. The centred fallback icon sat right behind the store name on phones.
+  if (!src) {
+    return <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgb(59_130_246/0.45),transparent_55%),linear-gradient(135deg,#0f1b3d,#1e3a8a_60%,#0f172a)]" />;
+  }
+
   return (
     <div className="absolute inset-0 bg-surface-2">
       <MediaImage

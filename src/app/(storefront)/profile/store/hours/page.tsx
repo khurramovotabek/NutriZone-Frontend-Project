@@ -80,13 +80,13 @@ export default function StoreHoursPage() {
 
   return (
     <div className="space-y-6">
-      <Card className="p-5">
+      <Card className="p-3 sm:p-5">
         <Fieldset legend={t("workingHours")} icon={<Clock className="h-3.5 w-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />}>
           <WeeklyHoursEditor value={store.working_hours} onSave={(week) => saveField({ working_hours: week })} />
         </Fieldset>
       </Card>
 
-      <Card className="p-5">
+      <Card className="p-3 sm:p-5">
         <Fieldset legend={t("specialHours")} icon={<CalendarOff className="h-3.5 w-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />}>
           <p className="text-xs text-ink-soft">{t("specialHoursHint")}</p>
 

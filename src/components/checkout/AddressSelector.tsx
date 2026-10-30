@@ -48,7 +48,9 @@ export default function AddressSelector({
           {t("addNew")}
         </button>
       ) : (
+        // bare: the checkout already wraps this in a Card -- a second card inside it left a ~230px map on phones
         <AddressForm
+          bare
           mode="create"
           onSaved={(created) => {
             onCreated(created);

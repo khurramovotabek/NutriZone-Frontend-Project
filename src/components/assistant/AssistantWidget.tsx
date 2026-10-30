@@ -10,7 +10,8 @@ import RichText from "./RichText";
 import { useAssistant } from "./useAssistant";
 import { useDictation, useSpeech } from "./useVoice";
 
-const HIDDEN = [/^\/profile\/store/, /^\/checkout/];
+// pages whose own bottom CTA or composer the floating button would cover on a phone
+const HIDDEN = [/^\/profile\/store/, /^\/checkout/, /^\/cart/, /^\/account\/chat/, /^\/login/, /^\/verify-otp/];
 const SUGGESTIONS = ["s1", "s2", "s3", "s4"] as const;
 const CAPS = [["pick", Dumbbell], ["usage", FlaskConical], ["stores", MapPin], ["voice", Languages]] as const;
 
@@ -125,7 +126,7 @@ export default function AssistantWidget() {
           type="button"
           onClick={openPanel}
           aria-label={t("open")}
-          className="nz-ai-fab nz-cta fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-4 z-40 inline-flex h-14 items-center gap-2 rounded-full pl-4 pr-5 text-sm font-semibold text-white shadow-[0_12px_32px_-10px_rgba(var(--nz-primary-rgb),0.8)] transition-transform hover:-translate-y-0.5 sm:bottom-6 sm:right-6"
+          className="nz-ai-fab nz-cta fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-3 z-40 inline-flex h-12 items-center gap-2 rounded-full pl-2 pr-2 sm:h-14 sm:pl-4 sm:pr-5 text-sm font-semibold text-white shadow-[0_12px_32px_-10px_rgba(var(--nz-primary-rgb),0.8)] transition-transform hover:-translate-y-0.5 sm:bottom-6 sm:right-6"
         >
           <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
             <Sparkles className="h-4.5 w-4.5" aria-hidden="true" />

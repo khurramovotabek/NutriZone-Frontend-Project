@@ -39,7 +39,7 @@ export default function StoreProfilePage() {
   return (
     <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
       <div className="space-y-6">
-        <Card className="p-5">
+        <Card className="p-3 sm:p-5">
           <Fieldset legend={t("basicInfoLegend")} icon={<StoreIcon className="h-3.5 w-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />}>
             <div>
               <label className="mb-1 flex justify-between text-sm font-medium text-ink-muted" htmlFor="store-name">{t("storeName")} <Counter value={name.length} max={200} /></label>
@@ -60,7 +60,7 @@ export default function StoreProfilePage() {
           </Fieldset>
         </Card>
 
-        <Card className="p-5">
+        <Card className="p-3 sm:p-5">
           <Fieldset legend={t("amenitiesLegend")} icon={<Sparkles className="h-3.5 w-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />}>
             <p className="-mt-1 text-xs text-ink-muted">{t("amenitiesHint")}</p>
             <div className="flex flex-wrap gap-2">
@@ -79,7 +79,7 @@ export default function StoreProfilePage() {
           </Fieldset>
         </Card>
 
-        <Card className="p-5">
+        <Card className="p-3 sm:p-5">
           <Fieldset legend={t("pickupLegend")} icon={<ShoppingBag className="h-3.5 w-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />}>
             <label className="flex cursor-pointer items-start gap-3">
               <button type="button" role="switch" aria-checked={pickupOn} onClick={() => saveField({ pickup_enabled: !pickupOn })}

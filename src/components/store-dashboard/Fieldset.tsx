@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
  */
 export function Fieldset({ legend, icon, children, className = "" }: { legend: string; icon?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <fieldset className={`rounded-xl border border-border px-4 pb-4 pt-1 sm:px-5 sm:pb-5 ${className}`}>
+    <fieldset className={`rounded-xl border border-border px-3 pb-3 pt-1 sm:px-5 sm:pb-5 ${className}`}>
       <legend className="flex items-center gap-1.5 px-1.5 text-sm font-semibold text-ink">
         {icon}
         {legend}

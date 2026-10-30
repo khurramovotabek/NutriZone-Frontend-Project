@@ -288,7 +288,10 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
         >
           <div className="mx-auto flex max-w-6xl items-center gap-3">
             {formattedPrice && <PriceTag price={price} compareAt={compareAt} discountPercent={discountPercent} currency={currency} size="sm" showBadge={false} className="shrink-0" />}
-            <AddToCartButton variantId={selected.id} className="!w-full flex-1 !py-3" />
+            {/* AddToCartButton renders a block wrapper div, so the flex-1 has to sit on a parent of it or the CTA shrinks to its label. */}
+            <div className="min-w-0 flex-1">
+              <AddToCartButton variantId={selected.id} className="w-full !py-3 !text-sm" />
+            </div>
           </div>
         </div>
       )}

@@ -151,19 +151,20 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
       </nav>
 
       {/* Hero: identity lives INSIDE the image (bottom-anchored, gradient-protected), not squeezed into a separate bar below it. */}
-      <div className="relative mt-4 h-[240px] w-full overflow-hidden sm:h-[320px] lg:h-[380px]">
+      {/* min-h, not a fixed height: on a phone the name, tagline, location and the wrapped action pills are taller than 240px and used to spill above the image. The identity block stays in flow so the hero grows with it. */}
+      <div className="relative mt-4 flex min-h-[260px] w-full flex-col justify-end overflow-hidden sm:min-h-[320px] lg:min-h-[380px]">
         <StoreHeroImage src={store.cover_image_url} alt={store.name} />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/5" />
 
-        <div className="absolute inset-x-0 bottom-0">
+        <div className="relative pt-24 sm:pt-32">
           <div className="mx-auto max-w-6xl px-4 pb-5 sm:pb-6">
             <div className="flex items-end gap-3.5 sm:gap-4">
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border-2 bg-white shadow-lg sm:h-20 sm:w-20" style={{ borderColor: accent, boxShadow: `0 10px 30px -10px ${accent}` }}>
-                <MediaImage src={store.logo_url} alt="" fit="contain" padding="p-2" sizes="80px" loading="eager" fallbackIcon={<StoreIcon className="h-7 w-7 text-white/70" strokeWidth={1.25} aria-hidden="true" />} />
+                <MediaImage src={store.logo_url} alt="" fit="contain" padding="p-2" sizes="80px" loading="eager" fallbackIcon={<StoreIcon className="h-7 w-7 text-slate-400" strokeWidth={1.25} aria-hidden="true" />} />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="truncate text-xl font-bold text-white sm:text-2xl lg:text-3xl">{store.name}</h1>
+                  <h1 className="min-w-0 break-words text-xl font-bold leading-tight text-white [text-shadow:0_1px_8px_rgb(0_0_0/0.45)] sm:text-2xl lg:text-3xl">{store.name}</h1>
                   <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
                     <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[statusKey]}`} />
                     {statusLabel}

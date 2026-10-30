@@ -49,7 +49,7 @@ export default function StoreOverviewPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.25fr_1fr]">
-        <Card className="p-5">
+        <Card className="p-3 sm:p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-lg font-semibold text-ink"><ShoppingBag className="h-4 w-4 text-primary" aria-hidden="true" /> {t("recentOrders")}</h2>
             <Link href="/profile/store/orders" className="inline-flex items-center gap-1 text-sm font-semibold text-primary">{t("allOrders")} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" /></Link>
@@ -79,7 +79,7 @@ export default function StoreOverviewPage() {
           )}
         </Card>
 
-        <Card className="p-5">
+        <Card className="p-3 sm:p-5">
           <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-ink"><AlertTriangle className="h-4 w-4 text-amber-500" aria-hidden="true" /> {t("attention.title")}</h2>
           {attention.length ? (
             <ul className="space-y-2">
@@ -98,7 +98,7 @@ export default function StoreOverviewPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="p-5">
+        <Card className="p-3 sm:p-5">
           <div className="mb-4 flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" strokeWidth={1.75} aria-hidden="true" />
             <h2 className="text-lg font-semibold text-ink">{t("chartCompleteness")}</h2>
@@ -109,7 +109,7 @@ export default function StoreOverviewPage() {
             <p className="mt-4 text-xs text-ink-muted">{t("completenessHint")} {completeness.missingKeys.map((k) => t(`missingField.${k}` as "missingField.logo")).join(", ")}</p>
           )}
         </Card>
-        <Card className="p-5">
+        <Card className="p-3 sm:p-5">
           <div className="mb-4 flex items-center gap-2">
             <Package className="h-4 w-4 text-primary" strokeWidth={1.75} aria-hidden="true" />
             <h2 className="text-lg font-semibold text-ink">{t("chartStock")}</h2>
@@ -121,7 +121,7 @@ export default function StoreOverviewPage() {
               segments={[{ label: t("stockHealthy"), value: stock.healthy, color: "var(--nz-success)" }, { label: t("stockLow"), value: stock.low, color: "var(--nz-warning)" }, { label: t("stockOut"), value: stock.outOfStock, color: "var(--nz-danger)" }]} />
           )}
         </Card>
-        <Card className="p-5 lg:col-span-2">
+        <Card className="p-3 sm:p-5 lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-primary" strokeWidth={1.75} aria-hidden="true" />

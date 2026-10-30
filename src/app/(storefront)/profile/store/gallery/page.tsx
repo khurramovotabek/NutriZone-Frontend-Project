@@ -74,7 +74,7 @@ export default function StoreGalleryPage() {
   }
 
   return (
-    <Card className="p-5">
+    <Card className="p-3 sm:p-5">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-ink">{t("gallery")}</h2>
         <Button type="button" variant="secondary" onClick={() => mediaInputRef.current?.click()} disabled={mediaUploading}>

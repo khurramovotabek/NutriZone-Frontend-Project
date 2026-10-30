@@ -199,31 +199,31 @@ export default function ProductRequestsPage() {
 
       <form onSubmit={submit} className="nz-glass nz-rise mt-5 rounded-3xl p-5 sm:p-7" noValidate aria-labelledby={`${uid}-form`}>
         <h2 id={`${uid}-form`} className="text-lg font-semibold text-ink">{t("formTitle")}</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-[1fr_200px]">
-          <div className="grid min-w-0 gap-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-1.5 text-sm font-medium text-ink">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-[1fr_200px]">
+          <div className="grid min-w-0 grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label className="grid min-w-0 gap-1.5 text-sm font-medium text-ink">
                 <span>
                   {t("name")} <span className="text-danger">*</span>
                 </span>
                 <input name="product_name" required maxLength={200} placeholder={t("namePlaceholder")} className={input} autoComplete="off" />
               </label>
-              <label className="grid gap-1.5 text-sm font-medium text-ink">
+              <label className="grid min-w-0 gap-1.5 text-sm font-medium text-ink">
                 {t("brand")}
                 <input name="brand" maxLength={120} placeholder={t("brandPlaceholder")} className={input} autoComplete="off" />
               </label>
             </div>
-            <div className="grid gap-4 sm:grid-cols-[1fr_110px]">
-              <label className="grid gap-1.5 text-sm font-medium text-ink">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_110px]">
+              <label className="grid min-w-0 gap-1.5 text-sm font-medium text-ink">
                 {t("url")}
                 <input name="url" type="url" inputMode="url" maxLength={500} placeholder="https://…" className={input} autoComplete="off" />
               </label>
-              <label className="grid gap-1.5 text-sm font-medium text-ink">
+              <label className="grid min-w-0 gap-1.5 text-sm font-medium text-ink">
                 {t("quantity")}
                 <input name="quantity" type="number" min={1} max={999} defaultValue={1} className={input} />
               </label>
             </div>
-            <label className="grid gap-1.5 text-sm font-medium text-ink">
+            <label className="grid min-w-0 gap-1.5 text-sm font-medium text-ink">
               {t("description")}
               <textarea name="description" rows={3} maxLength={2000} placeholder={t("descriptionPlaceholder")} className={`${input} resize-y`} />
             </label>

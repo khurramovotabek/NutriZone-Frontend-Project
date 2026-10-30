@@ -93,7 +93,7 @@ export default function AccountLoyaltyPage() {
       <AccountLayout>
         <div className="space-y-5" aria-hidden="true">
           <div className="h-12 w-64 animate-pulse rounded-2xl bg-surface-3/50" />
-          <div className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.3fr_1fr] [&>*]:min-w-0">
             <div className="nz-liquid aspect-[1.586] animate-pulse rounded-[28px]" />
             <div className="nz-liquid min-h-64 animate-pulse rounded-[28px]" />
           </div>
@@ -170,7 +170,7 @@ export default function AccountLoyaltyPage() {
         )}
 
         {/* hero: card + status */}
-        <div className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.3fr_1fr] [&>*]:min-w-0">
           <MembershipCard tier={tier} balance={data.balance} memberName={data.member_name} memberSince={data.member_since} />
 
           <div className="nz-liquid nz-rewards-status relative flex flex-col overflow-hidden rounded-[28px] p-5 sm:p-6">

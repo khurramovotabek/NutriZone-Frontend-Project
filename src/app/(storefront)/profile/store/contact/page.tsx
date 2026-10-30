@@ -84,7 +84,7 @@ export default function StoreContactPage() {
 
   return (
     <div className="space-y-6">
-      <Card className="p-5">
+      <Card className="p-3 sm:p-5">
         <Fieldset legend={t("location")} icon={<MapPin className="h-3.5 w-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />}>
           <LocationPicker
             latitude={pointLat} longitude={pointLng} onChange={onPoint}
@@ -142,7 +142,7 @@ export default function StoreContactPage() {
         </Fieldset>
       </Card>
 
-      <Card className="p-5">
+      <Card className="p-3 sm:p-5">
         <Fieldset legend={t("contact")} icon={<Phone className="h-3.5 w-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">

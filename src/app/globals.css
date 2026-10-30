@@ -178,6 +178,22 @@ body {
 /* Ultra-subtle film-grain layer over the whole app -- the difference
    between a flat digital gradient and something that reads like real,
    lit glass. Fixed, non-interactive, and nearly invisible by design. */
+/* Phones: a long word (Russian legal headings, store URLs, emails) wraps instead of pushing past the card edge. */
+body {
+  overflow-wrap: break-word;
+}
+h1, h2, h3 {
+  hyphens: auto;
+}
+
+/* iOS Safari (and the Telegram iOS webview) zooms the page when a field under 16px gets focus and never zooms back.
+   Only the small text utilities are lifted, so the big OTP / quantity fields keep their own size. */
+@media (max-width: 639px) {
+  :is(input, select, textarea):is(.text-xs, .text-sm, .text-\[15px\], .text-\[14px\], .text-\[13px\], .text-\[12px\], .text-\[11px\], .nz-glass-input) {
+    font-size: 16px;
+  }
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -200,9 +216,17 @@ body::before {
 
 /* Slim, glassy scrollbar -- consistent across browsers, never the
    default chunky system bar on a premium surface. */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--nz-border-hover) transparent;
+/* a <fieldset> defaults to min-inline-size: min-content, so a map or a long row inside it pushed the store dashboard forms past the phone edge */
+@layer base {
+  fieldset { min-inline-size: 0; }
+}
+
+/* in the base layer: unlayered, it out-ranked every `[scrollbar-width:none]` utility, so the swipeable tab rows grew a scrollbar */
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--nz-border-hover) transparent;
+  }
 }
 *::-webkit-scrollbar {
   width: 10px;
@@ -895,6 +919,8 @@ select.nz-glass-input option:disabled {
 
 /* ── Rewards page: tier-tinted aurora, segmented glass tabs, KPI tiles ─
  * --tier / --tier-next are set on .nz-rewards from the member's tier. */
+/* the drifting aurora moves 24px sideways; clip (not hidden) so it can't add page-wide horizontal scroll but its glow still bleeds up and down */
+.nz-rewards { overflow-x: clip; }
 .nz-rewards-aurora {
   /* kept inside the column horizontally (a negative inset caused page-wide horizontal scroll on phones); the blur still bleeds visually */
   position: absolute;
@@ -1103,7 +1129,9 @@ html[data-tg="1"] .nz-tg-hide { display: none !important; }
 html[data-tg="1"] .nz-ai-fab { display: none !important; }
 .nz-tg-tabbar a.is-active { color: var(--color-primary, #3b82f6); background: color-mix(in srgb, var(--color-primary, #3b82f6) 12%, transparent); }
 .nz-tg-tab-icon { position: relative; display: grid; place-items: center; }
-.nz-tg-tab-label { font-size: 10.5px; font-weight: 650; letter-spacing: .01em; line-height: 1.1; }
+/* one line per tab: at 360-390px six columns are ~58px, and "Bosh sahifa" / "AI maslahat" wrapped into two cramped lines */
+.nz-tg-tabbar > * { min-width: 0; }
+.nz-tg-tab-label { max-width: 100%; padding: 0 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-weight: 650; letter-spacing: -.01em; line-height: 1.2; }
 .nz-tg-badge { position: absolute; top: -6px; right: -10px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; display: grid; place-items: center; font-size: 10px; font-weight: 800; color: #fff; background: #ef4444; box-shadow: 0 0 0 2px var(--color-surface, #0b1220); }
 html[data-tg="1"] main { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
 /* bars pinned to the bottom of a page (product "Savatga qo'shish") sit above the tab bar, not hidden under it;

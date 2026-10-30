@@ -147,7 +147,7 @@ export default function StoreDashboardShell({ children }: { children: ReactNode 
         </Link>
 
         {compact ? (
-          <section className="nz-glass flex flex-wrap items-center gap-3 rounded-2xl px-4 py-3">
+          <section className="nz-glass flex items-center gap-3 rounded-2xl px-4 py-3">
             <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-white">
               <MediaImage src={store.logo_url} alt="" fit="contain" padding="p-1" fallbackIcon={<StoreIcon className="h-5 w-5 text-slate-400" strokeWidth={1.5} aria-hidden="true" />} />
             </span>
@@ -165,8 +165,9 @@ export default function StoreDashboardShell({ children }: { children: ReactNode 
               </span>
             )}
             {publicUrl && (
-              <Link href={publicUrl} target="_blank" className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-1.5 text-xs font-semibold text-ink hover:text-primary">
-                <ExternalLink className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" /> {t("viewOnSite")}
+              // icon-only on phones so the store name keeps the row instead of truncating to "Mobil Test ..."
+              <Link href={publicUrl} target="_blank" aria-label={t("viewOnSite")} title={t("viewOnSite")} className="inline-flex h-10 w-10 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-border text-xs font-semibold text-ink hover:text-primary sm:h-auto sm:w-auto sm:px-3 sm:py-1.5">
+                <ExternalLink className="h-4 w-4 sm:h-3.5 sm:w-3.5" strokeWidth={2} aria-hidden="true" /> <span className="hidden sm:inline">{t("viewOnSite")}</span>
               </Link>
             )}
           </section>

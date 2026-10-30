@@ -145,7 +145,7 @@ export default function StoreReportPage() {
           ) : (
             <>
               <div className="grid items-start gap-5 @5xl:grid-cols-[1.2fr_1fr]">
-                <Card className="p-5">
+                <Card className="p-3 sm:p-5">
                   <h3 className="mb-1 text-lg font-semibold text-ink">{t("report.compareTitle")}</h3>
                   <p className="mb-2 text-xs text-ink-soft">{t("report.compareHint", { n: net.branches })}</p>
                   <div className="flex items-center gap-3 border-b border-border/70 pb-2 text-[11px] font-bold uppercase tracking-wider text-ink-soft">
@@ -161,7 +161,7 @@ export default function StoreReportPage() {
                   </ul>
                 </Card>
 
-                <Card className="p-5">
+                <Card className="p-3 sm:p-5">
                   <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-ink"><Lightbulb className="h-4 w-4 text-amber-500" aria-hidden="true" /> {t("report.tipsTitle")}</h3>
                   <ul className="space-y-2">
                     {tips.map((tip) => (
@@ -174,7 +174,7 @@ export default function StoreReportPage() {
                 </Card>
               </div>
 
-              <Card className="p-5">
+              <Card className="p-3 sm:p-5">
                 <h3 className="mb-4 text-lg font-semibold text-ink">{t("report.trendTitle")}</h3>
                 <div className="flex h-36 items-end gap-[3px]" role="img" aria-label={t("report.trendTitle")}>
                   {data.series.map((d, i) => (
@@ -190,7 +190,7 @@ export default function StoreReportPage() {
               </Card>
 
               <div className="grid items-start gap-5 @2xl:grid-cols-2">
-                <Card className="p-5">
+                <Card className="p-3 sm:p-5">
                   <div className="mb-3 flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-ink">{t("report.ordersTitle")}</h3>
                     <Link href="/profile/store/orders" className="text-sm font-semibold text-primary">{t("allOrders")}</Link>
@@ -215,7 +215,7 @@ export default function StoreReportPage() {
                   </ul>
                 </Card>
 
-                <Card className="p-5">
+                <Card className="p-3 sm:p-5">
                   <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-ink"><Undo2 className="h-4 w-4 text-amber-500" aria-hidden="true" /> {t("report.handBacksTitle")}</h3>
                   {data.hand_backs.length ? (
                     <ul className="space-y-2">
