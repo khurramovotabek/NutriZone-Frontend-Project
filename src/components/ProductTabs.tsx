@@ -27,7 +27,14 @@ export default function ProductTabs({ tabs }: { tabs: TabDef[] }) {
   useEffect(() => {
     function syncFromHash() {
       const hash = window.location.hash.replace("#", "");
-      if (tabs.some((tab) => tab.id === hash)) setActive(hash);
+      if (!hash) return;
+      // "#reviews" (review-request messages, login return path) is the short form of the "reviewsTab" id.
+      // Scroll the whole tab box into view ourselves: no element carries the short id, and the browser's own
+      // jump to a tab button would land under the sticky header.
+      const tab = tabs.find((t) => t.id === hash) ?? tabs.find((t) => t.id === `${hash}Tab`);
+      if (!tab) return;
+      setActive(tab.id);
+      document.getElementById("product-tabs")?.scrollIntoView({ block: "start" });
     }
     syncFromHash();
     window.addEventListener("hashchange", syncFromHash);
@@ -36,7 +43,7 @@ export default function ProductTabs({ tabs }: { tabs: TabDef[] }) {
   }, []);
 
   return (
-    <div id="product-tabs" className="nz-glass overflow-hidden rounded-2xl">
+    <div id="product-tabs" className="nz-glass scroll-mt-24 overflow-hidden rounded-2xl">
       <div role="tablist" className="flex gap-1 overflow-x-auto border-b border-border p-2 [scrollbar-width:none]! [&::-webkit-scrollbar]:hidden">
         {tabs.map((tab) => (
           <button
