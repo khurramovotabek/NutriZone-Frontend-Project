@@ -1,10 +1,12 @@
 "use client";
 
 import { useIsClient } from "@/hooks/useIsClient";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { MAP_TILE_ATTRIBUTION, MAP_TILE_URL } from "@/lib/maps";
 import MapSizeFixer from "@/components/MapSizeFixer";
 import MapLinks from "@/components/MapLinks";
+import MapLocateButton from "@/components/MapLocateButton";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -52,6 +54,12 @@ const storeIcon = L.divIcon({
   popupAnchor: [0, -30],
 });
 
+function MapRef({ onReady }: { onReady: (map: L.Map) => void }) {
+  const map = useMap();
+  useEffect(() => onReady(map), [map, onReady]);
+  return null;
+}
+
 export default function StoreLocationMap({
   latitude,
   longitude,
@@ -66,7 +74,7 @@ export default function StoreLocationMap({
   mapUrl?: string;
 }) {
   const mounted = useIsClient();
-
+  const [map, setMap] = useState<L.Map | null>(null);
 
   if (!mounted) {
     return <div className="h-64 w-full animate-pulse rounded-2xl bg-surface-2 sm:h-72" aria-hidden="true" />;
@@ -74,9 +82,14 @@ export default function StoreLocationMap({
 
   return (
     <div className="relative h-64 w-full overflow-hidden rounded-2xl border border-border sm:h-72">
-      <MapContainer center={[latitude, longitude]} zoom={15} scrollWheelZoom={false} className="h-full w-full" style={{ height: "100%", width: "100%" }}>
+      <MapContainer
+        center={[latitude, longitude]} zoom={15} scrollWheelZoom={false} className="h-full w-full" style={{ height: "100%", width: "100%" }}
+        // a small map inside a phone page must not swallow the page scroll (pinch still zooms and moves it)
+        dragging={!L.Browser.mobile}
+      >
         <TileLayer url={MAP_TILE_URL} attribution={MAP_TILE_ATTRIBUTION} maxZoom={19} />
         <MapSizeFixer />
+        <MapRef onReady={setMap} />
         <Marker position={[latitude, longitude]} icon={storeIcon}>
           <Popup>
             <span className="font-semibold">{storeName}</span>
@@ -89,6 +102,7 @@ export default function StoreLocationMap({
           </Popup>
         </Marker>
       </MapContainer>
+      <MapLocateButton map={map} className="absolute right-3 top-3 z-[1000]" targets={[{ lat: latitude, lng: longitude, name: storeName }]} />
       <MapLinks latitude={latitude} longitude={longitude} label={storeName} className="absolute bottom-3 left-3 right-3 z-[1000] justify-end" />
     </div>
   );

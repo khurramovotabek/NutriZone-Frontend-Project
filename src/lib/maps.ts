@@ -22,12 +22,12 @@ export const MAP_LAYER_KEYS = Object.keys(MAP_LAYERS) as MapLayerKey[];
 const LAYER_STORAGE_KEY = "nz-map-layer";
 
 /** The shopper's last chosen map look (remembered per browser; storage may be blocked -- then the street map). */
-export function savedMapLayer(): MapLayerKey {
+export function savedMapLayer(fallback: MapLayerKey = "street"): MapLayerKey {
   try {
     const v = window.localStorage.getItem(LAYER_STORAGE_KEY);
-    return v && v in MAP_LAYERS ? (v as MapLayerKey) : "street";
+    return v && v in MAP_LAYERS ? (v as MapLayerKey) : fallback;
   } catch {
-    return "street";
+    return fallback;
   }
 }
 export function saveMapLayer(key: MapLayerKey): void {

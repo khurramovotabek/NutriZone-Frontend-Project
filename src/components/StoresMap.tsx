@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { useEffect, useState } from "react";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useTranslations } from "next-intl";
@@ -9,6 +10,7 @@ import { useIsClient } from "@/hooks/useIsClient";
 import MapSizeFixer from "@/components/MapSizeFixer";
 import { MAP_TILE_ATTRIBUTION, MAP_TILE_URL } from "@/lib/maps";
 import type { StoreListItem } from "@/lib/store-api";
+import MapLocateButton from "@/components/MapLocateButton";
 
 const OPEN_COLOR = "#10b981";
 const CLOSED_COLOR = "#64748b";
@@ -26,10 +28,20 @@ function pinIcon(color: string): L.DivIcon {
   });
 }
 
-/** Every store with coordinates on one map; a pin's popup shows its status, address and a link to the store. */
+function MapRef({ onReady }: { onReady: (map: L.Map) => void }) {
+  const map = useMap();
+  useEffect(() => onReady(map), [map, onReady]);
+  return null;
+}
+
+/**
+ * Every store with coordinates on one map; a pin's popup shows its status, address and a link to the store.
+ * "My location" puts the customer on it and names the nearest branch with the distance and a route.
+ */
 export default function StoresMap({ stores }: { stores: StoreListItem[] }) {
   const t = useTranslations("stores");
   const mounted = useIsClient();
+  const [map, setMap] = useState<L.Map | null>(null);
   const located = stores.filter((s) => s.latitude !== null && s.longitude !== null);
   const points = located.map((s) => [s.latitude!, s.longitude!] as [number, number]);
 
@@ -46,6 +58,7 @@ export default function StoresMap({ stores }: { stores: StoreListItem[] }) {
       >
         <TileLayer url={MAP_TILE_URL} attribution={MAP_TILE_ATTRIBUTION} maxZoom={19} />
         <MapSizeFixer />
+        <MapRef onReady={setMap} />
         {located.map((store) => (
           <Marker key={store.id} position={[store.latitude!, store.longitude!]} icon={pinIcon(store.is_open_now ? OPEN_COLOR : CLOSED_COLOR)} title={store.name}>
             <Popup>
@@ -61,6 +74,8 @@ export default function StoresMap({ stores }: { stores: StoreListItem[] }) {
           </Marker>
         ))}
       </MapContainer>
+      <MapLocateButton map={map} className="absolute right-3 top-14 z-[1000]"
+        targets={located.map((s) => ({ lat: s.latitude!, lng: s.longitude!, name: s.name, href: `/store/${s.slug}` }))} />
       {/* Legend */}
       <div className="pointer-events-none absolute right-3 top-3 z-[400] flex gap-2 rounded-xl bg-white/90 px-3 py-1.5 text-[11px] font-semibold text-slate-700 shadow backdrop-blur">
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full" style={{ background: OPEN_COLOR }} />{t("open")}</span>

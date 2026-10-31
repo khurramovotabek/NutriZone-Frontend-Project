@@ -1,18 +1,31 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { Circle, MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Check, Layers, Link2, LoaderCircle, Navigation, Search, ShieldAlert, X } from "lucide-react";
+import { Check, Expand, Layers, Link2, LoaderCircle, LocateFixed, Search, X } from "lucide-react";
 import { useIsClient } from "@/hooks/useIsClient";
 import { MAP_LAYER_KEYS, MAP_LAYERS, MAP_TILE_ATTRIBUTION, saveMapLayer, savedMapLayer, type MapLayerKey } from "@/lib/maps";
 import type { CoordinateSource } from "@/lib/geo-api";
 import type { GeocodeResult } from "@/lib/geo-locate";
 import MapSizeFixer from "@/components/MapSizeFixer";
 import MapLinks from "@/components/MapLinks";
-import { openTelegramLocationSettings, telegramLocation } from "@/lib/telegram-webapp";
+import LocateHelpPanel from "@/components/LocateHelpPanel";
+import { useGpsLocate, type LocateHelp } from "@/lib/use-gps-locate";
+
+const LocationPickerFullscreen = dynamic(() => import("@/components/LocationPickerFullscreen"), { ssr: false });
+
+// Phones and tablets: a finger on a small map is imprecise and fights the page scroll, so the map there is a preview
+// that opens the full-screen picker (pin fixed in the centre, the map moves under it).
+const TOUCH_QUERY = "(max-width: 767px), (pointer: coarse)";
+function subscribeTouch(cb: () => void) {
+  const mq = window.matchMedia(TOUCH_QUERY);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
 
 /**
  * The map location picker shared by every feature that sets a real point (address book, checkout, store profile).
@@ -20,6 +33,8 @@ import { openTelegramLocationSettings, telegramLocation } from "@/lib/telegram-w
  * keeps the most precise fix, with its accuracy circle), search a place or street, or paste a Yandex / Google /
  * Apple / 2GIS link or "41.31, 69.27". Four map looks (map · satellite · hybrid · terrain), remembered per browser.
  * The caller learns how each point was found (`source`) and how precise a GPS fix was (`accuracy`, metres).
+ * On phones the small map is a preview: tapping it -- or "use my location" -- opens LocationPickerFullscreen, where the
+ * customer moves the map under a fixed pin and sees the street / house under it before confirming.
  *
  * The caller still passes its own copy for the hint / empty / coordinates / locate texts (several namespaces use
  * it); the picker's own controls use the "locationPicker" messages.
@@ -35,9 +50,6 @@ const PIN_HTML = `
 
 const locationIcon = L.divIcon({ html: PIN_HTML, className: "", iconSize: [34, 34], iconAnchor: [17, 32] });
 
-const GOOD_ACCURACY_M = 20; // stop listening once a fix is this precise
-const LISTEN_MS = 9000; // ...or after this long, keeping the best fix
-
 export interface PickMeta {
   source: CoordinateSource;
   accuracy?: number | null;
@@ -47,8 +59,6 @@ export interface PickMeta {
    */
   final?: boolean;
 }
-
-type Help = "denied" | "insecure" | "off" | "timeout" | "tgDenied";
 
 function ClickToPlace({ onChange }: { onChange: (lat: number, lng: number) => void }) {
   useMapEvents({ click: (e) => onChange(e.latlng.lat, e.latlng.lng) });
@@ -119,12 +129,13 @@ export default function LocationPicker({
   const t = useTranslations("locationPicker");
   const locale = useLocale();
   const mounted = useIsClient();
-  const [locating, setLocating] = useState(false);
+  const touch = useSyncExternalStore(subscribeTouch, () => window.matchMedia(TOUCH_QUERY).matches, () => false);
+  const [fullscreen, setFullscreen] = useState<null | { autoLocate: boolean }>(null);
   const [flyTarget, setFlyTarget] = useState<{ lat: number; lng: number; nonce: number } | null>(null);
   const [accuracy, setAccuracy] = useState<number | null>(null);
   const [layer, setLayer] = useState<MapLayerKey>("street");
   const [layersOpen, setLayersOpen] = useState(false);
-  const [help, setHelp] = useState<Help | null>(null);
+  const [help, setHelp] = useState<LocateHelp | null>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GeocodeResult[] | null>(null);
   const [searching, setSearching] = useState(false);
@@ -133,22 +144,34 @@ export default function LocationPicker({
   const [linkError, setLinkError] = useState(false);
   const [linkBusy, setLinkBusy] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
-  const watchRef = useRef<number | null>(null);
-  const bestRef = useRef<GeolocationPosition | null>(null);
-  const timerRef = useRef<number | null>(null);
+  const firstFixRef = useRef(true);
   // only the last GPS fix this picker produced shows an accuracy circle -- a click / drag / search has none
   const lastGpsCoordRef = useRef<{ lat: number; lng: number } | null>(null);
+
+  const gpsLocate = useGpsLocate({
+    onFix: (fix) => {
+      lastGpsCoordRef.current = { lat: fix.lat, lng: fix.lng };
+      setAccuracy(fix.accuracy);
+      onChange(fix.lat, fix.lng, { source: "gps", accuracy: fix.accuracy, final: fix.final });
+      if (firstFixRef.current) {
+        firstFixRef.current = false;
+        setFlyTarget((prev) => ({ lat: fix.lat, lng: fix.lng, nonce: (prev?.nonce ?? 0) + 1 }));
+      }
+    },
+    onError: (h) => {
+      setHelp(h);
+      if (h === "unsupported") onLocateUnsupported();
+      else if (h === "denied" || h === "tgDenied") onLocateDenied();
+      else if (h === "timeout") (onLocateTimeout ?? onLocateDenied)();
+      else (onLocateUnavailable ?? onLocateDenied)();
+    },
+  });
 
   useEffect(() => setLayer(savedMapLayer()), []); // eslint-disable-line react-hooks/set-state-in-effect -- browser-only preference
   useEffect(() => {
     const gps = lastGpsCoordRef.current;
     if (!(gps != null && latitude === gps.lat && longitude === gps.lng)) setAccuracy(null);
   }, [latitude, longitude]);
-  useEffect(() => () => {
-    // unmount: stop the GPS watch without reporting anything
-    if (watchRef.current != null) navigator.geolocation?.clearWatch(watchRef.current);
-    if (timerRef.current != null) window.clearTimeout(timerRef.current);
-  }, []);
 
   // search as you type (debounced); results come closest to what's on screen first
   useEffect(() => {
@@ -177,114 +200,20 @@ export default function LocationPicker({
   function pick(lat: number, lng: number, meta: PickMeta, flyTo = false) {
     if (meta.source !== "gps") {
       lastGpsCoordRef.current = null;
-      stopListening();
+      gpsLocate.stop();
     }
     onChange(lat, lng, meta);
     if (flyTo) fly(lat, lng);
   }
 
-  function stopListening(commit = false) {
-    if (watchRef.current != null && typeof navigator !== "undefined") navigator.geolocation?.clearWatch(watchRef.current);
-    if (timerRef.current != null) window.clearTimeout(timerRef.current);
-    watchRef.current = null;
-    timerRef.current = null;
-    setLocating(false);
-    const best = bestRef.current;
-    bestRef.current = null;
-    // The most precise fix becomes the point to keep (callers that save on every change wait for this one).
-    if (commit && best) onChange(best.coords.latitude, best.coords.longitude, { source: "gps", accuracy: best.coords.accuracy, final: true });
-  }
-
-  async function handleLocate() {
-    if (locating) {
-      stopListening(true);
-      return;
-    }
+  function handleLocate() {
     setHelp(null);
-
-    // Inside the Telegram Mini App the in-app browser often has no GPS access: ask Telegram itself (Bot API 8.0+).
-    const tg = await telegramLocation();
-    if (tg !== "unsupported") {
-      if (typeof tg === "object") {
-        lastGpsCoordRef.current = { lat: tg.lat, lng: tg.lng };
-        setAccuracy(tg.accuracy);
-        onChange(tg.lat, tg.lng, { source: "gps", accuracy: tg.accuracy, final: true });
-        fly(tg.lat, tg.lng);
-      } else if (tg === "denied") {
-        setHelp("tgDenied");
-        onLocateDenied();
-      } else {
-        setHelp("off");
-        (onLocateUnavailable ?? onLocateDenied)();
-      }
+    if (touch) {
+      setFullscreen({ autoLocate: true }); // see it, correct it, confirm it -- all on the big map
       return;
     }
-
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      onLocateUnsupported();
-      return;
-    }
-    if (!window.isSecureContext) {
-      setHelp("insecure");
-      onLocateUnavailable?.();
-      return;
-    }
-    try {
-      const status = await navigator.permissions?.query({ name: "geolocation" as PermissionName });
-      if (status?.state === "denied") {
-        setHelp("denied");
-        onLocateDenied();
-        return;
-      }
-    } catch {
-      /* Permissions API missing (older Safari) -- just ask */
-    }
-    setLocating(true);
-    bestRef.current = null;
-    let first = true;
-    // watchPosition (not getCurrentPosition): phones answer first from Wi-Fi / cell towers, then GPS -- keep listening
-    // a few seconds and keep the most precise fix. The browser shows its own permission prompt on the first call.
-    watchRef.current = navigator.geolocation.watchPosition(
-      (position) => {
-        const best = bestRef.current;
-        if (best && position.coords.accuracy >= best.coords.accuracy) return; // keep the most precise fix
-        bestRef.current = position;
-        const { latitude: lat, longitude: lng, accuracy: acc } = position.coords;
-        lastGpsCoordRef.current = { lat, lng };
-        setAccuracy(acc);
-        if (acc <= GOOD_ACCURACY_M) {
-          if (first) fly(lat, lng);
-          stopListening(true);
-          return;
-        }
-        onChange(lat, lng, { source: "gps", accuracy: acc, final: false });
-        if (first) {
-          fly(lat, lng);
-          first = false;
-        }
-      },
-      (error) => {
-        if (bestRef.current) {
-          stopListening(true); // a later failure after a fix: keep the best one we have
-          return;
-        }
-        stopListening();
-        if (error.code === error.PERMISSION_DENIED) {
-          setHelp("denied");
-          onLocateDenied();
-        } else if (error.code === error.TIMEOUT) {
-          setHelp("timeout");
-          (onLocateTimeout ?? onLocateDenied)();
-        } else {
-          setHelp("off");
-          (onLocateUnavailable ?? onLocateDenied)();
-        }
-      },
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 },
-    );
-    timerRef.current = window.setTimeout(() => {
-      if (bestRef.current) stopListening(true);
-    }, LISTEN_MS);
+    firstFixRef.current = true;
+    void gpsLocate.start();
   }
 
   async function handleLink() {
@@ -308,6 +237,7 @@ export default function LocationPicker({
     }
   }
 
+  const locating = gpsLocate.locating;
   const quality = accuracy == null ? null : accuracy <= 30 ? "good" : accuracy <= 150 ? "fair" : "poor";
   const qualityClass = { good: "text-emerald-600 dark:text-emerald-400", fair: "text-amber-600 dark:text-amber-400", poor: "text-red-600 dark:text-red-400" };
   const def = MAP_LAYERS[layer];
@@ -316,6 +246,14 @@ export default function LocationPicker({
 
   return (
     <div className="space-y-2">
+      <button
+        type="button" onClick={handleLocate} aria-live="polite" title={locateLabel}
+        className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-primary/30 bg-primary-soft px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white active:scale-[0.99]"
+      >
+        {locating ? <LoaderCircle className="h-4.5 w-4.5 animate-spin" aria-hidden="true" /> : <LocateFixed className="h-4.5 w-4.5" aria-hidden="true" />}
+        <span className="truncate">{locating ? (accuracy != null ? t("improving", { meters: Math.round(accuracy) }) : locatingLabel) : t("locateCta")}</span>
+        {locating && <X className="h-4 w-4 opacity-70" aria-label={t("stop")} />}
+      </button>
       {tools && (
         <div className="relative flex gap-2">
           <label className="nz-glass-input flex min-w-0 flex-1 items-center gap-2 rounded-xl px-3 py-2">
@@ -360,90 +298,70 @@ export default function LocationPicker({
       )}
 
       <div className={`relative ${heightClassName} w-full overflow-hidden rounded-2xl border border-border`}>
-        <MapContainer center={center} zoom={hasLocation ? 16 : defaultZoom} scrollWheelZoom={false} className="h-full w-full" style={{ height: "100%", width: "100%" }}>
+        <MapContainer
+          center={center} zoom={hasLocation ? 16 : defaultZoom} scrollWheelZoom={false} className="h-full w-full" style={{ height: "100%", width: "100%" }}
+          // on a phone the small map is only a preview -- it must not swallow the page scroll
+          dragging={!touch} touchZoom={!touch} doubleClickZoom={!touch} zoomControl={!touch} keyboard={!touch}
+        >
           <TileLayer key={layer} url={def.url} attribution={MAP_TILE_ATTRIBUTION} maxZoom={19} />
           {def.labels && <TileLayer key={`${layer}-labels`} url={def.labels} maxZoom={19} />}
           <MapSizeFixer />
-          <WheelOnFocus />
+          {!touch && <WheelOnFocus />}
           <MapRef onReady={(m) => { mapRef.current = m; }} />
-          <ClickToPlace onChange={(lat, lng) => pick(lat, lng, { source: "map_pin" })} />
+          {!touch && <ClickToPlace onChange={(lat, lng) => pick(lat, lng, { source: "map_pin" })} />}
           <FlyToController target={flyTarget} />
           {hasLocation && accuracy != null && (
             <Circle center={[latitude, longitude]} radius={accuracy} pathOptions={{ color: "var(--nz-primary)", fillColor: "var(--nz-primary)", fillOpacity: 0.12, weight: 1 }} />
           )}
           {hasLocation && (
             <Marker
-              position={[latitude, longitude]} icon={locationIcon} draggable
+              position={[latitude, longitude]} icon={locationIcon} draggable={!touch}
               eventHandlers={{ dragend: (e) => { const pos = (e.target as L.Marker).getLatLng(); pick(pos.lat, pos.lng, { source: "map_pin" }); } }}
             />
           )}
         </MapContainer>
 
-        {!hasLocation && (
-          <div className={`${overlay} pointer-events-none absolute left-1/2 top-3 z-[1000] w-max max-w-[calc(100%-8.5rem)] -translate-x-1/2 rounded-2xl px-3.5 py-1.5 text-center text-xs font-medium text-ink shadow-lg`}>{hintText}</div>
-        )}
-
-        {tools && (
-          <div className="absolute right-3 top-3 z-[1000]">
-            <button type="button" onClick={() => setLayersOpen((v) => !v)} className={chip} aria-expanded={layersOpen} aria-label={t("layers")}>
-              <Layers className="h-3.5 w-3.5" aria-hidden="true" />
-              <span className="hidden sm:inline">{t(`layer.${layer}`)}</span>
-            </button>
-            {layersOpen && (
-              <div className={`${overlay} absolute right-0 top-full mt-1.5 w-40 rounded-2xl p-1.5 shadow-xl`}>
-                {MAP_LAYER_KEYS.map((k) => (
-                  <button key={k} type="button" onClick={() => { setLayer(k); saveMapLayer(k); setLayersOpen(false); }}
-                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm ${k === layer ? "bg-primary-soft font-semibold text-primary" : "text-ink hover:bg-surface-2"}`}>
-                    {t(`layer.${k}`)}
-                    {k === layer && <Check className="h-4 w-4" aria-hidden="true" />}
-                  </button>
-                ))}
+        {touch ? (
+          <button type="button" onClick={() => setFullscreen({ autoLocate: false })} className="absolute inset-0 z-[900] flex items-end justify-center bg-transparent pb-3" aria-label={t("openFullscreen")}>
+            <span className={`${chip} px-4 py-2.5 text-sm`}>
+              <Expand className="h-4 w-4" aria-hidden="true" />
+              {hasLocation ? t("adjustOnMap") : t("openFullscreen")}
+            </span>
+          </button>
+        ) : (
+          <>
+            {!hasLocation && (
+              <div className={`${overlay} pointer-events-none absolute left-1/2 top-3 z-[1000] w-max max-w-[calc(100%-8.5rem)] -translate-x-1/2 rounded-2xl px-3.5 py-1.5 text-center text-xs font-medium text-ink shadow-lg`}>{hintText}</div>
+            )}
+            {tools && (
+              <div className="absolute right-3 top-3 z-[1000] flex flex-col items-end gap-2">
+                <button type="button" onClick={() => setLayersOpen((v) => !v)} className={chip} aria-expanded={layersOpen} aria-label={t("layers")}>
+                  <Layers className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>{t(`layer.${layer}`)}</span>
+                </button>
+                {layersOpen && (
+                  <div className={`${overlay} w-40 rounded-2xl p-1.5 shadow-xl`}>
+                    {MAP_LAYER_KEYS.map((k) => (
+                      <button key={k} type="button" onClick={() => { setLayer(k); saveMapLayer(k); setLayersOpen(false); }}
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm ${k === layer ? "bg-primary-soft font-semibold text-primary" : "text-ink hover:bg-surface-2"}`}>
+                        {t(`layer.${k}`)}
+                        {k === layer && <Check className="h-4 w-4" aria-hidden="true" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
-          </div>
+            <div className="absolute bottom-3 right-3 z-[1000] flex gap-2">
+              <button type="button" onClick={() => setFullscreen({ autoLocate: false })} className={chip} aria-label={t("openFullscreen")} title={t("openFullscreen")}>
+                <Expand className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+            </div>
+          </>
         )}
-
-        <button type="button" onClick={handleLocate} className={`${chip} absolute bottom-3 right-3 z-[1000] px-3.5`} aria-live="polite">
-          {locating ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" strokeWidth={2} aria-hidden="true" /> : <Navigation className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />}
-          {locating ? (accuracy != null ? t("improving", { meters: Math.round(accuracy) }) : locatingLabel) : locateLabel}
-          {locating && <X className="h-3.5 w-3.5 opacity-60" aria-label={t("stop")} />}
-        </button>
       </div>
 
-      {help && (
-        <div role="alert" className="flex gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-ink">
-          <ShieldAlert className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
-          <div className="space-y-1.5">
-            <p className="font-semibold">{t(`${help}Title`)}</p>
-            {help === "denied" ? (
-              <ul className="list-disc space-y-0.5 pl-4 text-ink-muted">
-                <li>{t("deniedChrome")}</li>
-                <li>{t("deniedIphone")}</li>
-                <li>{t("deniedTelegram")}</li>
-              </ul>
-            ) : (
-              <p className="text-ink-muted">{t(`${help}Text`)}</p>
-            )}
-            <p className="text-ink-muted">{t("deniedAlternative")}</p>
-            <div className="flex flex-wrap gap-2 pt-0.5">
-              {help !== "insecure" && (
-                <button type="button" onClick={handleLocate} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 font-semibold text-white">
-                  <Navigation className="h-3.5 w-3.5" aria-hidden="true" />
-                  {t("retry")}
-                </button>
-              )}
-              {help === "tgDenied" && (
-                <button type="button" onClick={() => openTelegramLocationSettings()} className="rounded-lg border border-border px-3 py-1.5 font-semibold text-ink">
-                  {t("tgOpenSettings")}
-                </button>
-              )}
-            </div>
-          </div>
-          <button type="button" onClick={() => setHelp(null)} className="self-start text-ink-soft hover:text-ink" aria-label={t("close")}>
-            <X className="h-4 w-4" aria-hidden="true" />
-          </button>
-        </div>
-      )}
+      {help && <LocateHelpPanel help={help} onRetry={handleLocate} onClose={() => setHelp(null)} />}
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-ink-soft">{hasLocation ? coordinatesText : emptyText}</p>
@@ -453,6 +371,20 @@ export default function LocationPicker({
         <p className={`text-xs font-medium ${qualityClass[quality]}`}>
           {accuracyText(Math.round(accuracy))} · {t(`quality.${quality}`)}
         </p>
+      )}
+      {fullscreen && (
+        <LocationPickerFullscreen
+          initial={hasLocation ? { lat: latitude!, lng: longitude! } : null}
+          defaultCenter={defaultCenter}
+          autoLocate={fullscreen.autoLocate}
+          onConfirm={(lat, lng, meta) => {
+            lastGpsCoordRef.current = meta.source === "gps" ? { lat, lng } : null;
+            setAccuracy(meta.source === "gps" ? meta.accuracy ?? null : null);
+            onChange(lat, lng, meta);
+            fly(lat, lng);
+          }}
+          onClose={() => setFullscreen(null)}
+        />
       )}
     </div>
   );
