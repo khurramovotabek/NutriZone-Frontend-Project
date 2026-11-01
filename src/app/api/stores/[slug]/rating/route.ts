@@ -12,7 +12,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ slu
   const { slug } = await params;
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    return NextResponse.json({ success: false, error: { code: "NO_SESSION", message: "Please log in." } }, { status: 401 });
+    // a guest just sees the read-only rating; answered without a 401 so the store page logs no error
+    return NextResponse.json({ success: false, signed_in: false, error: { code: "NO_SESSION", message: "Please log in." } });
   }
 
   const response = await fetch(`${API_BASE_URL}/api/v1/stores/${encodeURIComponent(slug)}/rating`, {

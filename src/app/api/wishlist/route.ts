@@ -5,7 +5,8 @@ import { getAccessToken } from "@/lib/session";
 export async function GET() {
   const accessToken = await getAccessToken();
   if (!accessToken) {
-    return NextResponse.json({ success: false, error: { code: "NO_SESSION", message: "Please log in to view your wishlist." } }, { status: 401 });
+    // every storefront page asks once on mount: a guest simply has an empty wishlist (no 401 noise per page view)
+    return NextResponse.json({ success: true, data: [], signed_in: false });
   }
   try {
     const items = await getWishlist(accessToken);
