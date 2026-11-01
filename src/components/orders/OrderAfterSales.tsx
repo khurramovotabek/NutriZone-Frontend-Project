@@ -74,10 +74,13 @@ export default function OrderAfterSales({ order, displays, onChanged }: Props) {
     </>
   );
   // After an instant cancel nothing is left to show, but the success dialog must stay until the customer closes it.
-  if (!hasContent) return dialog ? dialogs : null;
+  if (!hasContent && !dialog) return null;
 
+  // The dialogs sit beside the card (never inside it), so the card disappearing after a cancel doesn't remount
+  // the open dialog and lose its "cancelled" success screen.
   return (
-    <section className="nz-glass rounded-3xl p-5" aria-labelledby="order-actions-title">
+    <>
+    {hasContent && <section className="nz-glass rounded-3xl p-5" aria-labelledby="order-actions-title">
       <h2 id="order-actions-title" className="text-sm font-semibold text-ink">{t("title")}</h2>
 
       <div className="mt-4 space-y-3">
@@ -147,8 +150,9 @@ export default function OrderAfterSales({ order, displays, onChanged }: Props) {
         </ul>
       )}
 
-      {dialogs}
-    </section>
+    </section>}
+    {dialogs}
+    </>
   );
 }
 

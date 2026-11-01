@@ -18,7 +18,11 @@ import ProductMediaImage from "@/components/ProductMediaImage";
 export default function OrderItem({ item }: { item: CartItem }) {
   const t = useTranslations("checkout");
   const cached = getCachedVariantDisplay(item.product_variant_id);
-  const price = formatMoney(item.price_reference?.unit_amount, item.price_reference?.currency);
+  const unitAmount = item.price_reference?.unit_amount;
+  const currency = item.price_reference?.currency;
+  // the line total (unit x quantity), with the unit price beside the quantity when there is more than one
+  const price = formatMoney(unitAmount == null ? null : Number(unitAmount) * item.quantity, currency);
+  const unitPrice = item.quantity > 1 ? formatMoney(unitAmount, currency) : null;
 
   return (
     <div className="flex items-center gap-3">
@@ -36,7 +40,7 @@ export default function OrderItem({ item }: { item: CartItem }) {
         <p className="line-clamp-1 text-sm font-medium text-ink">{cached?.productName ?? t("genericItem")}</p>
         {cached?.variantLabel && <p className="line-clamp-1 text-xs text-ink-soft">{cached.variantLabel}</p>}
         {!cached && <p className="text-xs text-ink-soft">{t("variantIdShort", { id: item.product_variant_id.slice(0, 8) })}</p>}
-        <p className="mt-0.5 text-xs text-ink-muted">{t("quantityTimes", { quantity: item.quantity })}</p>
+        <p className="mt-0.5 text-xs text-ink-muted">{t("quantityTimes", { quantity: item.quantity })}{unitPrice && ` × ${unitPrice}`}</p>
       </div>
       <p className="shrink-0 text-sm font-semibold text-ink">{price ?? t("priceUnavailableShort")}</p>
     </div>
