@@ -658,7 +658,11 @@
     "specServingSize": "Serving size",
     "specServings": "Servings per container",
     "specCalories": "Calories (per serving)",
-    "specSku": "SKU"
+    "specSku": "SKU",
+    "storeHowFar": "How far is it from me?",
+    "storeHowFarError": "Couldn't get your location — allow location access in your settings.",
+    "storeNearest": "Nearest branch",
+    "storeRoute": "Route"
   },
   "wishlist": {
     "title": "My Wishlist",

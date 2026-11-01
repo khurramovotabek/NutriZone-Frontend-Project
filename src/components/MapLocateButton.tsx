@@ -8,26 +8,13 @@ import { LoaderCircle, LocateFixed, Navigation, X } from "lucide-react";
 import { useGpsLocate, type LocateHelp } from "@/lib/use-gps-locate";
 import { yandexRouteUrl } from "@/lib/maps";
 import LocateHelpPanel from "@/components/LocateHelpPanel";
+import { distanceMeters, formatDistance } from "@/lib/geo-distance";
 
 export interface MapTarget {
   lat: number;
   lng: number;
   name: string;
   href?: string;
-}
-
-function distanceMeters(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
-  const R = 6371000;
-  const rad = (d: number) => (d * Math.PI) / 180;
-  const dLat = rad(b.lat - a.lat);
-  const dLng = rad(b.lng - a.lng);
-  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(h));
-}
-
-/** < 1 km in metres, otherwise km with one decimal (StoreCard's convention). */
-export function formatDistance(meters: number): string {
-  return meters < 1000 ? `${Math.round(meters)} m` : `${(meters / 1000).toFixed(1)} km`;
 }
 
 /**

@@ -658,7 +658,11 @@
     "specServingSize": "Bir porsiya",
     "specServings": "Porsiyalar soni",
     "specCalories": "Kaloriya (1 porsiya)",
-    "specSku": "Artikul"
+    "specSku": "Artikul",
+    "storeHowFar": "Mendan qancha uzoqda?",
+    "storeHowFarError": "Joylashuvingizni aniqlab bo‘lmadi — telefon sozlamalarida joylashuvga ruxsat bering.",
+    "storeNearest": "Eng yaqin filial",
+    "storeRoute": "Yo‘nalish"
   },
   "wishlist": {
     "title": "Sevimlilar",

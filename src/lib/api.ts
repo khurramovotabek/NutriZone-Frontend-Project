@@ -79,6 +79,8 @@ export interface StoreAvailability {
   city: string;
   district: string;
   available_quantity: number;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface ProductCard {
