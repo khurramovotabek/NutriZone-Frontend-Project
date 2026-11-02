@@ -434,6 +434,45 @@
       "title": "Deals",
       "subtitle": "{count} products on sale — biggest discounts first",
       "viewAll": "All deals"
+    },
+    "categoryRails": {
+      "viewAll": "View all",
+      "seeAllIn": "All {name}",
+      "protein": {
+        "eyebrow": "Muscle essentials",
+        "title": "Proteins",
+        "subtitle": "Whey, isolate and hydrolysate — best sellers"
+      },
+      "creatine": {
+        "eyebrow": "Strength & power",
+        "title": "Creatine",
+        "subtitle": "Monohydrate, HCL and Kre-Alkalyn — proven results"
+      },
+      "gainer": {
+        "eyebrow": "Mass gain",
+        "title": "Gainers",
+        "subtitle": "Calories and carbs for size"
+      },
+      "preworkout": {
+        "eyebrow": "Before training",
+        "title": "Pre-workout",
+        "subtitle": "Energy, focus and pump"
+      },
+      "amino": {
+        "eyebrow": "Recovery",
+        "title": "Amino acids",
+        "subtitle": "BCAA, EAA and glutamine"
+      },
+      "fatburner": {
+        "eyebrow": "Weight loss",
+        "title": "Fat burners",
+        "subtitle": "L-carnitine and thermogenics"
+      },
+      "vitamins": {
+        "eyebrow": "Health",
+        "title": "Vitamins",
+        "subtitle": "Multivitamins, omega-3, minerals"
+      }
     }
   },
   "blog": {
@@ -1030,14 +1069,22 @@
       "headline": "Sports nutrition — genuine, fast and rewarding",
       "lead": "Track your orders, earn coins on every purchase and level up your cashback.",
       "stepsTitle": "How to sign in",
-      "step1": "Open the Telegram bot",
-      "step2": "Tap “🔑 Get website login code” in the bot",
-      "step3": "Enter the 6-digit code here",
+      "step1": "Tap “Continue with Telegram”",
+      "step2": "In the bot tap “✅ Sign in to the website” (new here? register in 30 seconds)",
+      "step3": "The site signs you in by itself — no code to type",
       "perkTitle": "Coins on every purchase",
       "perkBody": "1% to 8% cashback — pay for your next order with coins.",
       "codeHint": "The code is valid for 2 minutes",
       "autoHint": "You'll be signed in automatically once all 6 digits are in",
-      "newCode": "Get a new code"
+      "newCode": "Get a new code",
+      "oneTapWaiting": "Waiting for your confirmation in Telegram…",
+      "oneTapWaitingHint": "Tap “✅ Sign in to the website” in the bot and come back — this page updates by itself.",
+      "oneTapOpen": "Telegram didn't open? Tap here",
+      "oneTapReopen": "Open Telegram again",
+      "oneTapExpired": "The request expired. Tap the button once more.",
+      "codeToggle": "Or sign in with a code",
+      "codeHow": "In the bot tap “🔑 Get a code for the website” and type the 6-digit code here.",
+      "getCode": "Get a code from the bot"
     }
   },
   "otp": {

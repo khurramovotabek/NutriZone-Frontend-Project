@@ -434,6 +434,45 @@
       "title": "Aksiyalar",
       "subtitle": "{count} ta mahsulot chegirmada — eng katta chegirmalar birinchi",
       "viewAll": "Barcha chegirmalar"
+    },
+    "categoryRails": {
+      "viewAll": "Barchasi",
+      "seeAllIn": "Barcha {name}",
+      "protein": {
+        "eyebrow": "Mushak uchun asos",
+        "title": "Proteinlar",
+        "subtitle": "Whey, izolyat va gidrolizat — eng ko'p sotilganlari"
+      },
+      "creatine": {
+        "eyebrow": "Kuch va chidamlilik",
+        "title": "Kreatinlar",
+        "subtitle": "Monogidrat, HCL va Kre-Alkalyn — isbotlangan natija"
+      },
+      "gainer": {
+        "eyebrow": "Vazn olish",
+        "title": "Geynerlar",
+        "subtitle": "Massa uchun kaloriya va uglevodlar"
+      },
+      "preworkout": {
+        "eyebrow": "Mashg'ulotdan oldin",
+        "title": "Pre-workout",
+        "subtitle": "Energiya, fokus va pamp"
+      },
+      "amino": {
+        "eyebrow": "Tiklanish",
+        "title": "Aminokislotalar",
+        "subtitle": "BCAA, EAA va glutamin"
+      },
+      "fatburner": {
+        "eyebrow": "Ozish",
+        "title": "Yog' yoquvchilar",
+        "subtitle": "L-karnitin va termogeniklar"
+      },
+      "vitamins": {
+        "eyebrow": "Salomatlik",
+        "title": "Vitaminlar",
+        "subtitle": "Multivitaminlar, omega-3, minerallar"
+      }
     }
   },
   "blog": {
@@ -1030,14 +1069,22 @@
       "headline": "Sport ozuqasi — ishonchli, tez va foydali",
       "lead": "Buyurtmalaringizni kuzating, har xariddan coin yig'ing va darajangizni oshiring.",
       "stepsTitle": "Qanday kiriladi",
-      "step1": "Telegram botni oching",
-      "step2": "Botda «🔑 Sayt uchun kod olish» tugmasini bosing",
-      "step3": "6 xonali kodni shu yerga kiriting",
+      "step1": "«Telegram orqali kirish» tugmasini bosing",
+      "step2": "Botda «✅ Saytga kirish»ni bosing (yangi bo'lsangiz — 30 soniyada ro'yxatdan o'tasiz)",
+      "step3": "Sayt o'zi kiradi — kod yozish shart emas",
       "perkTitle": "Har xariddan coin",
       "perkBody": "1% dan 8% gacha keshbek — coinlar bilan keyingi buyurtmani to'lang.",
       "codeHint": "Kod 2 daqiqa amal qiladi",
       "autoHint": "6 ta raqam kiritilgach, avtomatik kirasiz",
-      "newCode": "Yangi kod olish"
+      "newCode": "Yangi kod olish",
+      "oneTapWaiting": "Telegramda tasdiqlashingizni kutyapmiz…",
+      "oneTapWaitingHint": "Botdagi «✅ Saytga kirish» tugmasini bosing va shu sahifaga qayting — u o'zi yangilanadi.",
+      "oneTapOpen": "Telegram ochilmadimi? Shu yerni bosing",
+      "oneTapReopen": "Telegramni qayta ochish",
+      "oneTapExpired": "So'rov muddati tugadi. Tugmani yana bir bor bosing.",
+      "codeToggle": "Yoki kod bilan kirish",
+      "codeHow": "Botda «🔑 Sayt uchun kod olish» tugmasini bosing va 6 xonali kodni shu yerga yozing.",
+      "getCode": "Botdan kod olish"
     }
   },
   "otp": {

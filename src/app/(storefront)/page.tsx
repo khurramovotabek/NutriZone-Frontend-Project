@@ -21,6 +21,7 @@ import LoyaltyBanner from "@/components/home/LoyaltyBanner";
 import ProductShowcase, { type ShowcaseTab } from "@/components/home/ProductShowcase";
 import SaleSection from "@/components/home/SaleSection";
 import QuickNav from "@/components/home/QuickNav";
+import CategoryRail from "@/components/home/CategoryRail";
 import StoresSection from "@/components/home/StoresSection";
 import SeoIntro, { FAQ_KEYS } from "@/components/home/SeoIntro";
 import type { Metadata } from "next";
@@ -168,11 +169,39 @@ export default async function HomePage() {
       </Suspense>
 
       <Suspense fallback={null}>
+        <CategoryRail slug="proteinlar" tKey="protein" />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <CategoryRail slug="kreatin" tKey="creatine" />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <CategoryRail slug="geynerlar" tKey="gainer" />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <CategoryRail slug="pre-workout" tKey="preworkout" />
+      </Suspense>
+
+      <Suspense fallback={null}>
         <GoalsSection />
       </Suspense>
 
       <Suspense fallback={null}>
         <LoyaltyBanner />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <CategoryRail slug="aminokislotalar" tKey="amino" />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <CategoryRail slug="yog-yoquvchilar" tKey="fatburner" />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <CategoryRail slug="vitaminlar" tKey="vitamins" />
       </Suspense>
 
       <Suspense fallback={null}>

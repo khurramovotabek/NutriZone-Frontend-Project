@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Send, Timer } from "lucide-react";
+import { ChevronDown, ExternalLink, Loader2, Send, Timer } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { mapAuthErrorCode } from "@/lib/auth-errors";
 import { safeRedirectPath } from "@/lib/safe-redirect";
@@ -71,6 +71,13 @@ export default function LoginCodeForm({ redirectTo }: { redirectTo: string }) {
   // invocation -- however soon it arrives -- always sees it set.
   const submittingRef = useRef(false);
 
+  // One-tap sign-in: an auto-login session the bot confirms ("✅ Saytga kirish"); this page polls it and signs in by
+  // itself. New customers register inside the bot first (the bot keeps the request and asks again afterwards).
+  const [oneTap, setOneTap] = useState<"waiting" | "expired" | null>(null);
+  const [oneTapUrl, setOneTapUrl] = useState<string | null>(null);
+  const [showCode, setShowCode] = useState(false);
+  const sessionRef = useRef<string | null>(null);
+
   const counting = secondsLeft !== null && secondsLeft > 0;
   const expired = secondsLeft === 0;
 
@@ -101,6 +108,69 @@ export default function LoginCodeForm({ redirectTo }: { redirectTo: string }) {
     setErrorKey(null);
     setSecondsLeft(CODE_VALIDITY_SECONDS);
   }
+
+  async function handleOneTap() {
+    if (oneTap === "waiting" && oneTapUrl) {
+      window.open(oneTapUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    // Opened synchronously inside the tap -- a window opened after an await is blocked as a popup on phones.
+    const win = window.open("", "_blank");
+    try {
+      const res = await fetch("/api/auth/telegram/session", { method: "POST" });
+      const body = await res.json();
+      const url: string | null = body?.data?.telegram_url ?? null;
+      if (!res.ok || !body.success || !url) throw new Error("no session");
+      sessionRef.current = body.data.session_id;
+      setOneTapUrl(url);
+      setOneTap("waiting");
+      setErrorKey(null);
+      if (win) win.location.href = url;
+    } catch {
+      // Rate-limited or offline: the classic flow (bot -> 6-digit code) still works.
+      win?.close();
+      setShowCode(true);
+      handleOpenBot();
+    }
+  }
+
+  useEffect(() => {
+    if (oneTap !== "waiting") return;
+    let stopped = false;
+    async function poll() {
+      const id = sessionRef.current;
+      if (!id || stopped || submittingRef.current) return;
+      try {
+        const res = await fetch(`/api/auth/telegram/session/${encodeURIComponent(id)}`, { cache: "no-store" });
+        const body = await res.json();
+        const status = body?.data?.status;
+        if (stopped) return;
+        if (status === "verified") {
+          stopped = true;
+          submittingRef.current = true;
+          setAuthPhase("success");
+          await new Promise((resolve) => setTimeout(resolve, SUCCESS_TRANSITION_MS));
+          router.push(safeRedirectPath(redirectTo));
+          router.refresh();
+        } else if (status === "expired" || status === "consumed" || status === "failed") {
+          stopped = true;
+          setOneTap("expired");
+        }
+      } catch {
+        /* a dropped poll is retried on the next tick */
+      }
+    }
+    const timer = setInterval(poll, 2000);
+    const onVisible = () => document.visibilityState === "visible" && poll();
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
+    };
+  }, [oneTap, redirectTo, router]);
 
   async function handleLogin(value = code) {
     if (value.length !== OTP_LENGTH || loading || submittingRef.current) return;
@@ -179,53 +249,83 @@ export default function LoginCodeForm({ redirectTo }: { redirectTo: string }) {
       {TELEGRAM_BOT_USERNAME && (
         <button
           type="button"
-          onClick={handleOpenBot}
+          onClick={handleOneTap}
           className="nz-telegram-btn nz-shimmer-btn group flex w-full items-center justify-center gap-2.5 rounded-2xl px-6 py-4 text-base font-bold text-white"
         >
           <Send className="h-5 w-5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2} aria-hidden="true" />
-          {tTelegram("continueWith")}
+          {oneTap === "waiting" ? tPage("oneTapReopen") : tTelegram("continueWith")}
         </button>
       )}
 
-      <div className="my-6 flex items-center gap-3" role="separator">
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent to-border" />
-        <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-soft">{t("title")}</span>
-        <div className="h-px flex-1 bg-gradient-to-l from-transparent to-border" />
-      </div>
-
-      <OtpInput
-        variant="premium"
-        value={code}
-        disabled={loading}
-        invalid={!!errorKey}
-        onChange={(v) => {
-          setCode(v);
-          if (errorKey) setErrorKey(null);
-          if (v.length === OTP_LENGTH) handleLogin(v);
-        }}
-      />
-
-      <p className={`mt-4 flex items-center justify-center gap-1.5 text-center text-xs font-medium tabular-nums ${expired ? "text-amber-400" : "text-ink-muted"}`} aria-live="polite">
-        <Timer className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
-        {expired ? t("codeExpired") : counting ? t("validFor", { time: formatCountdown(secondsLeft ?? 0) }) : tPage("codeHint")}
-      </p>
-
-      {errorKey && (
-        <p role="alert" aria-live="polite" className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-center text-sm text-red-300">
-          {errorKey === "network" ? tAuth("networkError") : tAuth(`errors.${errorKey}` as "errors.unknown")}
+      {oneTap === "waiting" && (
+        <div className="mt-4 rounded-2xl border border-sky-400/25 bg-sky-400/10 p-4 text-center" aria-live="polite">
+          <p className="flex items-center justify-center gap-2 text-sm font-bold text-ink">
+            <Loader2 className="h-4 w-4 animate-spin text-sky-400" strokeWidth={2.25} aria-hidden="true" />
+            {tPage("oneTapWaiting")}
+          </p>
+          <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">{tPage("oneTapWaitingHint")}</p>
+          {oneTapUrl && (
+            <a href={oneTapUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-sky-300 hover:underline">
+              <ExternalLink className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+              {tPage("oneTapOpen")}
+            </a>
+          )}
+        </div>
+      )}
+      {oneTap === "expired" && (
+        <p role="alert" className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-center text-sm text-amber-200">
+          {tPage("oneTapExpired")}
         </p>
       )}
 
-      <button type="button" onClick={() => handleLogin()} disabled={loading || code.length !== OTP_LENGTH} className="nz-cta mt-5 flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold disabled:opacity-50">
-        {loading && <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden="true" />}
-        {loading ? t("loggingIn") : t("loginButton")}
+      <button
+        type="button"
+        onClick={() => setShowCode((v) => !v)}
+        aria-expanded={showCode}
+        className="mx-auto mt-6 flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink"
+      >
+        {tPage("codeToggle")}
+        <ChevronDown className={`h-3.5 w-3.5 transition-transform ${showCode ? "rotate-180" : ""}`} strokeWidth={2.25} aria-hidden="true" />
       </button>
-      <p className="mt-2 text-center text-[11px] text-ink-soft">{tPage("autoHint")}</p>
 
-      {expired && TELEGRAM_BOT_USERNAME && (
-        <button type="button" onClick={handleOpenBot} className="mt-3 block w-full text-center text-sm font-semibold text-primary hover:underline">
-          {tPage("newCode")}
-        </button>
+      {showCode && (
+        <div className="mt-4">
+          <p className="mb-4 text-center text-xs leading-relaxed text-ink-muted">{tPage("codeHow")}</p>
+          <OtpInput
+            variant="premium"
+            value={code}
+            disabled={loading}
+            invalid={!!errorKey}
+            onChange={(v) => {
+              setCode(v);
+              if (errorKey) setErrorKey(null);
+              if (v.length === OTP_LENGTH) handleLogin(v);
+            }}
+          />
+
+          <p className={`mt-4 flex items-center justify-center gap-1.5 text-center text-xs font-medium tabular-nums ${expired ? "text-amber-400" : "text-ink-muted"}`} aria-live="polite">
+            <Timer className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+            {expired ? t("codeExpired") : counting ? t("validFor", { time: formatCountdown(secondsLeft ?? 0) }) : tPage("codeHint")}
+          </p>
+
+          {errorKey && (
+            <p role="alert" aria-live="polite" className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-center text-sm text-red-300">
+              {errorKey === "network" ? tAuth("networkError") : tAuth(`errors.${errorKey}` as "errors.unknown")}
+            </p>
+          )}
+
+          <button type="button" onClick={() => handleLogin()} disabled={loading || code.length !== OTP_LENGTH} className="nz-cta mt-5 flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold disabled:opacity-50">
+            {loading && <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden="true" />}
+            {loading ? t("loggingIn") : t("loginButton")}
+          </button>
+          <p className="mt-2 text-center text-[11px] text-ink-soft">{tPage("autoHint")}</p>
+
+          {TELEGRAM_BOT_USERNAME && (
+            <button type="button" onClick={handleOpenBot} className="mt-3 block w-full text-center text-sm font-semibold text-primary hover:underline">
+              {expired ? tPage("newCode") : tPage("getCode")}
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

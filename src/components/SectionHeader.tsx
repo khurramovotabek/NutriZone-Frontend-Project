@@ -28,17 +28,17 @@ export default function SectionHeader({
   viewAllLabel?: string;
 }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-3">
-      <div>
+    <div className="flex items-end justify-between gap-3">
+      <div className="min-w-0">
         {eyebrow && <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">{eyebrow}</p>}
         <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-ink sm:text-2xl">
           {icon}
           {title}
         </h2>
-        {subtitle && <p className="mt-1 text-sm text-ink-muted">{subtitle}</p>}
+        {subtitle && <p className="mt-1 line-clamp-2 text-[13px] text-ink-muted sm:text-sm">{subtitle}</p>}
       </div>
       {viewAllHref && viewAllLabel && (
-        <Link href={viewAllHref} className="group/viewall flex shrink-0 items-center gap-1 text-sm font-medium text-primary transition-colors hover:brightness-110">
+        <Link href={viewAllHref} className="group/viewall flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-primary/10 px-3 py-1.5 text-[13px] font-semibold text-primary sm:bg-transparent sm:p-0 sm:text-sm transition-colors hover:brightness-110">
           {viewAllLabel}
           <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover/viewall:translate-x-0.5" strokeWidth={2} aria-hidden="true" />
         </Link>
