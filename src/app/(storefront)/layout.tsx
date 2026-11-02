@@ -25,6 +25,7 @@ import NotificationBell from "@/components/notifications/NotificationBell";
 import TelegramMiniAppBridge from "@/components/TelegramMiniAppBridge";
 import MiniAppTabBar from "@/components/MiniAppTabBar";
 import AssistantWidget from "@/components/assistant/AssistantWidget";
+import SignupNudge from "@/components/SignupNudge";
 
 /**
  * Storefront layout -- the main ecommerce navbar/footer, applied ONLY
@@ -139,6 +140,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
       <GlobalSearchOverlay />
       <CompareBar />
       <AssistantWidget />
+      {!fullName && <SignupNudge />}
       <MiniAppTabBar />
     </SearchOverlayProvider>
     </WishlistProvider>

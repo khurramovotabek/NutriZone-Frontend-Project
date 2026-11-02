@@ -3557,5 +3557,15 @@
     "empty": "No advice yet.",
     "loadError": "Couldn't load the advice.",
     "count": "{count} guides"
+  },
+  "signupNudge": {
+    "title": "Sign up in 30 seconds",
+    "subtitle": "With Telegram — no password, no SMS. One tap and you're in.",
+    "perkCoins": "Up to 8% coin cashback on every order",
+    "perkOrders": "Track your order in real time",
+    "perkDeals": "Members-only deals and personal picks",
+    "cta": "Continue with Telegram",
+    "later": "Later",
+    "close": "Close"
   }
 }

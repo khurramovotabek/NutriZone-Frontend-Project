@@ -3557,5 +3557,15 @@
     "empty": "Hozircha maslahatlar yo'q.",
     "loadError": "Maslahatlarni yuklab bo'lmadi.",
     "count": "{count} ta maslahat"
+  },
+  "signupNudge": {
+    "title": "30 soniyada ro'yxatdan o'ting",
+    "subtitle": "Telegram orqali — parol ham, SMS ham kerak emas. Bir tugma bosasiz, tamom.",
+    "perkCoins": "Har xariddan 8% gacha cashback coin",
+    "perkOrders": "Buyurtmangizni real vaqtda kuzating",
+    "perkDeals": "Yopiq chegirmalar va shaxsiy tavsiyalar",
+    "cta": "Telegram orqali kirish",
+    "later": "Keyinroq",
+    "close": "Yopish"
   }
 }
