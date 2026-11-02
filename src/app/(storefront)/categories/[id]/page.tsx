@@ -3,7 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { ChevronRight, Package, SlidersHorizontal, X } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getBrandNameMap, getCategories, getCategoryDescription, getProducts } from "@/lib/api";
+import { getBrandNameMap, getCategories, getCategoryDescription, searchProducts } from "@/lib/api";
 import MediaImage from "@/components/MediaImage";
 import ProductCard from "@/components/ProductCard";
 import ProductGrid from "@/components/ProductGrid";
@@ -28,7 +28,7 @@ interface Props {
  * docstring): `GET /categories` has no `/categories/{id}` detail
  * route or product count of its own, so this resolves the category's
  * name/image from that same list, and its real product count from
- * the existing, already-accurate `GET /products?filter[category_id]=` pagination.
+ * the catalogue search (same products and count as `GET /products?filter[category_id]=`, best sellers first).
  */
 async function resolveCategory(param: string) {
   const { data: categories } = await getCategories(await getLocale());
@@ -63,13 +63,13 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
   const about = await getCategoryDescription(id, await getLocale());
   const aboutParagraphs = about.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
-  let products: Awaited<ReturnType<typeof getProducts>>["data"] = [];
+  let products: Awaited<ReturnType<typeof searchProducts>>["data"] = [];
   let brandNames: Record<string, string> = {};
   let totalCount = 0;
   let totalPages = 1;
   let loadError = false;
   try {
-    const [result, brandMap] = await Promise.all([getProducts({ categoryId: id, page, pageSize: PAGE_SIZE, locale: await getLocale() }), getBrandNameMap()]);
+    const [result, brandMap] = await Promise.all([searchProducts({ q: "", categoryId: id, page, pageSize: PAGE_SIZE, sort: "-popularity", locale: await getLocale() }), getBrandNameMap()]);
     products = result.data;
     brandNames = brandMap;
     totalCount = result.pagination?.total_count ?? 0;
