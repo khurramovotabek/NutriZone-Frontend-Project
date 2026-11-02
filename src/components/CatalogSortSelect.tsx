@@ -15,15 +15,15 @@ export default function CatalogSortSelect({ state }: { state: CatalogState }) {
   const [pending, startTransition] = useTransition();
   const options: { value: CatalogSort; label: string }[] = [
     ...(state.q ? [{ value: "relevance" as const, label: t("sortRelevance") }] : []),
-    { value: "-created_at", label: t("sortNewest") },
     { value: "-popularity", label: t("sortPopular") },
+    { value: "-created_at", label: t("sortNewest") },
     { value: "-discount", label: t("sortDiscount") },
     { value: "price", label: t("sortPriceAsc") },
     { value: "-price", label: t("sortPriceDesc") },
     { value: "-rating", label: t("sortRating") },
     { value: "name", label: t("sortName") },
   ];
-  const current = state.sort ?? (state.q ? "relevance" : "-created_at");
+  const current = state.sort ?? (state.q ? "relevance" : "-popularity");
 
   return (
     <label className={`flex items-center gap-2 text-sm text-ink-muted transition-opacity ${pending ? "opacity-60" : ""}`}>

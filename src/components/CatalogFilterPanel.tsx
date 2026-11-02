@@ -50,7 +50,7 @@ export default function CatalogFilterPanel({ state, facets, categories, resultCo
   }
 
   const exactSizes = state.sizes.filter((s) => !isSizeBand(s));
-  const categoryOptions = facets?.category?.length ? facets.category : categories.map((c) => ({ id: c.id, name: c.name, count: undefined as number | undefined }));
+  const categoryOptions = categoryTreeOptions(categories, facets?.category, state.category);
 
   const body = (
     <div className={`transition-opacity ${pending ? "pointer-events-none opacity-60" : ""}`} aria-busy={pending}>
@@ -97,7 +97,7 @@ export default function CatalogFilterPanel({ state, facets, categories, resultCo
         </Section>
       )}
 
-      {(facets?.rating?.length ?? 0) > 0 && (
+      {(facets?.rating ?? []).some((r) => r.count > 0) && (
         <Section title={t("filterRating")} badge={state.rating ? 1 : 0}>
           <div className="flex flex-col gap-0.5">
             {facets!.rating!.map((r) => {
@@ -287,6 +287,35 @@ interface Option {
   name: string;
   count: number | undefined;
   swatch?: string;
+}
+
+/**
+ * The category filter as a tree, not 70+ leaf categories in one list: the top-level sections first (counts rolled up
+ * from their sub-categories), and once one is picked, its parent (to step back) and its own sub-categories. A
+ * category filter already includes everything below it, so picking "Proteinlar" shows every whey, isolate...
+ */
+function categoryTreeOptions(categories: Category[], facet: { id: string; name: string; count: number }[] | undefined, selected: string | undefined): Option[] {
+  if (!categories.length) return (facet ?? []).map((c) => ({ id: c.id, name: c.name, count: c.count }));
+  const byId = new Map(categories.map((c) => [c.id, c]));
+  const counts = new Map<string, number>();
+  for (const f of facet ?? []) {
+    // a leaf's products count for it and for every section above it
+    for (let c = byId.get(f.id), guard = 0; c && guard < 8; c = c.parent_id ? byId.get(c.parent_id) : undefined, guard++) counts.set(c.id, (counts.get(c.id) ?? 0) + f.count);
+  }
+  const hasCounts = (facet?.length ?? 0) > 0;
+  const childrenOf = (id: string | null) =>
+    categories
+      .filter((c) => c.parent_id === id && (!hasCounts || (counts.get(c.id) ?? 0) > 0))
+      .sort((a, b) => (counts.get(b.id) ?? 0) - (counts.get(a.id) ?? 0) || a.sort_order - b.sort_order)
+      .map((c) => ({ id: c.id, name: c.name, count: hasCounts ? counts.get(c.id) : undefined }));
+  const current = selected ? byId.get(selected) : undefined;
+  if (!current) return childrenOf(null);
+  const parent = current.parent_id ? byId.get(current.parent_id) : undefined;
+  return [
+    ...(parent ? [{ id: parent.id, name: `← ${parent.name}`, count: hasCounts ? counts.get(parent.id) : undefined }] : []),
+    { id: current.id, name: current.name, count: hasCounts ? counts.get(current.id) : undefined },
+    ...childrenOf(current.id).map((c) => ({ ...c, name: `↳ ${c.name}` })),
+  ];
 }
 
 function OptionList({

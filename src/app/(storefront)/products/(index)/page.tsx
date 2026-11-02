@@ -61,7 +61,8 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
         ratingMin: state.rating,
         inStock: state.stock,
         onSale: state.sale,
-        sort: state.sort,
+        // no query and no chosen order: best sellers first (the newest were often protein bars, a weak first impression)
+        sort: state.sort ?? (state.q ? undefined : "-popularity"),
         locale,
       }),
       getCategories(locale),
