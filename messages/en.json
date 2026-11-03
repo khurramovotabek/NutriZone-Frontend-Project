@@ -1,5 +1,14 @@
 {
   "navigation": {
+    "guides": "Advice centre",
+    "blog": "Blog",
+    "menuShop": "Shop",
+    "menuAccount": "My account",
+    "menuHelp": "Help",
+    "sale": "Deals",
+    "signInTitle": "Sign in to your account",
+    "signInText": "Orders, coins and your wishlist — one Telegram tap.",
+    "signInCta": "Sign in with Telegram",
     "home": "NutriZone",
     "homepage": "Homepage",
     "catalog": "Catalog",
@@ -633,6 +642,8 @@
     "keyFacts": "Quick facts",
     "zoomImage": "Zoom image",
     "attributeFlavor": "Flavor",
+    "moreFlavours": "{count} more flavours",
+    "fewerFlavours": "Show less",
     "attributePackageSize": "Size",
     "attributeForm": "Form",
     "sizesCount": "{count, plural, one {# size} other {# sizes}}",

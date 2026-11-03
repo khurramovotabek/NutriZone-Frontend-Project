@@ -1,5 +1,14 @@
 {
   "navigation": {
+    "guides": "Maslahatlar markazi",
+    "blog": "Blog",
+    "menuShop": "Do'kon",
+    "menuAccount": "Hisobim",
+    "menuHelp": "Yordam",
+    "sale": "Aksiyalar",
+    "signInTitle": "Hisobingizga kiring",
+    "signInText": "Buyurtmalar, bonuslar va sevimlilar — bir Telegram tugmasi bilan.",
+    "signInCta": "Telegram orqali kirish",
     "home": "NutriZone",
     "homepage": "Bosh sahifa",
     "catalog": "Katalog",
@@ -633,6 +642,8 @@
     "keyFacts": "Qisqacha ma'lumot",
     "zoomImage": "Rasmni kattalashtirish",
     "attributeFlavor": "Ta'm",
+    "moreFlavours": "Yana {count} ta ta'm",
+    "fewerFlavours": "Yig'ish",
     "attributePackageSize": "Hajm",
     "attributeForm": "Turi",
     "sizesCount": "{count, plural, other {# ta hajm}}",

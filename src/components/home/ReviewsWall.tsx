@@ -29,7 +29,7 @@ export default async function ReviewsWall() {
   const { results, average, count } = data;
 
   return (
-    <section className="mt-16">
+    <section className="mt-10 sm:mt-16">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <SectionHeader eyebrow={t("eyebrow")} title={t("title")} subtitle={t("subtitle")} />
         {average !== null && (

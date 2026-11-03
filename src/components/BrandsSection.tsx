@@ -24,7 +24,7 @@ export default async function BrandsSection() {
   if (brands.length === 0) return null;
 
   return (
-    <section className="mt-16">
+    <section className="mt-10 sm:mt-16">
       <h2 className="mb-4 text-xl font-semibold tracking-tight text-ink">{t("title")}</h2>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {brands.map((brand) => (

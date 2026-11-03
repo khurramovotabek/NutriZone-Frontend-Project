@@ -45,12 +45,14 @@ export default async function StorefrontLayout({ children }: { children: React.R
   // fallback icon UserAvatar itself already renders.
   let avatarUrl: string | null = null;
   let fullName = "";
+  let signedIn = false; // a shopper without a name on file is still signed in
   const accessToken = await getAccessToken();
   if (accessToken) {
     try {
       const me = await getMe(accessToken);
       avatarUrl = me.avatar_url;
       fullName = me.full_name;
+      signedIn = true;
     } catch {
       // Not logged in / expired session -- fall through to the icon fallback.
     }
@@ -129,7 +131,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
               <Link href="/account" aria-label={t("login")} className="nz-tg-hide flex h-9 w-9 items-center justify-center">
                 <UserAvatar avatarUrl={avatarUrl} alt={fullName || t("login")} size={26} />
               </Link>
-              <span className="nz-tg-hide flex"><MobileNav /></span>
+              <span className="nz-tg-hide flex"><MobileNav signedIn={signedIn} /></span>
             </span>
           </div>
         </div>
@@ -140,7 +142,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
       <GlobalSearchOverlay />
       <CompareBar />
       <AssistantWidget />
-      {!fullName && <SignupNudge />}
+      {!signedIn && <SignupNudge />}
       <MiniAppTabBar />
     </SearchOverlayProvider>
     </WishlistProvider>

@@ -13,7 +13,7 @@ const POPULAR = ["sport", "protein", "creatine", "gainer", "bcaa", "vitamins", "
 export default async function SeoIntro({ brand }: { brand: string }) {
   const t = await getTranslations("seo");
   return (
-    <section className="mt-16 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]" aria-labelledby="nz-seo-intro">
+    <section className="mt-10 sm:mt-16 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]" aria-labelledby="nz-seo-intro">
       <div className="nz-glass rounded-3xl p-6 sm:p-8">
         <h2 id="nz-seo-intro" className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">{t("intro.title")}</h2>
         <div className="mt-4 space-y-3 text-sm leading-relaxed text-ink-muted sm:text-[15px]">

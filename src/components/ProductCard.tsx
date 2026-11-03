@@ -195,7 +195,7 @@ export default function ProductCard({
         </div>
 
         {/* CONTENT */}
-        <div className={`flex flex-1 flex-col ${isCompact ? "p-2.5" : isFeatured ? "p-4" : "p-3.5"}`}>
+        <div className={`flex flex-1 flex-col ${isCompact ? "p-2.5" : isFeatured ? "p-4" : "p-3 sm:p-3.5"}`}>
           {brandName && !isCompact && <p className="truncate text-xs font-medium uppercase tracking-wide text-ink-soft">{brandName}</p>}
           <p
             className={`mt-0.5 line-clamp-2 font-medium text-ink transition-colors group-hover:text-primary ${isFeatured ? "text-base" : isCompact ? "text-xs" : "text-sm"}`}
@@ -220,7 +220,7 @@ export default function ProductCard({
 
           <div className="mt-auto pt-2">
             {product.price_from ? (
-              <p className={`font-bold text-ink ${isFeatured ? "text-lg" : isCompact ? "text-sm" : "text-base"}`}>
+              <p className={`font-bold tracking-tight text-ink ${isFeatured ? "text-lg" : isCompact ? "text-sm" : "text-[15px] sm:text-base"}`}>
                 {t("priceFrom", { price: formatPrice(product.price_from, product.currency) ?? "" })}
               </p>
             ) : formattedPrice ? (
@@ -287,7 +287,8 @@ function RatingRow({
   size: "xs" | "sm";
 }) {
   const textSize = size === "xs" ? "text-[11px]" : "text-xs";
-  if (!hasRating) return <p className={`mt-1 ${textSize} text-ink-soft`}>{noReviewsLabel}</p>;
+  // "No reviews yet" is noise on a phone's half-width card -- the space goes to the name and price there.
+  if (!hasRating) return <p className={`mt-1 hidden sm:block ${textSize} text-ink-soft`}>{noReviewsLabel}</p>;
   return (
     <div className="mt-1 flex items-center gap-1">
       <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400" strokeWidth={0} aria-hidden="true" />

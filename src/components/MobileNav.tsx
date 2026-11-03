@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useIsClient } from "@/hooks/useIsClient";
 import { createPortal } from "react-dom";
-import { Coins, Heart, LayoutDashboard, LayoutGrid, Mail, MapPin, Menu, MessageCircle, Package, Settings, ShoppingCart, X } from "lucide-react";
+import { BookOpen, Coins, Heart, Info, LayoutDashboard, LayoutGrid, Lightbulb, Mail, MapPin, Menu, MessageCircle, Package, Percent, Send, Settings, Store, Tag, X } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -30,7 +30,7 @@ import ThemeToggle from "@/components/ThemeToggle";
  * sliver). Same root cause and same fix as LanguageSwitcher's own
  * portaled dropdown.
  */
-export default function MobileNav() {
+export default function MobileNav({ signedIn = false }: { signedIn?: boolean }) {
   const [open, setOpen] = useState(false);
   const mounted = useIsClient();
   const t = useTranslations("navigation");
@@ -51,17 +51,44 @@ export default function MobileNav() {
     };
   }, [open]);
 
-  const NAV_ITEMS = [
-    { href: "/products", label: t("catalog"), icon: LayoutGrid },
-    { href: "/wishlist", label: t("wishlist"), icon: Heart },
-    { href: "/cart", label: t("cart"), icon: ShoppingCart },
-    { href: "/orders", label: t("orders"), icon: Package },
-    { href: "/account/loyalty", label: t("loyalty"), icon: Coins },
-    { href: "/account/addresses", label: tAccount("addresses"), icon: MapPin },
-    { href: "/account", label: tAccount("dashboard"), icon: LayoutDashboard },
-    { href: "/account/chat", label: tAccount("chat"), icon: MessageCircle },
-    { href: "/account/settings", label: tAccount("settings"), icon: Settings },
-    { href: "/contact", label: tAccount("contact"), icon: Mail },
+  // Grouped like a shop app: browse first, then the shopper's own pages, then help. Guests get a sign-in card instead
+  // of account links that would only bounce them to /login one by one.
+  const SECTIONS = [
+    {
+      title: t("menuShop"),
+      items: [
+        { href: "/products", label: t("catalog"), icon: LayoutGrid },
+        { href: "/products?sale=1", label: t("sale"), icon: Percent },
+        { href: "/brands", label: t("brands"), icon: Tag },
+        { href: "/stores", label: t("stores"), icon: Store },
+        { href: "/loyalty", label: "NutriZone Coins", icon: Coins },
+        { href: "/guides", label: t("guides"), icon: Lightbulb },
+        { href: "/blog", label: t("blog"), icon: BookOpen },
+      ],
+    },
+    ...(signedIn
+      ? [
+          {
+            title: t("menuAccount"),
+            items: [
+              { href: "/account", label: tAccount("dashboard"), icon: LayoutDashboard },
+              { href: "/orders", label: t("orders"), icon: Package },
+              { href: "/account/loyalty", label: t("loyalty"), icon: Coins },
+              { href: "/wishlist", label: t("wishlist"), icon: Heart },
+              { href: "/account/addresses", label: tAccount("addresses"), icon: MapPin },
+              { href: "/account/settings", label: tAccount("settings"), icon: Settings },
+            ],
+          },
+        ]
+      : []),
+    {
+      title: t("menuHelp"),
+      items: [
+        ...(signedIn ? [{ href: "/account/chat", label: tAccount("chat"), icon: MessageCircle }] : [{ href: "/wishlist", label: t("wishlist"), icon: Heart }]),
+        { href: "/contact", label: tAccount("contact"), icon: Mail },
+        { href: "/about", label: t("about"), icon: Info },
+      ],
+    },
   ];
 
   return (
@@ -99,17 +126,38 @@ export default function MobileNav() {
                 </button>
               </div>
 
-              <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-4 text-sm">
-                {NAV_ITEMS.map(({ href, label, icon: Icon }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-3 py-3 font-medium text-ink transition-colors hover:bg-primary-soft hover:text-primary"
-                  >
-                    <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                    {label}
-                  </Link>
+              <nav className="flex flex-1 flex-col overflow-y-auto overscroll-contain p-3 text-sm">
+                {!signedIn && (
+                  <div className="mb-3 rounded-2xl border border-sky-400/25 bg-gradient-to-br from-sky-500/15 to-primary/10 p-4">
+                    <p className="text-sm font-bold text-ink">{t("signInTitle")}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-ink-muted">{t("signInText")}</p>
+                    <Link
+                      href="/login"
+                      onClick={() => setOpen(false)}
+                      className="nz-telegram-btn mt-3 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white"
+                    >
+                      <Send className="h-4 w-4" strokeWidth={2.25} aria-hidden="true" />
+                      {t("signInCta")}
+                    </Link>
+                  </div>
+                )}
+                {SECTIONS.map((section) => (
+                  <div key={section.title} className="mb-2">
+                    <p className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[0.14em] text-ink-soft">{section.title}</p>
+                    {section.items.map(({ href, label, icon: Icon }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-ink transition-colors hover:bg-primary-soft hover:text-primary active:bg-primary-soft"
+                      >
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-ink-muted">
+                          <Icon className="h-4 w-4" strokeWidth={1.9} aria-hidden="true" />
+                        </span>
+                        {label}
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </nav>
 

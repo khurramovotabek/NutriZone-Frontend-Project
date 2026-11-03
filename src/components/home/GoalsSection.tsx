@@ -23,7 +23,7 @@ export default async function GoalsSection() {
   if (goals.length === 0) return null;
 
   return (
-    <section className="mt-16">
+    <section className="mt-10 sm:mt-16">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} subtitle={t("subtitle")} />
       <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {goals.map((g) => {

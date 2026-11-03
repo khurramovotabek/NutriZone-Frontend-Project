@@ -27,7 +27,7 @@ export default async function BestSellersSection() {
   if (products.length === 0) return null;
 
   return (
-    <section className="mt-16">
+    <section className="mt-10 sm:mt-16">
       <SectionHeader
         icon={<Flame className="h-5 w-5 text-orange-500" strokeWidth={1.75} aria-hidden="true" />}
         title={t("title")}

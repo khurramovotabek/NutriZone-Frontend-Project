@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { Heart, Send } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getWishlist } from "@/lib/wishlist-api";
 import { getBrandNameMap } from "@/lib/api";
@@ -15,18 +15,26 @@ export async function generateMetadata() {
 
 export default async function WishlistPage() {
   const t = await getTranslations("wishlist");
+  const tNav = await getTranslations("navigation");
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
-        <Heart className="mx-auto h-12 w-12 text-ink-soft" strokeWidth={1.25} />
-        <h1 className="mt-4 text-xl font-bold text-ink">{t("title")}</h1>
-        <p className="mt-2 text-sm text-ink-muted">
-          <Link href={`/login?next=${encodeURIComponent("/wishlist")}`} className="font-medium text-primary transition-colors hover:brightness-110">
-            {t("loginPrompt")}
+      <div className="mx-auto max-w-md px-4 py-12 sm:py-20">
+        <div className="nz-glass-strong rounded-3xl p-6 text-center sm:p-8">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500/12 text-rose-500 dark:text-rose-400">
+            <Heart className="h-7 w-7" strokeWidth={1.75} aria-hidden="true" />
+          </span>
+          <h1 className="mt-4 text-xl font-bold text-ink">{t("title")}</h1>
+          <p className="mt-2 text-sm text-ink-muted">{t("loginPrompt")}</p>
+          <Link href={`/login?next=${encodeURIComponent("/wishlist")}`} className="nz-telegram-btn mt-5 flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white">
+            <Send className="h-4 w-4" strokeWidth={2.25} aria-hidden="true" />
+            {tNav("signInCta")}
           </Link>
-        </p>
+          <Link href="/products" className="mt-3 inline-block text-sm font-medium text-primary hover:underline">
+            {tNav("catalog")} &rarr;
+          </Link>
+        </div>
       </div>
     );
   }

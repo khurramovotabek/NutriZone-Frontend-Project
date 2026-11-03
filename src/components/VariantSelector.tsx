@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ProductCard } from "@/lib/api";
@@ -19,6 +19,8 @@ interface Props {
 
 const sizeKey = (v: Variant) => (v.weight_value !== null ? `${v.weight_value}|${v.weight_unit}` : "");
 const flavourKey = (v: Variant) => v.flavour?.id ?? "";
+// A family can have 20+ flavours: past this many the list folds behind a "N more" toggle so the buy button stays near.
+const FLAVOURS_FOLDED = 8;
 const soldOut = (v: Variant) => v.stock_status === "out_of_stock" || v.stock_quantity === 0;
 
 /** Comparable magnitude so sizes read small → large: 350 g, 700 g, 1.8 kg, 2.27 kg (counts and volumes likewise). */
@@ -36,6 +38,7 @@ function magnitude(v: Variant): number {
 export default function VariantSelector({ variants, selectedId, onChange, disabled = false }: Props) {
   const t = useTranslations("product");
   const selected = variants.find((v) => v.id === selectedId) ?? variants[0];
+  const [allFlavours, setAllFlavours] = useState(false);
 
   const sizes = useMemo(() => {
     const seen = new Map<string, Variant>();
@@ -54,6 +57,10 @@ export default function VariantSelector({ variants, selectedId, onChange, disabl
   const curSize = sizeKey(selected);
   const curFlavour = flavourKey(selected);
   const combo = (size: string, flavour: string) => variants.find((v) => sizeKey(v) === size && flavourKey(v) === flavour);
+
+  const folds = flavours.length > FLAVOURS_FOLDED + 2;
+  // folded: the first few, plus the selected flavour when it sits further down the list
+  const shownFlavours = !folds || allFlavours ? flavours : flavours.filter((f, i) => i < FLAVOURS_FOLDED || f.id === curFlavour);
 
   function choose(dim: "size" | "flavour", key: string) {
     const exact = dim === "size" ? combo(key, curFlavour) : combo(curSize, key);
@@ -107,7 +114,7 @@ export default function VariantSelector({ variants, selectedId, onChange, disabl
             {selected.flavour && <span className="font-normal text-ink-soft">— {selected.flavour.name}</span>}
           </legend>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {flavours.map((f) => {
+            {shownFlavours.map((f) => {
               const on = f.id === curFlavour;
               const match = sizes.length > 1 ? combo(curSize, f.id) : variants.find((v) => flavourKey(v) === f.id);
               const out = match ? soldOut(match) : false;
@@ -139,6 +146,16 @@ export default function VariantSelector({ variants, selectedId, onChange, disabl
               );
             })}
           </div>
+          {folds && (
+            <button
+              type="button"
+              onClick={() => setAllFlavours((v) => !v)}
+              aria-expanded={allFlavours}
+              className="mt-2 rounded-lg px-1 py-1 text-sm font-semibold text-primary hover:underline"
+            >
+              {allFlavours ? t("fewerFlavours") : t("moreFlavours", { count: flavours.length - shownFlavours.length })}
+            </button>
+          )}
         </fieldset>
       )}
     </div>

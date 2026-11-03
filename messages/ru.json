@@ -1,5 +1,14 @@
 {
   "navigation": {
+    "guides": "Центр советов",
+    "blog": "Блог",
+    "menuShop": "Магазин",
+    "menuAccount": "Мой аккаунт",
+    "menuHelp": "Помощь",
+    "sale": "Акции",
+    "signInTitle": "Войдите в аккаунт",
+    "signInText": "Заказы, бонусы и избранное — одной кнопкой в Telegram.",
+    "signInCta": "Войти через Telegram",
     "home": "NutriZone",
     "homepage": "Главная",
     "catalog": "Каталог",
@@ -633,6 +642,8 @@
     "keyFacts": "Коротко о товаре",
     "zoomImage": "Увеличить изображение",
     "attributeFlavor": "Вкус",
+    "moreFlavours": "Ещё {count} вкусов",
+    "fewerFlavours": "Свернуть",
     "attributePackageSize": "Объём",
     "attributeForm": "Форма",
     "sizesCount": "{count, plural, one {# размер} few {# размера} many {# размеров} other {# размера}}",

@@ -35,7 +35,7 @@ export default function ProductShowcase({ tabs, brandNames }: { tabs: ShowcaseTa
   const wide = products.length <= 2;
 
   return (
-    <section id="featured-products" className="mt-16 scroll-mt-24">
+    <section id="featured-products" className="mt-10 sm:mt-16 scroll-mt-24">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">{t("eyebrow")}</p>

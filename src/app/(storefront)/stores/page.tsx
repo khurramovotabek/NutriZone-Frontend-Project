@@ -66,9 +66,9 @@ export default async function StoresPage({
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-10">
       <StoreJsonLd stores={stores} locale={(await getLocale()) as Locale} brandName={(await getBrand()).name} />
-      <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex items-center gap-1.5 text-xs text-ink-muted">
+      <nav aria-label={t("breadcrumbLabel")} className="mb-4 flex items-center gap-1.5 text-xs text-ink-muted sm:mb-6">
         <Link href="/" className="transition-colors hover:text-primary">
           {tNav("home")}
         </Link>
@@ -78,13 +78,13 @@ export default async function StoresPage({
         </span>
       </nav>
 
-      <header className="nz-glass relative overflow-hidden rounded-3xl p-6 sm:p-8">
+      <header className="nz-glass relative overflow-hidden rounded-3xl p-5 sm:p-8">
         <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-28 left-1/3 h-72 w-72 rounded-full bg-blue-500/15 blur-3xl" />
         <p className="relative text-xs font-bold uppercase tracking-[0.18em] text-primary">{t("heroEyebrow")}</p>
         <h1 className="relative mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">{t("title")}</h1>
         <p className="relative mt-2 max-w-2xl text-ink-muted">{t("subtitle")}</p>
-        <dl className="relative mt-6 grid max-w-xl grid-cols-3 gap-3">
+        <dl className="relative mt-5 grid max-w-xl grid-cols-3 gap-3">
           {[
             { icon: StoreIcon, value: count, label: t("statStores"), tone: "text-emerald-500 bg-emerald-500/12" },
             { icon: DoorOpen, value: openNowCount ?? stores.filter((s) => s.is_open_now).length, label: t("statOpen"), tone: "text-sky-500 bg-sky-500/12" },
@@ -102,60 +102,64 @@ export default async function StoresPage({
         </dl>
       </header>
 
-      {/* Filters + list/map switch */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        <div className="nz-glass order-last ml-auto flex gap-1 rounded-2xl p-1">
-          <Link href={buildFilterUrl({ view: undefined })} aria-current={!mapView ? "page" : undefined} className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${!mapView ? "bg-primary text-white" : "text-ink-muted hover:text-ink"}`}>
-            <LayoutGrid className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
-            {t("viewList")}
+      {/* Filters + list/map switch. Phones: the quick filters and the switch on one row, the 15+ places as one swipeable rail (not six rows of chips). */}
+      <div className="mt-6 space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <Suspense fallback={null}>
+            <NearMeFilter />
+          </Suspense>
+
+          <Link
+            href={buildFilterUrl({ open_now: params.open_now === "true" ? undefined : "true" })}
+            className={`whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+              params.open_now === "true" ? "border-primary/25 bg-primary-soft text-primary" : "border-border text-ink-muted hover:border-primary/40"
+            }`}
+          >
+            {t("openNow")}
           </Link>
-          <Link href={buildFilterUrl({ view: "map" })} aria-current={mapView ? "page" : undefined} className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${mapView ? "bg-primary text-white" : "text-ink-muted hover:text-ink"}`}>
-            <MapIcon className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
-            {t("viewMap")}
-          </Link>
+
+          {(params.city || params.district || params.open_now || params.lat) && (
+            <Link href="/stores" className="text-sm text-ink-muted underline hover:text-primary">
+              {t("clearFilters")}
+            </Link>
+          )}
+          <div className="nz-glass ml-auto flex shrink-0 gap-1 rounded-2xl p-1">
+            <Link href={buildFilterUrl({ view: undefined })} aria-current={!mapView ? "page" : undefined} className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${!mapView ? "bg-primary text-white" : "text-ink-muted hover:text-ink"}`}>
+              <LayoutGrid className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+              {t("viewList")}
+            </Link>
+            <Link href={buildFilterUrl({ view: "map" })} aria-current={mapView ? "page" : undefined} className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${mapView ? "bg-primary text-white" : "text-ink-muted hover:text-ink"}`}>
+              <MapIcon className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+              {t("viewMap")}
+            </Link>
+          </div>
         </div>
-        <Suspense fallback={null}>
-          <NearMeFilter />
-        </Suspense>
+        <div className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+          {cities.map((city) => (
+            <Link
+              key={city}
+              href={buildFilterUrl({ city: params.city === city ? undefined : city })}
+              className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-medium backdrop-blur-sm transition-colors ${
+                params.city === city ? "border-primary/25 bg-primary-soft text-primary" : "border-border text-ink-muted hover:border-primary/40"
+              }`}
+            >
+              {city}
+            </Link>
+          ))}
 
-        <Link
-          href={buildFilterUrl({ open_now: params.open_now === "true" ? undefined : "true" })}
-          className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
-            params.open_now === "true" ? "border-primary/25 bg-primary-soft text-primary" : "border-border text-ink-muted hover:border-primary/40"
-          }`}
-        >
-          {t("openNow")}
-        </Link>
+          {districts.map((district) => (
+            <Link
+              key={district}
+              href={buildFilterUrl({ district: params.district === district ? undefined : district })}
+              className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-medium backdrop-blur-sm transition-colors ${
+                params.district === district ? "border-primary/25 bg-primary-soft text-primary" : "border-border text-ink-muted hover:border-primary/40"
+              }`}
+            >
+              {district}
+            </Link>
+          ))}
 
-        {cities.map((city) => (
-          <Link
-            key={city}
-            href={buildFilterUrl({ city: params.city === city ? undefined : city })}
-            className={`rounded-full border px-4 py-1.5 text-sm font-medium backdrop-blur-sm transition-colors ${
-              params.city === city ? "border-primary/25 bg-primary-soft text-primary" : "border-border text-ink-muted hover:border-primary/40"
-            }`}
-          >
-            {city}
-          </Link>
-        ))}
-
-        {districts.map((district) => (
-          <Link
-            key={district}
-            href={buildFilterUrl({ district: params.district === district ? undefined : district })}
-            className={`rounded-full border px-4 py-1.5 text-sm font-medium backdrop-blur-sm transition-colors ${
-              params.district === district ? "border-primary/25 bg-primary-soft text-primary" : "border-border text-ink-muted hover:border-primary/40"
-            }`}
-          >
-            {district}
-          </Link>
-        ))}
-
-        {(params.city || params.district || params.open_now || params.lat) && (
-          <Link href="/stores" className="text-sm text-ink-muted underline hover:text-primary">
-            {t("clearFilters")}
-          </Link>
-        )}
+        </div>
       </div>
 
       {/* Grid */}

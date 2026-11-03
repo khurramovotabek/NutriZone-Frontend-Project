@@ -21,7 +21,7 @@ export default async function LoyaltyBanner() {
   const sorted = hidden ? [...all.slice(0, 3), all[all.length - 1]] : all;
 
   return (
-    <section className="relative mt-16 overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#1c1407_0%,#3b2506_45%,#0f172a_100%)] p-6 text-white shadow-2xl shadow-amber-900/20 sm:p-10">
+    <section className="relative mt-10 overflow-hidden rounded-[2rem] sm:mt-16 bg-[linear-gradient(135deg,#1c1407_0%,#3b2506_45%,#0f172a_100%)] p-6 text-white shadow-2xl shadow-amber-900/20 sm:p-10">
       <span aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-amber-400/30 blur-3xl" />
       <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-orange-500/20 blur-3xl" />
       <div className="relative grid items-center gap-8 lg:grid-cols-[1.15fr_1fr]">

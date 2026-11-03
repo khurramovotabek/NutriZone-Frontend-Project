@@ -15,7 +15,7 @@ export default async function TelegramSubscribe() {
   const coins = info.gift_coins ? info.gift_coins.toLocaleString("ru-RU").replace(/ /g, " ") : null;
 
   return (
-    <section className="relative mt-16 overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#0b3b5c_0%,#0e5f8a_45%,#1d9bd8_100%)] p-6 text-white shadow-2xl shadow-sky-900/25 sm:p-10">
+    <section className="relative mt-10 overflow-hidden rounded-[2rem] sm:mt-16 bg-[linear-gradient(135deg,#0b3b5c_0%,#0e5f8a_45%,#1d9bd8_100%)] p-6 text-white shadow-2xl shadow-sky-900/25 sm:p-10">
       <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-sky-300/30 blur-3xl" />
       <Send aria-hidden="true" className="pointer-events-none absolute -bottom-10 right-6 h-56 w-56 -rotate-12 text-white/10" strokeWidth={1.25} />
       <div className="relative grid items-center gap-8 lg:grid-cols-[1.2fr_1fr]">

@@ -55,7 +55,7 @@ export default async function BlogSection() {
   const minutes = (p: BlogPostCard) => (p.reading_minutes ? t("minutes", { count: p.reading_minutes }) : null);
 
   return (
-    <section className="mt-16">
+    <section className="mt-10 sm:mt-16">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} subtitle={t("subtitle")} viewAllHref="/blog" viewAllLabel={t("viewAll")} />
 
       <div className={`mt-6 grid gap-6 ${rest.length ? "lg:grid-cols-[1.35fr_1fr]" : ""}`}>

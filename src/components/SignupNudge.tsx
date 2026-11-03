@@ -84,7 +84,8 @@ export default function SignupNudge() {
         {t("title")}
       </p>
       <p className="mt-1 pr-6 text-[13px] leading-relaxed text-ink-muted">{t("subtitle")}</p>
-      <ul className="mt-3 space-y-1.5">
+      {/* phones: the perks stay off -- the card must not cover half the product page; the title and one tap say enough */}
+      <ul className="mt-3 hidden space-y-1.5 sm:block">
         {perks.map(({ icon, text }) => (
           <li key={text} className="flex items-center gap-2.5 text-[13px] font-medium text-ink">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center">{icon}</span>
@@ -95,12 +96,12 @@ export default function SignupNudge() {
       <Link
         href={`/login?next=${encodeURIComponent(pathname)}`}
         onClick={() => write(DISMISS_KEY, String(Date.now()), "local")}
-        className="nz-telegram-btn mt-4 flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-bold text-white"
+        className="nz-telegram-btn mt-3 flex w-full sm:mt-4 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white sm:py-3.5"
       >
         <Send className="h-4 w-4" strokeWidth={2.25} aria-hidden="true" />
         {t("cta")}
       </Link>
-      <button type="button" onClick={dismiss} className="mt-2 w-full py-1.5 text-center text-xs font-semibold text-ink-soft hover:text-ink">
+      <button type="button" onClick={dismiss} className="mt-1 w-full py-1.5 text-center sm:mt-2 text-xs font-semibold text-ink-soft hover:text-ink">
         {t("later")}
       </button>
     </div>

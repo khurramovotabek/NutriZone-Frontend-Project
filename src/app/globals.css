@@ -1138,6 +1138,7 @@ html[data-tg="1"] main { padding-bottom: calc(76px + env(safe-area-inset-bottom)
    the AI launcher moves up above such a bar */
 html[data-tg="1"] .nz-tg-above-tabbar { bottom: calc(62px + env(safe-area-inset-bottom)); padding-bottom: 0.75rem !important; }
 html[data-tg="1"] body:has(.nz-tg-above-tabbar) .nz-ai-fab { bottom: calc(140px + env(safe-area-inset-bottom)); }
+html[data-tg="1"] .nz-filter-pill { bottom: calc(74px + env(safe-area-inset-bottom)); }
 
 /* horizontal swipe rows (home Aksiyalar): no scrollbar on touch, momentum scroll */
 .nz-snap-row { scrollbar-width: none; -webkit-overflow-scrolling: touch; }

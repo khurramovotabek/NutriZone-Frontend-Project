@@ -35,7 +35,7 @@ export default async function ForYouSection({ limit = 4 }: { limit?: number }) {
   const t = await getTranslations("home.forYou");
 
   return (
-    <section className="mt-16">
+    <section className="mt-10 sm:mt-16">
       <SectionHeader icon={<Sparkles className="h-5 w-5 text-primary" strokeWidth={1.75} aria-hidden="true" />} title={t("title")} viewAllHref="/products" viewAllLabel={t("viewAll")} />
       <p className="mt-1 text-sm text-ink-muted">{t("subtitle")}</p>
       <div className="mt-4">

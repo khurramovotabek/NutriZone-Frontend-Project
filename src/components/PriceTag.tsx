@@ -19,7 +19,7 @@ const SIZES = {
   xs: { price: "text-sm", old: "text-[11px]", badge: "text-[10px] px-1.5 py-0.5", save: "text-[11px]" },
   sm: { price: "text-base", old: "text-xs", badge: "text-[11px] px-1.5 py-0.5", save: "text-xs" },
   md: { price: "text-lg", old: "text-sm", badge: "text-xs px-2 py-0.5", save: "text-xs" },
-  xl: { price: "text-3xl sm:text-4xl", old: "text-base sm:text-lg", badge: "text-sm px-2.5 py-1", save: "text-sm" },
+  xl: { price: "text-[1.7rem] leading-tight sm:text-4xl", old: "text-base sm:text-lg", badge: "text-sm px-2.5 py-1", save: "text-sm" },
 } as const;
 
 /**
@@ -35,6 +35,7 @@ export default function PriceTag({
   size = "sm",
   showBadge = true,
   showSavings = false,
+  stacked = false,
   className = "",
 }: {
   price: string | null | undefined;
@@ -44,6 +45,8 @@ export default function PriceTag({
   size?: keyof typeof SIZES;
   showBadge?: boolean;
   showSavings?: boolean;
+  /** Old price under the current one instead of beside it -- for tight rows (the phone's sticky buy bar). */
+  stacked?: boolean;
   className?: string;
 }) {
   const t = useTranslations("product");
@@ -56,13 +59,13 @@ export default function PriceTag({
 
   return (
     <div className={className}>
-      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <span className={`font-extrabold tabular-nums tracking-tight ${discounted ? "text-rose-600 dark:text-rose-400" : "text-primary"} ${s.price}`}>
+      <div className={stacked ? "flex flex-col leading-tight" : "flex flex-wrap items-baseline gap-x-2 gap-y-0.5"}>
+        <span className={`whitespace-nowrap font-extrabold tabular-nums tracking-tight ${discounted ? "text-rose-600 dark:text-rose-400" : "text-primary"} ${s.price}`}>
           <span className="sr-only">{t("currentPrice")}: </span>
           {current}
         </span>
         {old && (
-          <span className={`tabular-nums text-ink-soft line-through decoration-ink-soft/70 ${s.old}`}>
+          <span className={`whitespace-nowrap tabular-nums text-ink-soft line-through decoration-ink-soft/70 ${s.old}`}>
             <span className="sr-only">{t("oldPrice")}: </span>
             {old}
           </span>

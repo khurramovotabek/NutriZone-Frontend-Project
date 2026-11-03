@@ -43,9 +43,10 @@ export default async function Footer() {
 
   return (
     <footer className="nz-glass nz-site-footer">
-      <div className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
-          <div>
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
+        {/* phones: brand on top, the two link columns side by side, contacts under them -- half the scrolling of four stacked lists */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
+          <div className="col-span-2 sm:col-span-1">
             <p className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink">
               <BrandMark className="h-7 w-7 rounded-lg text-xs" />
               {brand.name}
@@ -96,7 +97,7 @@ export default async function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="col-span-2 sm:col-span-1">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-ink-soft">{t("contactHeading")}</h3>
             <ul className="mt-3 space-y-2.5 text-sm">
               {phone && (

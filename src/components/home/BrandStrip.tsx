@@ -18,7 +18,7 @@ export default async function BrandStrip() {
   if (brands.length === 0) return null;
 
   return (
-    <section className="mt-16">
+    <section className="mt-10 sm:mt-16">
       <SectionHeader eyebrow={t("eyebrow")} title={t("title")} subtitle={t("subtitle")} viewAllHref="/brands" viewAllLabel={t("viewAll")} />
       <ul className="mt-6 flex flex-wrap justify-center gap-4">
         {brands.slice(0, 12).map((b) => (

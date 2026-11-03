@@ -87,12 +87,12 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
   const pageLocale = (await getLocale()) as Locale;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <div className="mx-auto max-w-7xl px-4 py-5 sm:py-10">
       <JsonLd data={[
         breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: t("title"), path: "/products" }, ...ancestors.map((a) => ({ name: a.name, path: categoryPath(a) })), { name: category.name, path: categoryPath(category) }], pageLocale),
         { "@context": "https://schema.org", "@type": "CollectionPage", name: category.name, url: absoluteUrl(localizedPath(categoryPath(category), pageLocale)), isPartOf: { "@id": absoluteUrl("/#website") } },
       ]} />
-      <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-ink-soft">
+      <nav aria-label={t("breadcrumbLabel")} className="mb-4 flex flex-wrap items-center gap-1.5 text-sm text-ink-soft sm:mb-6">
         <Link href="/" className="transition-colors hover:text-primary">
           {tNav("home")}
         </Link>
@@ -110,22 +110,22 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
         <span className="truncate font-medium text-ink">{category.name}</span>
       </nav>
 
-      {/* Category hero -- name, image, count and (when written in the dashboard) the category's own description. */}
-      <div className="nz-glass-strong flex flex-col items-center gap-4 rounded-3xl px-6 py-10 text-center sm:px-10">
-        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-surface-2">
+      {/* Category hero -- name, image, count and (when written in the dashboard) the category's own description. On a phone it is a compact row (image beside the name, three lines of text) so the products start on the first screen. */}
+      <div className="nz-glass-strong grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-3 rounded-3xl p-4 sm:flex sm:flex-col sm:items-center sm:gap-4 sm:px-10 sm:py-10 sm:text-center">
+        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-surface-2 sm:h-24 sm:w-24">
           <MediaImage src={category.image_url} alt="" fit="cover" fallbackIcon={<Package className="h-10 w-10 text-ink-soft" strokeWidth={1.25} aria-hidden="true" />} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{category.name}</h1>
-          {!loadError && <p className="mt-1.5 text-sm text-ink-muted">{t("resultCount", { count: totalCount })}</p>}
+          <h1 className="text-xl font-bold tracking-tight text-ink sm:text-3xl">{category.name}</h1>
+          {!loadError && <p className="mt-0.5 text-sm text-ink-muted sm:mt-1.5">{t("resultCount", { count: totalCount })}</p>}
         </div>
         {aboutParagraphs.length > 0 && (
-          <details className="group w-full max-w-3xl text-left">
+          <details className="group col-span-2 w-full max-w-3xl text-left">
             <summary className="list-none [&::-webkit-details-marker]:hidden">
               <span className="sr-only">{t("aboutCategory", { name: category.name })}</span>
-              <p className="text-sm leading-relaxed text-ink-muted sm:text-[15px]">{aboutParagraphs[0]}</p>
-              {aboutParagraphs.length > 1 && (
-                <span className="mt-2 inline-block cursor-pointer text-sm font-semibold text-primary hover:underline">
+              <p className="line-clamp-3 text-sm leading-relaxed text-ink-muted group-open:line-clamp-none sm:line-clamp-none sm:text-[15px]">{aboutParagraphs[0]}</p>
+              {(aboutParagraphs.length > 1 || aboutParagraphs[0].length > 160) && (
+                <span className={`mt-2 inline-block cursor-pointer text-sm font-semibold text-primary hover:underline ${aboutParagraphs.length === 1 ? "sm:hidden" : ""}`}>
                   <span className="group-open:hidden">{t("readMore")}</span>
                   <span className="hidden group-open:inline">{t("showLess")}</span>
                 </span>
@@ -141,7 +141,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
       </div>
 
       {/* Active-filter chip + escape hatch into the full Catalog filter sidebar (brand/price/availability combined with this same category) -- reuses the existing `/products?category=` capability rather than duplicating CatalogFilterPanel here. */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-6">
         <Link href="/products" className="flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary-soft px-3 py-1 text-xs font-medium text-primary transition-colors hover:brightness-95">
           {t("filterCategory")}: {category.name} <X className="h-3 w-3" strokeWidth={2} aria-hidden="true" />
         </Link>
@@ -155,9 +155,9 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
       </div>
 
       {subCategories.length > 0 && (
-        <nav aria-label={category.name} className="mt-4 flex flex-wrap gap-2">
+        <nav aria-label={category.name} className="scrollbar-none -mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
           {subCategories.map((c) => (
-            <Link key={c.id} href={categoryPath(c)} className="nz-glass rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-primary hover:text-primary">
+            <Link key={c.id} href={categoryPath(c)} className="nz-glass shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-primary hover:text-primary">
               {c.name}
             </Link>
           ))}

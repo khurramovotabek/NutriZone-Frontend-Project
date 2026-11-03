@@ -86,7 +86,7 @@ export default function AddToCartButton({ variantId, className = "", outOfStock 
         onClick={handleAdd}
         disabled={state === "pending"}
         aria-label={t("addToCart")}
-        className={`nz-cta nz-shimmer-btn group/cart flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-out hover:-translate-y-px disabled:pointer-events-none disabled:opacity-70 ${className}`}
+        className={`nz-cta nz-shimmer-btn group/cart flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 sm:px-3 text-xs font-semibold transition-all duration-200 ease-out hover:-translate-y-px disabled:pointer-events-none disabled:opacity-70 ${className}`}
       >
         {state === "added" ? (
           <>

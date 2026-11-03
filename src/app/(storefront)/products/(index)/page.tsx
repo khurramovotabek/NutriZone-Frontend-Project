@@ -96,7 +96,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const viewBaseQuery = catalogHref(state, { view: undefined, page: state.page }).split("?")[1] ?? "";
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <div className="mx-auto max-w-7xl px-4 pb-24 pt-5 sm:py-10 lg:pb-10">
       <ScrollSideNav />
       <div className="flex flex-col gap-8 lg:flex-row">
         <Suspense fallback={null}>
