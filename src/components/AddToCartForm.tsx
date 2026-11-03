@@ -247,7 +247,7 @@ export default function AddToCartForm({ variants, selectedId, onSelectVariant, f
 
       {state === "success" && (
         <p role="status" aria-live="polite" className="text-sm text-success">
-          {unitAmount ? t("addedWithPrice", { amount: unitAmount, currency: currency ?? "" }) : t("addedSimple")}
+          {unitAmount ? t("addedWithPrice", { amount: Math.round(Number(unitAmount)).toLocaleString("en-US"), currency: currency ?? "" }) : t("addedSimple")}
         </p>
       )}
     </div>

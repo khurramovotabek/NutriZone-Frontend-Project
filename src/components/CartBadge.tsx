@@ -5,7 +5,7 @@ import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { onCartUpdated } from "@/lib/cart-events";
+import { loadCart, onCartUpdated } from "@/lib/cart-events";
 
 /**
  * `compact`: the mobile header icon-button treatment (same `h-9 w-9`
@@ -22,24 +22,20 @@ export default function CartBadge({ compact = false }: { compact?: boolean } = {
 
   useEffect(() => {
     let cancelled = false;
-    function refresh() {
-      fetch("/api/cart")
-        .then((res) => (res.ok ? res.json() : null))
-        .then((body) => {
-          if (cancelled || !body?.success) return;
-          const activeItems = (body.data.items ?? []).filter((i: { status: string }) => i.status !== "removed");
-          setCount(activeItems.length);
-        })
-        .catch(() => {
-          // Not logged in, or no cart yet -- show no badge rather than a fake count.
-        });
+    function refresh(fresh = false) {
+      // no cart yet / request failed -> loadCart() gives null: show no badge rather than a fake count
+      void loadCart(fresh).then((body) => {
+        if (cancelled || !body?.success) return;
+        const activeItems = (body.data?.items ?? []).filter((i) => i.status !== "removed");
+        setCount(activeItems.length);
+      });
     }
     refresh();
     // Real navigation still refetches (a fresh page load is the one case
     // an external cart mutation, e.g. from another tab, should surface
     // here); every mutation *this* tab makes fires cart-updated directly
     // instead of waiting for a navigation that may never happen.
-    const unsubscribe = onCartUpdated(refresh);
+    const unsubscribe = onCartUpdated(() => refresh(true));
     return () => {
       cancelled = true;
       unsubscribe();

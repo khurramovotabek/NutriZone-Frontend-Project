@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, Coins, LayoutDashboard, LogOut, Mail, MapPin, MessageCircle, Package, PackageSearch, ReceiptText, Settings, User } from "lucide-react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -25,6 +26,15 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   const router = useRouter();
   const t = useTranslations("account");
   const chatUnread = useChatUnread();
+  const navRef = useRef<HTMLElement>(null);
+
+  // Phones see the menu as one swipe row: bring the current page's tab into view (Settings sits far right, off-screen).
+  useEffect(() => {
+    const nav = navRef.current;
+    const active = nav?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!nav || !active || nav.scrollWidth <= nav.clientWidth) return;
+    nav.scrollTo({ left: active.offsetLeft - (nav.clientWidth - active.offsetWidth) / 2, behavior: "instant" as ScrollBehavior });
+  }, [pathname]);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -33,8 +43,8 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <div className="grid min-w-0 gap-6 lg:grid-cols-[220px_1fr]">
+    <div className="mx-auto max-w-6xl px-4 py-5 sm:py-10">
+      <div className="grid min-w-0 gap-4 sm:gap-6 lg:grid-cols-[220px_1fr]">
         {/* Real overflow fix, live-verified: grid items default to
             `min-width: auto`, so this sidebar's own intrinsic content
             width (nine `shrink-0` nav links) forced the whole grid track
@@ -44,7 +54,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             this grid item shrink to its track's real width so the nav's
             horizontal scroll actually contains itself instead. */}
         <aside className="min-w-0 lg:sticky lg:top-6 lg:h-fit">
-          <nav aria-label={t("navLabel")} className="nz-glass flex snap-x gap-2 overflow-x-auto rounded-2xl p-2 [scrollbar-width:none]! lg:flex-col lg:overflow-visible [&::-webkit-scrollbar]:hidden">
+          <nav ref={navRef} aria-label={t("navLabel")} className="nz-glass relative flex snap-x gap-2 overflow-x-auto rounded-2xl p-2 [scrollbar-width:none]! lg:flex-col lg:overflow-visible [&::-webkit-scrollbar]:hidden">
             {NAV_ITEMS.map(({ href, labelKey, icon: Icon }) => {
               const isActive = href === "/account" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
               return (

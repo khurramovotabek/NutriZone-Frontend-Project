@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Home, LayoutGrid, Package, ShoppingBag, Sparkles, UserRound } from "lucide-react";
 import { openAssistant } from "@/lib/assistant-events";
-import { onCartUpdated } from "@/lib/cart-events";
+import { loadCart, onCartUpdated } from "@/lib/cart-events";
 import { haptic, isMiniAppSession } from "@/lib/telegram-webapp";
 
 const TABS = [
@@ -30,21 +30,18 @@ export default function MiniAppTabBar() {
   useEffect(() => {
     if (!isMiniAppSession()) return;
     let alive = true;
-    const load = () =>
-      fetch("/api/cart")
-        .then((r) => r.json())
-        .then((b) => {
-          if (!alive) return;
-          const items: { quantity: number; status: string }[] = b?.data?.items ?? [];
-          setCount(items.filter((i) => i.status !== "removed").reduce((n, i) => n + i.quantity, 0));
-        })
-        .catch(() => {});
+    const load = (fresh = false) =>
+      loadCart(fresh).then((b) => {
+        if (!alive) return;
+        const items = b?.data?.items ?? [];
+        setCount(items.filter((i) => i.status !== "removed").reduce((n, i) => n + i.quantity, 0));
+      });
     // the session flag is browser-only state, so the bar appears after hydration
     const id = window.setTimeout(() => {
       if (alive) setOn(true);
     }, 0);
     void load();
-    const off = onCartUpdated(() => void load());
+    const off = onCartUpdated(() => void load(true));
     return () => {
       alive = false;
       window.clearTimeout(id);

@@ -3,16 +3,16 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { onCartUpdated } from "@/lib/cart-events";
+import { loadCart, onCartUpdated } from "@/lib/cart-events";
 import { markEmbedded } from "@/lib/cookie-policy";
 import { haptic, isMiniAppSession, loadTelegramScript, paintTelegramChrome, supports, type TelegramWebApp } from "@/lib/telegram-webapp";
 
 type CartSummary = { count: number; total: number };
 
-async function cartSummary(): Promise<CartSummary> {
+async function cartSummary(fresh = false): Promise<CartSummary> {
   try {
-    const body = await fetch("/api/cart").then((r) => r.json());
-    const items: { quantity: number; status: string; price_reference: { unit_amount: string } | null }[] = body?.data?.items ?? [];
+    const body = await loadCart(fresh);
+    const items = body?.data?.items ?? [];
     const active = items.filter((i) => i.status !== "removed");
     return {
       count: active.reduce((n, i) => n + i.quantity, 0),
@@ -46,7 +46,7 @@ export default function TelegramMiniAppBridge() {
     let cancelled = false;
     const back = () => router.back();
 
-    const syncMain = async () => {
+    const syncMain = async (fresh = false) => {
       const app = appRef.current;
       const main = app?.MainButton;
       if (!app || !main) return;
@@ -56,7 +56,7 @@ export default function TelegramMiniAppBridge() {
         main.hide();
         return;
       }
-      const { count, total } = await cartSummary();
+      const { count, total } = await cartSummary(fresh);
       if (cancelled) return;
       if (count === 0) {
         main.hide();
@@ -91,7 +91,7 @@ export default function TelegramMiniAppBridge() {
 
     const unsubscribe = onCartUpdated(() => {
       haptic("success");
-      void syncMain();
+      void syncMain(true);
     });
     // re-sync the buttons whenever the route changes (custom event from the pathname effect below)
     const onRoute = () => {

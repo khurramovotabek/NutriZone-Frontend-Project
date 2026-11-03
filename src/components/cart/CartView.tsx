@@ -208,7 +208,7 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
   const estimatedTotal = !authenticated && estimateComplete ? estimateLines.reduce((acc, l) => acc + (l?.amount ?? 0), 0) : null;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto max-w-6xl px-4 pb-28 pt-5 sm:pt-10 lg:py-10">
       <nav aria-label={t("breadcrumbLabel")} className="mb-4 flex items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/products" className="transition-colors hover:text-primary">
           {t("breadcrumbCatalog")}
@@ -392,6 +392,28 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
         </div>
       </div>
       <CartCrossSell variantIds={activeItems.map((i) => i.product_variant_id)} />
+
+      {/* Phones: total + the next step pinned to the thumb -- with several items the summary card sits far below the list. */}
+      {activeItems.length > 0 && (
+        <div className="nz-tg-above-tabbar fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 px-4 pt-3 backdrop-blur-md lg:hidden" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
+          <div className="mx-auto flex max-w-6xl items-center gap-3">
+            {(authenticated ? total : estimatedTotal) !== null && (
+              <div className="shrink-0 leading-tight">
+                <p className="text-[11px] font-medium text-ink-soft">{authenticated ? t("totalLabel") : t("estimatedTotal")}</p>
+                <p className="whitespace-nowrap text-base font-extrabold tabular-nums text-primary">
+                  {formatAmount((authenticated ? total : estimatedTotal) ?? 0)} {authenticated ? currency : estimateCurrency}
+                </p>
+              </div>
+            )}
+            <Link href={authenticated ? "/checkout" : "/login?next=/checkout"} className="min-w-0 flex-1">
+              <Button variant="primary" className="w-full whitespace-nowrap">
+                {authenticated ? t("proceedToCheckout") : t("signInToCheckout")}
+                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden="true" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
