@@ -119,10 +119,10 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           {guide.related.length > 0 && (
             <nav className="nz-glass rounded-2xl p-5" aria-labelledby="guide-related">
               <h2 id="guide-related" className="mb-3 text-sm font-bold uppercase tracking-wide text-ink-soft">{t("relatedGuides")}</h2>
-              <ul className="space-y-2">
+              <ul className="sm:space-y-2">
                 {guide.related.map((g) => (
                   <li key={g.slug}>
-                    <Link href={`/guides/${g.slug}`} className="text-sm font-medium text-ink transition-colors hover:text-primary">{g.title}</Link>
+                    <Link href={`/guides/${g.slug}`} className="inline-flex min-h-10 items-center text-sm font-medium text-ink transition-colors hover:text-primary sm:min-h-0">{g.title}</Link>
                   </li>
                 ))}
               </ul>

@@ -401,13 +401,13 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
                         {hasContact ? (
                           <div className="space-y-3 text-sm">
                             {store.phone_numbers.map((phone) => (
-                              <a key={phone} href={`tel:${phone}`} className="flex items-center gap-2.5 text-ink-muted transition-colors hover:text-primary">
+                              <a key={phone} href={`tel:${phone}`} className="flex min-h-10 items-center gap-2.5 text-ink-muted transition-colors hover:text-primary sm:min-h-0">
                                 <Phone className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
                                 {phone}
                               </a>
                             ))}
                             {store.email && (
-                              <a href={`mailto:${store.email}`} className="flex items-center gap-2.5 text-ink-muted transition-colors hover:text-primary">
+                              <a href={`mailto:${store.email}`} className="flex min-h-10 items-center gap-2.5 text-ink-muted transition-colors hover:text-primary sm:min-h-0">
                                 <Mail className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
                                 {store.email}
                               </a>
@@ -417,7 +417,7 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
                                 href={`https://t.me/${store.telegram_username}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2.5 text-ink-muted transition-colors hover:text-primary"
+                                className="flex min-h-10 items-center gap-2.5 text-ink-muted transition-colors hover:text-primary sm:min-h-0"
                               >
                                 <Send className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />@{store.telegram_username}
                               </a>
@@ -427,7 +427,7 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
                                 href={`https://instagram.com/${store.instagram_username}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2.5 text-ink-muted transition-colors hover:text-primary"
+                                className="flex min-h-10 items-center gap-2.5 text-ink-muted transition-colors hover:text-primary sm:min-h-0"
                               >
                                 <Camera className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />@{store.instagram_username}
                               </a>

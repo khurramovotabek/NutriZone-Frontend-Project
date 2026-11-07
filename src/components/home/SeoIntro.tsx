@@ -53,8 +53,8 @@ export default async function SeoIntro({ brand }: { brand: string }) {
         <h2 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">{t("faq.title")}</h2>
         <div className="mt-4 divide-y divide-border">
           {FAQ_KEYS.map((k) => (
-            <details key={k} className="group py-3">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-bold text-ink sm:text-[15px]">
+            <details key={k} className="group py-0.5 sm:py-3">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm sm:min-h-0 font-bold text-ink sm:text-[15px]">
                 {t(`faq.q${k}`)}
                 <ChevronDown className="h-4 w-4 shrink-0 text-ink-soft transition-transform group-open:rotate-180" strokeWidth={2} aria-hidden="true" />
               </summary>
