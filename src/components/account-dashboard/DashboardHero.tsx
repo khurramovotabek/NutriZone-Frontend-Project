@@ -1,6 +1,7 @@
 "use client";
 
 import { Coins, MessageCircle, Package, ShoppingBag, User } from "lucide-react";
+import AvatarImage from "@/components/AvatarImage";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useChatUnread } from "@/hooks/useChatUnread";
@@ -47,12 +48,7 @@ export default function DashboardHero({ fullName, avatarUrl }: { fullName: strin
         <div className="flex items-start gap-4 sm:items-center sm:gap-5">
           <Link href="/profile" className="shrink-0 rounded-full bg-[conic-gradient(from_200deg,var(--nz-primary),var(--nz-success),var(--nz-primary))] p-[2.5px] shadow-[0_14px_32px_-16px_rgba(var(--nz-primary-rgb),0.9)] transition-transform hover:scale-105">
             <span className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-surface bg-surface-2 sm:h-16 sm:w-16">
-              {avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element -- backend media domain isn't configured in next.config.ts's images.remotePatterns.
-                <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <User className="h-7 w-7 text-ink-soft" strokeWidth={1.5} aria-hidden="true" />
-              )}
+              <AvatarImage src={avatarUrl} className="h-full w-full object-cover" fallback={<User className="h-7 w-7 text-ink-soft" strokeWidth={1.5} aria-hidden="true" />} />
             </span>
           </Link>
           <div className="min-w-0">

@@ -30,7 +30,7 @@ export default function ActiveOrderCard({ order, extraCount }: { order: Order; e
             <p className="font-semibold text-ink">#{order.order_number}</p>
           </div>
         </div>
-        <Link href={`/orders/${order.order_number}`} className="group flex items-center gap-0.5 rounded-lg px-2 py-1 text-sm font-semibold text-primary transition-colors hover:bg-primary-soft">
+        <Link href={`/orders/${order.order_number}`} className="group flex min-h-10 items-center gap-0.5 rounded-lg px-2 py-1 text-sm sm:min-h-0 font-semibold text-primary transition-colors hover:bg-primary-soft">
           {t("trackOrder")}
           <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2} aria-hidden="true" />
         </Link>

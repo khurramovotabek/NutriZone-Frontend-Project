@@ -38,7 +38,7 @@ export default function SectionHeader({
         {subtitle && <p className="mt-1 line-clamp-2 text-[13px] text-ink-muted sm:text-sm">{subtitle}</p>}
       </div>
       {viewAllHref && viewAllLabel && (
-        <Link href={viewAllHref} className="group/viewall flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-primary/10 px-3 py-1.5 text-[13px] font-semibold text-primary sm:bg-transparent sm:p-0 sm:text-sm transition-colors hover:brightness-110">
+        <Link href={viewAllHref} className="group/viewall flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-primary/10 px-3 py-1.5 sm:min-h-0 text-[13px] font-semibold text-primary sm:bg-transparent sm:p-0 sm:text-sm transition-colors hover:brightness-110">
           {viewAllLabel}
           <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover/viewall:translate-x-0.5" strokeWidth={2} aria-hidden="true" />
         </Link>

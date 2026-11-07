@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { randomUUID } from "crypto";
 import { CartApiError, getCart, getCheckoutPreview, priceCartItem } from "@/lib/cart-api";
 import { getAccessToken, getCartCode, getCartToken } from "@/lib/session";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const params = new URL(request.url).searchParams;
   const accessToken = await getAccessToken();
   if (!accessToken) {
     return NextResponse.json({ success: false, error: { code: "NO_SESSION", message: "Please log in to view checkout." } }, { status: 401 });
@@ -23,7 +25,7 @@ export async function GET() {
     // of bouncing the shopper back to the cart. Per-line failures (e.g. no
     // active price configured) are left for the preview's own issues list.
     await priceUnpricedLines(accessToken, code, token);
-    const preview = await getCheckoutPreview(accessToken, code, token);
+    const preview = await getCheckoutPreview(accessToken, code, token, { addressId: params.get("address_id"), method: params.get("method"), lang: (await cookies()).get("nz_locale")?.value ?? null });
     return NextResponse.json({ success: true, data: preview });
   } catch (err) {
     if (err instanceof CartApiError) {

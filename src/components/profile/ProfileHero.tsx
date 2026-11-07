@@ -1,6 +1,7 @@
 "use client";
 
 import { AtSign, BadgeCheck, Camera, ChevronRight, LoaderCircle, Mail, Package, Phone, User } from "lucide-react";
+import AvatarImage from "@/components/AvatarImage";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { LoyaltySummary } from "@/lib/loyalty-api";
@@ -50,12 +51,7 @@ export default function ProfileHero({ fullName, username, email, phone, avatarUr
             <div className="rounded-full bg-[conic-gradient(from_200deg,var(--accent),rgba(var(--nz-primary-rgb),0.9),var(--accent))] p-[3px] shadow-[0_18px_40px_-18px_var(--accent)]">
               <div className="rounded-full bg-surface p-[3px]">
                 <label htmlFor={AVATAR_INPUT_ID} className="group relative flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-surface-2 sm:h-28 sm:w-28">
-                  {avatarUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- backend media domain isn't configured in next.config.ts's images.remotePatterns.
-                    <img src={avatarUrl} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                  ) : (
-                    <User className="h-11 w-11 text-ink-soft" strokeWidth={1.5} aria-hidden="true" />
-                  )}
+                  <AvatarImage src={avatarUrl} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" fallback={<User className="h-11 w-11 text-ink-soft" strokeWidth={1.5} aria-hidden="true" />} />
                   <span
                     className={`absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/50 text-[11px] font-semibold text-white backdrop-blur-[2px] transition-opacity ${
                       avatarUploading ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"

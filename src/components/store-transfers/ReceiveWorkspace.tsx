@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { hasFinePointer } from "@/lib/pointer";
 import { useTranslations } from "next-intl";
 import {
   ArrowLeft, ArrowRight, Barcode, CheckCircle2, CircleAlert, FileSpreadsheet, History, LoaderCircle, Minus, PackageCheck, PackageOpen, Plus, RotateCcw, Save, Scale, TriangleAlert, Truck, WifiOff, X,
@@ -313,12 +314,13 @@ export default function ReceiveWorkspace({ transferId, onBack }: { transferId: s
     setLast({ ok: true, title: t("undone"), text: `−${u.n}` });
   }, [last, scheduleSave, t]);
 
-  // keep the scanner field focused (a USB / Bluetooth scanner types into whatever has focus)
+  // keep the scanner field focused (a USB / Bluetooth scanner types into whatever has focus) -- desk computers only:
+  // on a phone it would keep popping the on-screen keyboard up; there the field keeps the focus once tapped
   useEffect(() => {
-    if (!T?.can_receive || confirm) return;
+    if (!T?.can_receive || confirm || !hasFinePointer()) return;
     const refocus = () => {
       const a = document.activeElement;
-      if (!a || a === document.body) scanRef.current?.focus();
+      if (!a || a === document.body) scanRef.current?.focus({ preventScroll: true });
     };
     const timer = window.setInterval(refocus, 1500);
     refocus();

@@ -74,8 +74,10 @@ function BannerProgressSegment({
       aria-selected={isActive}
       aria-label={label}
       onClick={() => onSelect(index)}
-      className="group h-1 flex-1 overflow-hidden rounded-full bg-white/25 backdrop-blur-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40"
+      // a 28px-tall transparent tap area around the 4px progress track (thumbs miss a bare 4px bar)
+      className="group flex-1 rounded-full py-3 outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40"
     >
+      <span aria-hidden="true" className="block h-1 overflow-hidden rounded-full bg-white/25 backdrop-blur-sm transition-colors">
       <span
         aria-hidden="true"
         onAnimationEnd={(e) => {
@@ -92,6 +94,7 @@ function BannerProgressSegment({
         }`}
         style={isActive && !reducedMotion ? ({ animationDuration: `${durationMs}ms`, animationPlayState: playing ? "running" : "paused" } as CSSProperties) : undefined}
       />
+      </span>
     </button>
   );
 }

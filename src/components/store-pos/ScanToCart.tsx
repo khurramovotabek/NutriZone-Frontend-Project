@@ -1,6 +1,7 @@
 "use client";
 
-import { forwardRef, useState } from "react";
+import { forwardRef, useCallback, useState } from "react";
+import { hasFinePointer } from "@/lib/pointer";
 import { useTranslations } from "next-intl";
 import { Barcode, CheckCircle2, CircleAlert, Package, RotateCcw, Tag } from "lucide-react";
 import MediaImage from "@/components/MediaImage";
@@ -26,6 +27,13 @@ const ScanToCart = forwardRef<HTMLInputElement, {
   onUndo: () => void;
   onAdjustLast: (delta: number) => void;
 }>(function ScanToCart({ busy, last, priceMode, onPriceMode, onScan, onUndo, onAdjustLast }, ref) {
+  // Ready to scan the moment the field appears -- on desk computers only (a phone would pop its keyboard up), and
+  // without scrolling: on a narrow window the field sits far down the page.
+  const inputRef = useCallback((el: HTMLInputElement | null) => {
+    if (typeof ref === "function") ref(el);
+    else if (ref) ref.current = el;
+    if (el && hasFinePointer()) el.focus({ preventScroll: true });
+  }, [ref]);
   const t = useTranslations("storePos.scanner");
   const [code, setCode] = useState("");
   const [qty, setQty] = useState(1);
@@ -46,14 +54,14 @@ const ScanToCart = forwardRef<HTMLInputElement, {
           {priceMode ? t("titlePrice") : t("title")}
         </p>
         <div className="inline-flex rounded-full bg-surface-2/80 p-0.5 text-[11px] font-bold" role="radiogroup" aria-label={t("mode")}>
-          <button type="button" role="radio" aria-checked={!priceMode} onClick={() => onPriceMode(false)} className={`rounded-full px-2.5 py-1 ${!priceMode ? "bg-primary text-primary-contrast shadow" : "text-ink-muted"}`}>{t("modeAdd")}</button>
-          <button type="button" role="radio" aria-checked={priceMode} onClick={() => onPriceMode(true)} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 ${priceMode ? "bg-amber-500 text-white shadow" : "text-ink-muted"}`}><Tag className="h-3 w-3" aria-hidden="true" />{t("modePrice")}</button>
+          <button type="button" role="radio" aria-checked={!priceMode} onClick={() => onPriceMode(false)} className={`min-h-8 rounded-full px-3 py-1 sm:min-h-0 sm:px-2.5 ${!priceMode ? "bg-primary text-primary-contrast shadow" : "text-ink-muted"}`}>{t("modeAdd")}</button>
+          <button type="button" role="radio" aria-checked={priceMode} onClick={() => onPriceMode(true)} className={`inline-flex min-h-8 items-center gap-1 rounded-full px-3 py-1 sm:min-h-0 sm:px-2.5 ${priceMode ? "bg-amber-500 text-white shadow" : "text-ink-muted"}`}><Tag className="h-3 w-3" aria-hidden="true" />{t("modePrice")}</button>
         </div>
       </div>
       <form onSubmit={(e) => { e.preventDefault(); submit(); }} className={`flex items-center gap-2 rounded-2xl border-2 bg-surface px-2.5 py-1.5 transition-colors focus-within:shadow-lg ${priceMode ? "border-amber-400 focus-within:border-amber-500" : "border-primary/40 focus-within:border-primary"}`}>
         <Barcode className={`h-6 w-6 shrink-0 ${priceMode ? "text-amber-500" : "text-primary"}`} aria-hidden="true" />
         <input
-          ref={ref}
+          ref={inputRef}
           value={code}
           onChange={(e) => setCode(e.target.value)}
           onKeyDown={(e) => {
@@ -69,7 +77,6 @@ const ScanToCart = forwardRef<HTMLInputElement, {
               onAdjustLast(e.key === "+" ? 1 : -1);
             }
           }}
-          autoFocus
           autoComplete="off"
           spellCheck={false}
           enterKeyHint="done"

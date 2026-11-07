@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AvatarImage from "@/components/AvatarImage";
 import { useRouter } from "next/navigation";
 import { Bell, Check, ChevronDown, ExternalLink, Globe, Laptop, LifeBuoy, LoaderCircle, LogOut, Monitor, Moon, Palette, Send, Shield, ShieldCheck, Smartphone, Sun, User, Volume2 } from "lucide-react";
 import Link from "next/link";
@@ -194,12 +195,7 @@ export default function AccountSettingsPage() {
         <div className="relative p-5 sm:p-7">
           <div className="flex items-center gap-4">
             <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border/70 bg-surface-2">
-              {profile?.avatar_url ? (
-                // eslint-disable-next-line @next/next/no-img-element -- backend media domain isn't configured in next.config.ts's images.remotePatterns.
-                <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <User className="h-7 w-7 text-ink-soft" strokeWidth={1.5} aria-hidden="true" />
-              )}
+              <AvatarImage src={profile?.avatar_url} fallback={<User className="h-7 w-7 text-ink-soft" strokeWidth={1.5} aria-hidden="true" />} />
             </span>
             <div className="min-w-0">
               <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{t("title")}</h1>
@@ -385,7 +381,7 @@ export default function AccountSettingsPage() {
                         <button
                           type="button"
                           onClick={() => setConfirmRevokeId(s.id)}
-                          className="shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                          className="min-h-10 shrink-0 rounded-xl px-3 py-1.5 text-xs sm:min-h-0 font-semibold text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
                         >
                           {t("revoke")}
                         </button>
@@ -506,7 +502,7 @@ function ToggleRow({ icon: Icon, title, hint, checked, busy = false, disabled = 
         aria-label={title}
         disabled={disabled || busy}
         onClick={onChange}
-        className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors before:absolute before:-inset-x-1 before:-inset-y-2 before:content-[""] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 ${
           checked ? "bg-primary" : "bg-surface-3"
         }`}
       >

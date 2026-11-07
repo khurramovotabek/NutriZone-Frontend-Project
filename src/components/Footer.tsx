@@ -38,7 +38,8 @@ export default async function Footer() {
   const phone = site?.support_phone?.trim();
   const email = site?.support_email?.trim();
   const telegram = site?.telegram_username?.trim().replace(/^@/, "");
-  const link = "text-ink-muted transition-colors hover:text-primary";
+  // phones: every footer link is a 40px-tall tap target (the rows stay compact by dropping the list gaps)
+  const link = "inline-flex min-h-10 items-center text-ink-muted transition-colors hover:text-primary md:min-h-0";
   const social = "flex h-10 w-10 items-center justify-center rounded-xl bg-surface-2 text-ink-muted ring-1 ring-border transition hover:-translate-y-0.5 hover:text-primary";
 
   return (
@@ -68,7 +69,7 @@ export default async function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-ink-soft">{t("shopHeading")}</h3>
-            <ul className="mt-3 space-y-2 text-sm">
+            <ul className="mt-2 text-sm md:mt-3 md:space-y-2">
               <li><Link href="/products" className={link}>{tNav("catalog")}</Link></li>
               <li><Link href="/brands" className={link}>{t("brands")}</Link></li>
               <li><Link href="/stores" className={link}>{t("stores")}</Link></li>
@@ -81,7 +82,7 @@ export default async function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-ink-soft">{t("accountHeading")}</h3>
-            <ul className="mt-3 space-y-2 text-sm">
+            <ul className="mt-2 text-sm md:mt-3 md:space-y-2">
               <li><Link href="/account" className={link}>{t("myAccount")}</Link></li>
               <li><Link href="/orders" className={link}>{tNav("orders")}</Link></li>
               <li>
@@ -99,7 +100,7 @@ export default async function Footer() {
 
           <div className="col-span-2 sm:col-span-1">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-ink-soft">{t("contactHeading")}</h3>
-            <ul className="mt-3 space-y-2.5 text-sm">
+            <ul className="mt-2 text-sm md:mt-3 md:space-y-2.5">
               {phone && (
                 <li>
                   <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className={`inline-flex items-center gap-2 ${link}`}>
@@ -148,11 +149,11 @@ export default async function Footer() {
           </div>
           <div className="flex flex-col items-start gap-1 text-sm text-ink-soft sm:items-end">
             <div className="flex flex-wrap gap-x-4 gap-y-1">
-              <Link href="/terms" className="inline-flex items-center gap-1.5 transition-colors hover:text-primary">
+              <Link href="/terms" className="inline-flex min-h-10 items-center gap-1.5 transition-colors hover:text-primary md:min-h-0">
                 <FileSignature className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
                 {t("terms")}
               </Link>
-              <Link href="/privacy" className="inline-flex items-center gap-1.5 transition-colors hover:text-primary">
+              <Link href="/privacy" className="inline-flex min-h-10 items-center gap-1.5 transition-colors hover:text-primary md:min-h-0">
                 <ShieldCheck className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
                 {t("privacy")}
               </Link>

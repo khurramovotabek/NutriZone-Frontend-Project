@@ -793,7 +793,7 @@
     "removeError": "Ushbu mahsulotni o'chirib bo'lmadi.",
     "updateError": "Miqdorni yangilab bo'lmadi.",
     "subtotalLabel": "Mahsulotlar ({total} ta)",
-    "subtotalNote": "Yakuniy summa buyurtmani rasmiylashtirishda tasdiqlanadi. To'lov — yetkazib berishda.",
+    "subtotalNote": "Yetkazib berish narxi buyurtma berishda manzilga qarab qo'shiladi. Do'kondan olib ketish bepul.",
     "breadcrumbLabel": "Yo'l ko'rsatuvchi",
     "breadcrumbCatalog": "Katalog",
     "itemCount": "({count, plural, other {# ta mahsulot}})",
@@ -808,7 +808,8 @@
     "estimatedTotal": "Taxminiy jami",
     "guestCheckoutNote": "Savatga qo'shish uchun ro'yxatdan o'tish shart emas. Buyurtma berish uchun Telegram orqali bir zumda kiring.",
     "signInToCheckout": "Kirish va buyurtma berish",
-    "crossSellTitle": "Bular bilan ko'pincha olinadi"
+    "crossSellTitle": "Bular bilan ko'pincha olinadi",
+    "deliveryRates": "Yetkazib berish: Toshkent shahri — {tashkent} gacha, viloyatlar — {regions} dan. Olib ketish — bepul."
   },
   "checkout": {
     "title": "Buyurtma rasmiylashtirish",
@@ -821,7 +822,7 @@
     "itemsPriced": "{total} tadan {priced} tasi narxlangan",
     "subtotal": "Summa",
     "priceUnavailable": "Narx mavjud emas — savatdagi barcha mahsulotlar narxini tasdiqlang.",
-    "deliveryNote": "Yetkazib berish narxi va yakuniy summa keyingi qadamda tasdiqlanadi.",
+    "deliveryNote": "Do'kondan olib ketish bepul. Yetkazib berish narxi manzilga qarab hisoblanadi: Toshkent shahri ichida — Yandex Dostavka, viloyatlarga — BTS (og'irlikka qarab).",
     "continue": "Buyurtma berish",
     "notReadyTitle": "Savat hali tayyor emas",
     "blocked": "Davom etishdan oldin savatga e'tibor bering.",
@@ -971,7 +972,17 @@
       "chooseStoreError": "Olib ketish uchun do'konni tanlang."
     },
     "cashAtStore": "Do'konda to'lov (naqd yoki karta)",
-    "legalConsent": "Buyurtma berish orqali siz <terms>Ommaviy oferta</terms> va <privacy>Maxfiylik siyosati</privacy> shartlarini qabul qilasiz."
+    "legalConsent": "Buyurtma berish orqali siz <terms>Ommaviy oferta</terms> va <privacy>Maxfiylik siyosati</privacy> shartlarini qabul qilasiz.",
+    "deliveryQuote": {
+      "tashkent": "Toshkent shahri",
+      "regions": "Viloyat",
+      "chooseAddress": "Manzil tanlangach hisoblanadi",
+      "rates": "Toshkent shahri — {tashkent} gacha · viloyatlar — {regions} dan",
+      "by": "{carrier} · {eta}",
+      "freeFrom": "{amount} dan qimmat buyurtmalar bepul yetkaziladi",
+      "weight": "posilka ≈ {kg} kg",
+      "pickupFree": "Do'kondan olib ketish — bepul"
+    }
   },
   "auth": {
     "title": "Kirish yoki ro'yxatdan o'tish",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { hasFinePointer } from "@/lib/pointer";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Ban, Barcode, Clock3, Flame, Hash, Keyboard, Loader2, Lock, Maximize2, Minimize2, Minus, Package, Pencil, Plus, Printer, Search, ShoppingBasket, Store as StoreIcon, Trash2 } from "lucide-react";
@@ -81,7 +82,9 @@ export default function PosTerminal() {
   const [lastScan, setLastScan] = useState<LastScan | null>(null);
   const [priceMode, setPriceMode] = useState(false);
   const [parkSignal, setParkSignal] = useState(0);
-  const focusScan = useCallback(() => setTimeout(() => scanRef.current?.focus(), 50), []);
+  // preventScroll: on a narrow window the scanner sits far down the page -- focusing it must not jump the page there
+  const focusScan = useCallback(() => setTimeout(() => { if (hasFinePointer()) scanRef.current?.focus({ preventScroll: true }); }, 50), []);
+
   const scanBuffer = useRef({ text: "", at: 0 });
   const router = useRouter();
   const pathname = usePathname();
@@ -400,7 +403,7 @@ export default function PosTerminal() {
         setParkSignal((n) => n + 1);
       } else if (e.key === "F4") {
         e.preventDefault();
-        scanRef.current?.focus();
+        scanRef.current?.focus({ preventScroll: true });
       } else if (e.key === "F3" || (e.key === "/" && !typing)) {
         e.preventDefault();
         searchRef.current?.focus();
@@ -442,7 +445,7 @@ export default function PosTerminal() {
           setSession(opened);
           startSale();
           loadTop();
-          setTimeout(() => scanRef.current?.focus(), 100);
+          focusScan();
         }}
       />
     );

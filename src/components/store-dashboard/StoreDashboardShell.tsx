@@ -131,7 +131,7 @@ export default function StoreDashboardShell({ children }: { children: ReactNode 
   const wide = pathname.startsWith("/profile/store/pos");
   const today = store.today_hours;
   const openChip = (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold ${store.is_open_now ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" : "bg-slate-500/15 text-ink-soft"}`}>
+    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-bold ${store.is_open_now ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" : "bg-slate-500/15 text-ink-soft"}`}>
       <span className={`h-1.5 w-1.5 rounded-full ${store.is_open_now ? "bg-emerald-500" : "bg-slate-400"}`} />
       {store.is_open_now ? t("openNow") : t("closedNow")}
       {today && !today.closed && today.open ? ` · ${today.open}–${today.close}` : ""}
@@ -141,7 +141,7 @@ export default function StoreDashboardShell({ children }: { children: ReactNode 
   return (
     <div className="pb-16">
       <div className={`mx-auto px-4 pt-6 ${wide ? "max-w-7xl" : "max-w-6xl"}`}>
-        <Link href="/profile" className="mb-4 inline-flex items-center gap-1.5 text-sm text-ink-muted transition-colors hover:text-primary">
+        <Link href="/profile" className="mb-2 inline-flex min-h-10 items-center gap-1.5 text-sm text-ink-muted sm:mb-4 sm:min-h-0 transition-colors hover:text-primary">
           <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
           {t("back")}
         </Link>
@@ -207,7 +207,7 @@ export default function StoreDashboardShell({ children }: { children: ReactNode 
 
             <div className="min-w-0 flex-1 pt-3">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="truncate text-2xl font-bold text-ink sm:text-3xl">{store.name || t("manageStore")}</h1>
+                <h1 className="line-clamp-2 max-w-full break-words text-xl font-bold leading-tight text-ink sm:truncate sm:text-3xl">{store.name || t("manageStore")}</h1>
                 <Badge tone={STATUS_TONE[store.status] ?? "neutral"}>{t(`status.${store.status}` as "status.active")}</Badge>
                 {openChip}
                 {cashier && (

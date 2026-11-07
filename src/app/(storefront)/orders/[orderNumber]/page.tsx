@@ -77,6 +77,7 @@ export default function OrderDetailPage() {
   const tOrders = useTranslations("orders");
   const tNav = useTranslations("navigation");
   const tPayment = useTranslations("payment");
+  const tCheckout = useTranslations("checkout");
   const [payInfo, setPayInfo] = useState<OrderPaymentState | null>(null);
   const paidVia = payInfo?.paid && payInfo.latest?.status === "succeeded" ? payInfo.latest.method : null;
   const locale = useLocale();
@@ -194,7 +195,9 @@ export default function OrderDetailPage() {
 
   const subtotal = activeLines.reduce((acc, l) => acc + Number(l.unit_price.amount) * l.quantity, 0);
   const discount = activeLines.reduce((acc, l) => acc + Number(l.discount_amount.amount), 0);
-  const total = activeLines.reduce((acc, l) => acc + Number(l.line_total.amount), 0);
+  // the delivery fee frozen at checkout (0 for pickup) is part of what the customer pays
+  const shippingFee = Number(order.shipping_amount ?? 0) || 0;
+  const total = order.totals ? Number(order.totals.grand_total) : activeLines.reduce((acc, l) => acc + Number(l.line_total.amount), 0) + shippingFee;
   const step = orderStepIndex(order.status);
   const stopped = isStopped(order.status);
   const address = order.shipping_address;
@@ -328,6 +331,17 @@ export default function OrderDetailPage() {
                   <dd className="tabular-nums text-success">−{formatMoney(discount, order.currency)}</dd>
                 </div>
               )}
+              <div className="flex items-start justify-between gap-3">
+                <dt className="text-ink-muted">
+                  {order.fulfilment_method === "pickup" ? tCheckout("fulfilment.pickup") : tCheckout("delivery")}
+                  {order.fulfilment_method !== "pickup" && (order.delivery_zone || order.delivery_carrier) && (
+                    <span className="block text-xs text-ink-soft">
+                      {[order.delivery_zone === "tashkent" ? tCheckout("deliveryQuote.tashkent") : order.delivery_zone === "regions" ? tCheckout("deliveryQuote.regions") : "", order.delivery_carrier].filter(Boolean).join(" · ")}
+                    </span>
+                  )}
+                </dt>
+                <dd className={`shrink-0 tabular-nums ${shippingFee ? "text-ink" : "text-success"}`}>{shippingFee ? formatMoney(shippingFee, order.currency) : tCheckout("deliveryFree")}</dd>
+              </div>
               <div className="flex items-baseline justify-between gap-3 border-t border-border/70 pt-3">
                 <dt className="font-semibold text-ink">{t("total")}</dt>
                 <dd className="text-xl font-bold tabular-nums text-primary">{formatMoney(total, order.currency)}</dd>

@@ -50,9 +50,9 @@ export default function StoreOverviewPage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.25fr_1fr]">
         <Card className="p-3 sm:p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-ink"><ShoppingBag className="h-4 w-4 text-primary" aria-hidden="true" /> {t("recentOrders")}</h2>
-            <Link href="/profile/store/orders" className="inline-flex items-center gap-1 text-sm font-semibold text-primary">{t("allOrders")} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" /></Link>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="flex min-w-0 items-center gap-2 text-lg font-semibold text-ink"><ShoppingBag className="h-4 w-4 text-primary" aria-hidden="true" /> {t("recentOrders")}</h2>
+            <Link href="/profile/store/orders" className="inline-flex min-h-10 shrink-0 items-center gap-1 text-sm font-semibold text-primary sm:min-h-0">{t("allOrders")} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" /></Link>
           </div>
           {data && data.orders.length ? (
             <ul className="divide-y divide-border/70">

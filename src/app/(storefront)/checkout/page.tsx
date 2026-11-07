@@ -15,7 +15,7 @@ import AddressSelector from "@/components/checkout/AddressSelector";
 import RecipientForm from "@/components/checkout/RecipientForm";
 import PaymentMethodCard, { withinLimits } from "@/components/checkout/PaymentMethodCard";
 import type { PaymentMethod, PaymentMethodKey } from "@/lib/payments-api";
-import OrderSummary from "@/components/checkout/OrderSummary";
+import OrderSummary, { DeliveryLine, deliveryFeeOf } from "@/components/checkout/OrderSummary";
 import CheckoutReview from "@/components/checkout/CheckoutReview";
 import CoinRedeemCard from "@/components/checkout/CoinRedeemCard";
 import FulfilmentPicker, { type PickupOption } from "@/components/checkout/FulfilmentPicker";
@@ -70,11 +70,29 @@ export default function CheckoutPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
 
+  // the preview carries the delivery quote for the chosen method/address (Tashkent city: Yandex, regions: BTS by weight)
+  const previewUrl = `/api/checkout/preview?method=${fulfilment}${fulfilment === "delivery" && selectedAddressId ? `&address_id=${encodeURIComponent(selectedAddressId)}` : ""}`;
+
   async function refreshPreview() {
-    const res = await fetch("/api/checkout/preview");
+    const res = await fetch(previewUrl);
     const body = await res.json();
     if (body.success) setPreview(body.data);
   }
+
+  // a new address or method re-prices delivery (the first load below has no address yet)
+  useEffect(() => {
+    if (loading) return;
+    let cancelled = false;
+    fetch(previewUrl)
+      .then((res) => res.json())
+      .then((body) => {
+        if (!cancelled && body.success) setPreview(body.data);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [previewUrl, loading]);
 
   useEffect(() => {
     Promise.all([
@@ -258,7 +276,7 @@ export default function CheckoutPage() {
       const orderNumber = checkoutBody.data.order_number;
       const chosen = paymentMethods.find((m) => m.key === paymentMethod);
       const coinsUsed = preview?.loyalty ? Math.min(coinsToRedeem, preview.loyalty.max_redeemable) : 0;
-      const amountDue = preview?.total ? Math.max(0, Number(preview.total.amount) - coinsUsed) : null;
+      const amountDue = preview?.total ? Math.max(0, Number(preview.total.amount) - coinsUsed) + deliveryFeeOf(preview, fulfilment === "pickup") : null;
       if (chosen?.online && chosen.available && withinLimits(chosen, amountDue)) {
         // The order exists; now hand the customer to the provider's secure page. If that fails, the order page offers "Pay online" again.
         setRedirecting(true);
@@ -333,7 +351,7 @@ export default function CheckoutPage() {
 
   // The cap can shrink after the customer picked an amount (e.g. a coupon lowers the total) -- always honour the latest server limit.
   const effectiveCoins = preview.loyalty ? Math.min(coinsToRedeem, preview.loyalty.max_redeemable) : 0;
-  const payableAmount = preview.total ? Math.max(0, Number(preview.total.amount) - effectiveCoins) : null;
+  const payableAmount = preview.total ? Math.max(0, Number(preview.total.amount) - effectiveCoins) + deliveryFeeOf(preview, fulfilment === "pickup") : null;
   // A method that became unavailable (or out of its limits after coins/coupon) falls back to cash on delivery.
   const pickedMethod = paymentMethods.find((m) => m.key === paymentMethod);
   const effectiveMethod: PaymentMethodKey = pickedMethod && pickedMethod.available && withinLimits(pickedMethod, payableAmount) ? paymentMethod : "cash";
@@ -400,6 +418,12 @@ export default function CheckoutPage() {
                   <Card>
                     <h2 className="mb-4 text-sm font-semibold text-ink-muted">{t("deliveryAddress")}</h2>
                     <AddressSelector addresses={addresses} selectedId={selectedAddressId} onSelect={handleAddressSelected} onCreated={handleAddressCreated} />
+                    {selectedAddressId && preview.delivery?.method === "delivery" && (
+                      // the price for the picked address right here -- on a phone the summary sits far below
+                      <div className="mt-4 rounded-xl bg-primary-soft/40 px-3 py-2.5" aria-live="polite">
+                        <DeliveryLine preview={preview} pickup={false} />
+                      </div>
+                    )}
                   </Card>
                 )}
 

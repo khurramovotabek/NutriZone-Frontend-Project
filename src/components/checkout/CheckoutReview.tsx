@@ -10,7 +10,7 @@ import type { Address } from "@/lib/geo-api";
 import type { CheckoutPreview } from "@/lib/cart-api";
 import { Button, Card } from "@/components/ui";
 import OrderItem from "@/components/checkout/OrderItem";
-import { CoinsLine, payableAfterCoins } from "@/components/checkout/OrderSummary";
+import { CoinsLine, DeliveryLine, deliveryFeeOf, payableAfterCoins } from "@/components/checkout/OrderSummary";
 
 /** Step 3 -- a final, read-only review of everything the order will contain, per this task's own "not another generic form" requirement. Every value shown here was already collected/validated in steps 1-2. */
 export default function CheckoutReview({
@@ -108,7 +108,7 @@ export default function CheckoutReview({
       )}
 
       <Card>
-        {coins > 0 && preview.total && (
+        {preview.total && (
           <div className="mb-3 space-y-2 border-b border-border pb-3">
             <div className="flex items-baseline justify-between text-sm text-ink-muted">
               <span>{t("subtotal")}</span>
@@ -116,14 +116,15 @@ export default function CheckoutReview({
                 {formatPrice(preview.total.amount, preview.total.currency)}
               </span>
             </div>
-            <CoinsLine coins={coins} currency={preview.total.currency} />
+            {coins > 0 && <CoinsLine coins={coins} currency={preview.total.currency} />}
+            <DeliveryLine preview={preview} pickup={!!pickupStore} />
           </div>
         )}
         {preview.total && (
           <div className="flex items-baseline justify-between">
             <span className="text-base font-semibold text-ink">{t("total")}</span>
             <span className="text-xl font-bold text-ink">
-              {formatPrice(payableAfterCoins(preview.total.amount, coins), preview.total.currency)}
+              {formatPrice(payableAfterCoins(preview.total.amount, coins, deliveryFeeOf(preview, !!pickupStore)), preview.total.currency)}
             </span>
           </div>
         )}

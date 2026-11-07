@@ -19,11 +19,12 @@ export default function LoyaltyExperience({ tiers }: { tiers: LoyaltyTier[] }) {
   const [summary, setSummary] = useState<LoyaltySummary | null>(null);
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/loyalty/me")
+    fetch("/api/loyalty/me?soft=1")
       .then(async (res) => {
         if (cancelled) return;
         if (res.status === 401) return setStatus("guest");
         const body = await res.json();
+        if (body?.guest) return setStatus("guest");
         if (!res.ok || !body.success) return setStatus("error");
         setSummary(body.data);
         setStatus("ready");

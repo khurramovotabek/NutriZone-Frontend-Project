@@ -125,9 +125,9 @@ export function DonutChart({
               );
             })}
         </svg>
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-[20%] text-center">
           <span className="text-lg font-bold text-ink">{centerValue ?? (isEmpty ? "—" : `${Math.round((segments[0]?.value ?? 0) / total * 100)}%`)}</span>
-          {centerLabel && <span className="text-[10px] font-medium uppercase tracking-wide text-ink-soft">{centerLabel}</span>}
+          {centerLabel && <span className="max-w-full text-[10px] font-medium uppercase leading-tight tracking-wide text-ink-soft [overflow-wrap:anywhere]">{centerLabel}</span>}
         </div>
       </div>
 

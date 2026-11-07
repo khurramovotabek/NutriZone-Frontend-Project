@@ -173,9 +173,24 @@ export interface CheckoutPreview {
   expires_at: string | null;
   /** Coin payment options for the signed-in customer (null for guests / non-UZS carts). */
   loyalty?: { enabled: boolean; balance: number; max_redeemable: number; max_percent: number; min_coins: number } | null;
+  /** The delivery line for the chosen method/address (null until an address is chosen). Pickup is always free. */
+  delivery?: DeliveryQuote | null;
 }
 
-export async function getCheckoutPreview(accessToken: string, code: string, cartToken: string): Promise<CheckoutPreview> {
+/** Server-priced delivery: Tashkent city by Yandex (by distance, up to a cap), the regions by BTS (by parcel weight). */
+export interface DeliveryQuote {
+  method: "delivery" | "pickup";
+  zone: "tashkent" | "regions" | null;
+  carrier: string;
+  fee: string;
+  base_fee: string;
+  eta: string;
+  free_from: string | null;
+  weight_kg?: number | null;
+  distance_km?: number | null;
+}
+
+export async function getCheckoutPreview(accessToken: string, code: string, cartToken: string, opts: { addressId?: string | null; method?: string | null; lang?: string | null } = {}): Promise<CheckoutPreview> {
   /**
    * Phase 09.5: calls the new, customer-safe Checkout Preview
    * endpoint. Sends no request body at all -- readiness, issues, and
@@ -185,7 +200,12 @@ export async function getCheckoutPreview(accessToken: string, code: string, cart
    * computed from any real, attached coupon(s) -- omitted (null/empty)
    * when none are attached, never a fabricated non-zero value.
    */
-  return cartFetch<CheckoutPreview>(`/api/v1/cart/${code}/checkout-preview`, accessToken, { method: "GET", cartToken });
+  const q = new URLSearchParams();
+  if (opts.method) q.set("method", opts.method);
+  if (opts.addressId) q.set("address_id", opts.addressId);
+  if (opts.lang) q.set("lang", opts.lang);
+  const qs = q.toString();
+  return cartFetch<CheckoutPreview>(`/api/v1/cart/${code}/checkout-preview${qs ? `?${qs}` : ""}`, accessToken, { method: "GET", cartToken });
 }
 
 export async function applyCheckoutCoupon(accessToken: string, code: string, cartToken: string, couponCode: string): Promise<{ id: string }> {

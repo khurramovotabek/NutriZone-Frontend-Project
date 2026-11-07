@@ -361,7 +361,7 @@ export default function InquiriesWorkspace({
               key={tab}
               type="button"
               onClick={() => selectStatus(tab)}
-              className={`shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+              className={`min-h-9 shrink-0 rounded-lg px-2.5 py-1.5 text-xs sm:min-h-0 font-medium transition-colors ${
                 statusFilter === tab ? "bg-primary-soft text-primary" : "text-ink-muted hover:bg-surface-2 hover:text-ink"
               }`}
             >

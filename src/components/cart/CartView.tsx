@@ -12,6 +12,7 @@ import ProductMediaImage from "@/components/ProductMediaImage";
 import { emitCartUpdated } from "@/lib/cart-events";
 import { priceLine, queueCartTask } from "@/lib/cart-client";
 import CartCrossSell from "@/components/cart/CartCrossSell";
+import DeliveryRatesNote from "@/components/checkout/DeliveryRatesNote";
 import { cartActionNeedsLogin } from "@/lib/cart-errors";
 
 /** The cart itself (client: live quantities, removal, coupon). `emptyRecommendations` is server-rendered by the route and shown under an empty cart. */
@@ -371,7 +372,7 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
             )}
             {authenticated && total !== null && <OrderCoinEarn amount={total} currency={currency} />}
             {!authenticated && estimatedTotal !== null && <OrderCoinEarn amount={estimatedTotal} currency={estimateCurrency} />}
-            {authenticated && <p className="mt-3 text-xs text-ink-soft">{t("subtotalNote")}</p>}
+            <DeliveryRatesNote className="mt-3" />
 
             <Link href={authenticated ? "/checkout" : "/login?next=/checkout"} className="mt-5 block">
               <Button variant="primary" className="w-full">

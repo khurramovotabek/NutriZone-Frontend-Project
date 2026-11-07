@@ -10,10 +10,51 @@ import CoinIcon from "@/components/loyalty/CoinIcon";
 import { OrderCoinEarn } from "@/components/loyalty/ProductCoinReward";
 
 /** Display-only total after coins (1 coin = 1 so'm); the server recomputes the real payable amount at order creation. */
-export function payableAfterCoins(total: string, coins: number): string {
-  if (!coins) return total;
-  const value = Math.max(0, Number(total) - coins);
+export function payableAfterCoins(total: string, coins: number, deliveryFee = 0): string {
+  if (!coins && !deliveryFee) return total;
+  const value = Math.max(0, Number(total) - coins) + deliveryFee;
   return value.toFixed(2);
+}
+
+/** The delivery fee the server quoted for the chosen address (0 for pickup; 0 until an address is chosen). */
+export function deliveryFeeOf(preview: CheckoutPreview, pickup: boolean): number {
+  if (pickup) return 0;
+  return preview.delivery?.method === "delivery" ? Number(preview.delivery.fee) || 0 : 0;
+}
+
+/** "Delivery · Tashkent city (Yandex Dostavka · today or tomorrow) — 24 000 so'm"; pickup is free. */
+export function DeliveryLine({ preview, pickup }: { preview: CheckoutPreview; pickup: boolean }) {
+  const t = useTranslations("checkout");
+  const q = preview.delivery;
+  const currency = preview.total?.currency ?? preview.currency;
+  if (pickup) {
+    return (
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-sm text-ink-muted">{t("fulfilment.pickup")}</span>
+        <span className="text-sm font-medium text-success">{t("deliveryFree")}</span>
+      </div>
+    );
+  }
+  if (!q || q.method !== "delivery") {
+    return (
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-sm text-ink-muted">{t("delivery")}</span>
+        <span className="text-right text-xs text-ink-soft">{t("deliveryQuote.chooseAddress")}</span>
+      </div>
+    );
+  }
+  const fee = Number(q.fee) || 0;
+  const zone = q.zone === "tashkent" ? t("deliveryQuote.tashkent") : t("deliveryQuote.regions");
+  const details = [q.carrier, q.eta].filter(Boolean).join(" · ");
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <span className="min-w-0 text-sm text-ink-muted">
+        {t("delivery")} · {zone}
+        {details && <span className="block text-xs text-ink-soft">{details}{q.zone === "regions" && q.weight_kg ? ` · ${t("deliveryQuote.weight", { kg: q.weight_kg.toFixed(1) })}` : ""}</span>}
+      </span>
+      <span className={`shrink-0 text-sm font-medium ${fee ? "text-ink" : "text-success"}`}>{fee ? formatPrice(fee, currency) : t("deliveryFree")}</span>
+    </div>
+  );
 }
 
 export function CoinsLine({
@@ -49,12 +90,8 @@ const ISSUE_KEYS = new Set([
 ]);
 
 /**
- * Real, server-confirmed numbers only -- subtotal/discount/total come
- * directly from CheckoutPreview, never computed client-side. Delivery
- * is always shown as "Bepul" (free) because the real order-create API
- * has no delivery-cost/method field at all (confirmed in cart-api.ts's
- * CheckoutOrderResult/submitCheckout) -- there is nothing else it
- * could honestly be.
+ * Server numbers only -- subtotal/discount/total and the delivery quote come from CheckoutPreview (the delivery fee
+ * is quoted for the chosen address: Tashkent city by Yandex, the regions by BTS; pickup is free).
  */
 export default function OrderSummary({
   preview,
@@ -129,12 +166,7 @@ export default function OrderSummary({
           </div>
         )}
 
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm text-ink-muted">{pickup ? t("fulfilment.pickup") : t("delivery")}</span>
-          <span className="text-sm font-medium text-success">
-            {t("deliveryFree")}
-          </span>
-        </div>
+        <DeliveryLine preview={preview} pickup={pickup} />
 
         {showCoupon && preview.subtotal && (
           <div className="pt-1">
@@ -161,7 +193,7 @@ export default function OrderSummary({
               </span>
               <span className="text-xl font-bold text-ink">
                 {formatPrice(
-                  payableAfterCoins(preview.total.amount, coins),
+                  payableAfterCoins(preview.total.amount, coins, deliveryFeeOf(preview, pickup)),
                   preview.total.currency,
                 )}
               </span>

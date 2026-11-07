@@ -83,7 +83,7 @@ export default function StoreProfilePage() {
           <Fieldset legend={t("pickupLegend")} icon={<ShoppingBag className="h-3.5 w-3.5 text-primary" strokeWidth={1.75} aria-hidden="true" />}>
             <label className="flex cursor-pointer items-start gap-3">
               <button type="button" role="switch" aria-checked={pickupOn} onClick={() => saveField({ pickup_enabled: !pickupOn })}
-                className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${pickupOn ? "bg-primary" : "bg-surface-3"}`}>
+                className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors before:absolute before:-inset-x-1 before:-inset-y-2.5 before:content-[""] ${pickupOn ? "bg-primary" : "bg-surface-3"}`}>
                 <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${pickupOn ? "left-[22px]" : "left-0.5"}`} />
               </button>
               <span>

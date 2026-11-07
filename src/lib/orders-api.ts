@@ -58,6 +58,11 @@ export interface Order {
   note: string | null;
   shipping_address?: OrderAddress | null;
   fulfilment_method?: "delivery" | "pickup";
+  /** Delivery fee frozen at checkout (0 for pickup); zone tashkent (Yandex) / regions (BTS). */
+  shipping_amount?: string;
+  delivery_zone?: "tashkent" | "regions" | null;
+  delivery_carrier?: string;
+  totals?: { subtotal: string; discount_total: string; tax_total: string; shipping_total: string; grand_total: string };
   /** For a pickup order: the branch to collect it from. */
   pickup_store?: { name: string; slug: string; address: string; landmark: string; latitude: number | null; longitude: number | null; phone: string; note: string; is_open_now: boolean; today: string } | null;
 }

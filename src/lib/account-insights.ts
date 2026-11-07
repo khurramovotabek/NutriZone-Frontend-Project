@@ -20,8 +20,10 @@ export function ordersByStatus(orders: Order[]): Record<string, number> {
   return counts;
 }
 
+/** What the customer paid / pays: the server's grand total (goods + delivery fee), else the lines plus the fee. */
 export function orderTotal(order: Order): number {
-  return order.lines.reduce((sum, line) => sum + Number(line.line_total.amount || 0), 0);
+  if (order.totals) return Number(order.totals.grand_total) || 0;
+  return order.lines.reduce((sum, line) => sum + Number(line.line_total.amount || 0), 0) + (Number(order.shipping_amount ?? 0) || 0);
 }
 
 function dominantCurrency(orders: Order[]): string | null {

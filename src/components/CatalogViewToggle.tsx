@@ -28,7 +28,7 @@ export default async function CatalogViewToggle({ view, baseQuery }: Props) {
         href={hrefFor("grid")}
         aria-label={t("gridView")}
         aria-current={view === "grid" ? "true" : undefined}
-        className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors ${view === "grid" ? "nz-cta" : "text-ink-muted hover:text-primary"}`}
+        className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors sm:h-7 sm:w-7 ${view === "grid" ? "nz-cta" : "text-ink-muted hover:text-primary"}`}
       >
         <LayoutGrid className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
       </Link>
@@ -36,7 +36,7 @@ export default async function CatalogViewToggle({ view, baseQuery }: Props) {
         href={hrefFor("list")}
         aria-label={t("listView")}
         aria-current={view === "list" ? "true" : undefined}
-        className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors ${view === "list" ? "nz-cta" : "text-ink-muted hover:text-primary"}`}
+        className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors sm:h-7 sm:w-7 ${view === "list" ? "nz-cta" : "text-ink-muted hover:text-primary"}`}
       >
         <List className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
       </Link>

@@ -793,7 +793,7 @@
     "removeError": "Could not remove this item.",
     "updateError": "Could not update quantity.",
     "subtotalLabel": "Items ({total})",
-    "subtotalNote": "The final total is confirmed at checkout. You pay on delivery.",
+    "subtotalNote": "Delivery is added at checkout based on your address. Store pickup is free.",
     "breadcrumbLabel": "Breadcrumb",
     "breadcrumbCatalog": "Catalog",
     "itemCount": "({count, plural, one {# item} other {# items}})",
@@ -808,7 +808,8 @@
     "estimatedTotal": "Estimated total",
     "guestCheckoutNote": "No account needed to fill your cart. Sign in with Telegram in seconds to place your order.",
     "signInToCheckout": "Sign in to checkout",
-    "crossSellTitle": "Often bought together"
+    "crossSellTitle": "Often bought together",
+    "deliveryRates": "Delivery: Tashkent city up to {tashkent}, regions from {regions}. Pickup is free."
   },
   "checkout": {
     "title": "Checkout",
@@ -821,7 +822,7 @@
     "itemsPriced": "{priced} of {total, plural, one {# item} other {# items}} priced",
     "subtotal": "Subtotal",
     "priceUnavailable": "Price unavailable — please confirm pricing for all items in your cart.",
-    "deliveryNote": "Delivery and the final total are confirmed at the next step.",
+    "deliveryNote": "Store pickup is free. Delivery is priced by address: within Tashkent city by Yandex Delivery, to the regions by BTS (by weight).",
     "continue": "Place Order",
     "notReadyTitle": "Your cart is not yet ready for checkout",
     "blocked": "Your cart needs attention before you can continue.",
@@ -971,7 +972,17 @@
       "chooseStoreError": "Choose a store to pick up from."
     },
     "cashAtStore": "Pay at the store (cash or card)",
-    "legalConsent": "By placing an order you accept the <terms>Public Offer</terms> and the <privacy>Privacy Policy</privacy>."
+    "legalConsent": "By placing an order you accept the <terms>Public Offer</terms> and the <privacy>Privacy Policy</privacy>.",
+    "deliveryQuote": {
+      "tashkent": "Tashkent city",
+      "regions": "Region",
+      "chooseAddress": "Calculated once you pick an address",
+      "rates": "Tashkent city — up to {tashkent} · regions — from {regions}",
+      "by": "{carrier} · {eta}",
+      "freeFrom": "Free delivery on orders from {amount}",
+      "weight": "parcel ≈ {kg} kg",
+      "pickupFree": "Store pickup — free"
+    }
   },
   "auth": {
     "title": "Log in or sign up",

@@ -191,9 +191,9 @@ export default function StoreReportPage() {
 
               <div className="grid items-start gap-5 @2xl:grid-cols-2">
                 <Card className="p-3 sm:p-5">
-                  <div className="mb-3 flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-ink">{t("report.ordersTitle")}</h3>
-                    <Link href="/profile/store/orders" className="text-sm font-semibold text-primary">{t("allOrders")}</Link>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <h3 className="min-w-0 text-lg font-semibold text-ink">{t("report.ordersTitle")}</h3>
+                    <Link href="/profile/store/orders" className="inline-flex min-h-10 shrink-0 items-center text-sm font-semibold text-primary sm:min-h-0">{t("allOrders")}</Link>
                   </div>
                   <ul className="divide-y divide-border/70">
                     {data.orders.map((o) => (
