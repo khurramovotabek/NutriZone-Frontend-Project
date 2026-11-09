@@ -266,6 +266,7 @@
     }
   },
   "home": {
+    "search": {"placeholder": "Protein, creatine, brand or goal…", "hint": "Type in Latin or Cyrillic — we'll find it even with a typo"},
     "hero": {
       "title": "Original sports nutrition, built for results",
       "subtitle": "Protein, creatine, vitamins and gainers from official brands only. Fast delivery, in-store pickup and coins on every order.",

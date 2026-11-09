@@ -266,6 +266,7 @@
     }
   },
   "home": {
+    "search": {"placeholder": "Protein, kreatin, brend yoki maqsad…", "hint": "Lotin yoki kirillda yozing — xato yozsangiz ham topamiz"},
     "hero": {
       "title": "Original sport ozuqalari — natija uchun",
       "subtitle": "Protein, kreatin, vitaminlar va gainerlar faqat rasmiy brendlardan. Tez yetkazib berish, do'kondan olib ketish va har xariddan coin.",

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import HomeSearch from "@/components/home/HomeSearch";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Headphones, Package, Send, ShoppingBag, Zap } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -112,7 +113,7 @@ export default async function HomePage() {
   const brand = await getBrand();
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <div className="mx-auto max-w-7xl px-4 pb-10 pt-4 sm:pt-10">
       <SiteJsonLd
         name={brand.name}
         logoUrl={brand.logoUrl}
@@ -122,6 +123,7 @@ export default async function HomePage() {
         description={tSeo("homeDescription")}
         faq={FAQ_KEYS.map((k) => ({ q: tSeo(`faq.q${k}`), a: tSeo(`faq.a${k}`, { brand: brand.name }) }))}
       />
+      <HomeSearch />
       {banners.length > 0 ? (
         <>
           {/* The slider's banner titles are h2s; the page's own subject is the h1 (read by screen readers and search engines). */}
