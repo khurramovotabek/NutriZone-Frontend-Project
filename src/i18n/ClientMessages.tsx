@@ -16,7 +16,7 @@ import { getMessages } from "next-intl/server";
  */
 const SERVER_ONLY = ["blog", "footer", "about", "receipt", "meta", "seo", "guides"]; // "pagination" is client-side now (CatalogPagerView)
 const APP_ONLY = ["myStore", "storePos", "accountSettings", "loyalty", "orders", "checkout", "profile", "chatRealtime", "payment", "auth", "otp", "autoLogin", "authLoading"];
-const PARTIAL: Record<string, string[]> = { home: ["banner", "showcase"] };
+const PARTIAL: Record<string, string[]> = { home: ["banner", "showcase", "search"] };
 
 type Messages = Record<string, unknown>;
 
