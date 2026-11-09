@@ -13,7 +13,7 @@ export default function SiteJsonLd({
 }: { name: string; logoUrl: string | null; site: PublicSiteSettings | null; telegramUrl: string | null; locale: Locale; description: string; faq: { q: string; a: string }[] }) {
   const sameAs = [telegramUrl, site?.instagram_url].filter(Boolean);
   const host = SITE_URL.replace(/^https?:\/\//, "");
-  const alternateName = Array.from(new Set([host, "NutriZone", "Nutri Zone", "Nutrizone.uz", "Нутризон", "NutriZone Uzbekistan", "LifeSport", "Life Sport", "LifeSport Pit", "Life Sport Pit", "Лайфспорт"].filter((n) => n.toLowerCase() !== name.toLowerCase())));
+  const alternateName = Array.from(new Set([host, "NutriZone", "Nutri Zone", "Nutrizone.uz", "Nutrizon", "Nutri Zon", "Nutrizon.uz", "Нутризон", "Нутризона", "Нутри Зон", "НутриЗон", "Нутризон уз", "NutriZone Uzbekistan", "NutriZone Toshkent", "LifeSport", "Life Sport", "LifeSport Pit", "Life Sport Pit", "Лайфспорт"].filter((n) => n.toLowerCase() !== name.toLowerCase())));
   const orgId = `${SITE_URL}/#organization`;
   const data = [
     {
