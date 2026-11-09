@@ -273,7 +273,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
 
 
         {/* Which stores (branches) have the selected variant right now, and how many units each. */}
-        {selected && <StoreAvailability stores={selected.store_availability} />}
+        {selected && <StoreAvailability stores={selected.store_availability} onlineInStock={selected.stock_status === "in_stock" || selected.stock_status === "low_stock"} />}
 
         {/* Reference layout's compact stat strip -- e.g. "250 g / 50 servings / 5 g" -- real specification entries, not a fabricated serving size. */}
         {statFacts.length > 0 && (

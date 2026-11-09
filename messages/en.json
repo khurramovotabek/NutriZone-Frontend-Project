@@ -657,6 +657,7 @@
     "storeAvailabilityTitle": "Availability in stores",
     "storeAvailabilityCount": "Available in {count} {count, plural, one {store} other {stores}}",
     "storeAvailabilityNone": "Not in any store right now",
+    "storeAvailabilityOnlineOnly": "Not on store shelves yet — we deliver it from our central warehouse",
     "storeUnits": "{count} pcs",
     "viewStore": "View store",
     "outOfStock": "Out of stock",

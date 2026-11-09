@@ -18,7 +18,7 @@ import { yandexRouteUrl } from "@/lib/maps";
  * "How far is it?" asks for the customer's location once: every branch then shows its distance, stocked branches
  * are ordered nearest first and the nearest one gets a route button.
  */
-export default function StoreAvailability({ stores }: { stores: StoreAvailabilityRow[] | undefined }) {
+export default function StoreAvailability({ stores, onlineInStock = false }: { stores: StoreAvailabilityRow[] | undefined; /** the variant still ships from the central warehouse */ onlineInStock?: boolean }) {
   const t = useTranslations("product");
   const [me, setMe] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
@@ -83,7 +83,8 @@ export default function StoreAvailability({ stores }: { stores: StoreAvailabilit
       )}
 
       {stores.length === 0 ? (
-        <p className="mt-3 text-sm text-ink-soft">{t("storeAvailabilityNone")}</p>
+        // Sold online from the central warehouse but not on any branch shelf: say it ships, not just "nowhere".
+        <p className="mt-3 text-sm text-ink-soft">{t(onlineInStock ? "storeAvailabilityOnlineOnly" : "storeAvailabilityNone")}</p>
       ) : (
         <ul className="mt-3 divide-y divide-border">
           {rows.map((store) => {

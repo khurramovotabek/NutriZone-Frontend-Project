@@ -657,6 +657,7 @@
     "storeAvailabilityTitle": "Наличие в магазинах",
     "storeAvailabilityCount": "В наличии в {count} магазинах",
     "storeAvailabilityNone": "Пока нет ни в одном магазине",
+    "storeAvailabilityOnlineOnly": "В магазинах пока нет — доставим с центрального склада",
     "storeUnits": "{count} шт.",
     "viewStore": "Открыть магазин",
     "outOfStock": "Нет в наличии",

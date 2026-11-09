@@ -657,6 +657,7 @@
     "storeAvailabilityTitle": "Do'konlarda mavjudligi",
     "storeAvailabilityCount": "{count} ta do'konda mavjud",
     "storeAvailabilityNone": "Hozircha hech bir do'konda yo'q",
+    "storeAvailabilityOnlineOnly": "Do'konlarda hozircha yo'q — markaziy omborimizdan yetkazib beramiz",
     "storeUnits": "{count} ta",
     "viewStore": "Do'konni ko'rish",
     "outOfStock": "Tugagan",
