@@ -1,4 +1,4 @@
-import { Heart, Package, Store, Tag } from "lucide-react";
+import { Heart, Package, Tag } from "lucide-react";
 import CoinIcon from "@/components/loyalty/CoinIcon";
 import ReferralCapture from "@/components/loyalty/ReferralCapture";
 import Link from "next/link";
@@ -92,10 +92,6 @@ export default async function StorefrontLayout({ children }: { children: React.R
             <Link href="/brands" className="flex items-center gap-1.5 transition-colors hover:text-primary">
               <Tag className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
               {t("brands")}
-            </Link>
-            <Link href="/stores" className="flex items-center gap-1.5 transition-colors hover:text-primary">
-              <Store className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
-              {t("stores")}
             </Link>
             <Link href="/orders" className="flex items-center gap-1.5 transition-colors hover:text-primary">
               <Package className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />

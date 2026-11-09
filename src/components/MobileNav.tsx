@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useIsClient } from "@/hooks/useIsClient";
 import { createPortal } from "react-dom";
-import { BookOpen, Coins, Heart, Info, LayoutDashboard, LayoutGrid, Lightbulb, Mail, MapPin, Menu, MessageCircle, Package, Percent, Send, Settings, Store, Tag, X } from "lucide-react";
+import { BookOpen, Coins, Heart, Info, LayoutDashboard, LayoutGrid, Lightbulb, Mail, MapPin, Menu, MessageCircle, Package, Percent, Send, Settings, Tag, X } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -60,7 +60,6 @@ export default function MobileNav({ signedIn = false }: { signedIn?: boolean }) 
         { href: "/products", label: t("catalog"), icon: LayoutGrid },
         { href: "/products?sale=1", label: t("sale"), icon: Percent },
         { href: "/brands", label: t("brands"), icon: Tag },
-        { href: "/stores", label: t("stores"), icon: Store },
         { href: "/loyalty", label: "NutriZone Coins", icon: Coins },
         { href: "/guides", label: t("guides"), icon: Lightbulb },
         { href: "/blog", label: t("blog"), icon: BookOpen },

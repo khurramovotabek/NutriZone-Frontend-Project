@@ -22,7 +22,6 @@ import ProductShowcase, { type ShowcaseTab } from "@/components/home/ProductShow
 import SaleSection from "@/components/home/SaleSection";
 import QuickNav from "@/components/home/QuickNav";
 import CategoryRail from "@/components/home/CategoryRail";
-import StoresSection from "@/components/home/StoresSection";
 import SeoIntro, { FAQ_KEYS } from "@/components/home/SeoIntro";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n/config";
@@ -212,9 +211,6 @@ export default async function HomePage() {
         <ReviewsWall />
       </Suspense>
 
-      <Suspense fallback={null}>
-        <StoresSection />
-      </Suspense>
 
       <WhyNutriZone />
 

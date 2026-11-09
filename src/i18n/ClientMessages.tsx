@@ -14,7 +14,7 @@ import { getMessages } from "next-intl/server";
  * A namespace a client component needs must not be listed here for a page it renders on -- next-intl would
  * print the key instead of the text.
  */
-const SERVER_ONLY = ["blog", "footer", "about", "receipt", "meta", "seo", "pagination", "guides"];
+const SERVER_ONLY = ["blog", "footer", "about", "receipt", "meta", "seo", "guides"]; // "pagination" is client-side now (CatalogPagerView)
 const APP_ONLY = ["myStore", "storePos", "accountSettings", "loyalty", "orders", "checkout", "profile", "chatRealtime", "payment", "auth", "otp", "autoLogin", "authLoading"];
 const PARTIAL: Record<string, string[]> = { home: ["banner", "showcase"] };
 

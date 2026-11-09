@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Coins, LayoutGrid, Package, Store, Tag } from "lucide-react";
+import { BookOpen, Coins, LayoutGrid, Package, Percent, Tag } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getCategories } from "@/lib/api";
 import FullBleedImage from "@/components/FullBleedImage";
@@ -20,7 +20,7 @@ export default async function QuickNav() {
 
   const doors = [
     { href: "/brands", label: t("brands"), icon: Tag, tone: "from-violet-500 to-indigo-600" },
-    { href: "/stores", label: t("stores"), icon: Store, tone: "from-emerald-500 to-teal-600" },
+    { href: "/products?sale=1", label: t("sale"), icon: Percent, tone: "from-rose-500 to-pink-600" },
     { href: "/loyalty", label: t("coins"), icon: Coins, tone: "from-amber-400 to-orange-500" },
     { href: "/guides", label: t("guides"), icon: BookOpen, tone: "from-sky-500 to-cyan-600" },
   ];

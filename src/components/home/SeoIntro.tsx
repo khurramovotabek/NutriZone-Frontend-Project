@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronDown, Store, Coins, ShieldCheck } from "lucide-react";
+import { ChevronDown, Coins, ShieldCheck } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 export const FAQ_KEYS = ["1", "2", "3", "4", "5"] as const;
@@ -25,10 +25,6 @@ export default async function SeoIntro({ brand }: { brand: string }) {
           <Link href="/products" className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-3 py-2 text-primary transition-colors hover:bg-primary/15">
             <ShieldCheck className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
             {t("catalogTitle")}
-          </Link>
-          <Link href="/stores" className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-3 py-2 text-primary transition-colors hover:bg-primary/15">
-            <Store className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
-            {t("storesTitle")}
           </Link>
           <Link href="/loyalty" className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-3 py-2 text-primary transition-colors hover:bg-primary/15">
             <Coins className="h-4 w-4" strokeWidth={2} aria-hidden="true" />

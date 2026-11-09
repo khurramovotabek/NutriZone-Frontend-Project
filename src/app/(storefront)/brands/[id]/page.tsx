@@ -3,13 +3,11 @@ import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowUpRight, BadgeCheck, ChevronRight, Package, Percent, Tag } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getBrands, searchProducts, type CatalogSort } from "@/lib/api";
+import { getBrands, searchProducts, searchQueryString, type CatalogSort } from "@/lib/api";
 import BrandCard from "@/components/BrandCard";
 import BrandGrid from "@/components/BrandGrid";
 import BrandLogo from "@/components/BrandLogo";
-import ProductCard from "@/components/ProductCard";
-import ProductGrid from "@/components/ProductGrid";
-import CatalogPagination from "@/components/CatalogPagination";
+import CatalogFeed from "@/components/CatalogFeed";
 import { EmptyState, ErrorState } from "@/components/ui";
 import { getBrand } from "@/lib/brand";
 import { pageMetadata, paged, samePrefixPath } from "@/lib/seo";
@@ -200,18 +198,16 @@ export default async function BrandDetailPage({ params, searchParams }: Props) {
 
         {!loadError && products.length > 0 && (
           <>
-            <ProductGrid>
-              {products.map((product, idx) => (
-                <ProductCard key={product.id} product={product} brandName={brand.name} priority={idx < 4} />
-              ))}
-            </ProductGrid>
-
-            <CatalogPagination
+            <CatalogFeed
+              initial={products}
+              view="grid"
+              query={searchQueryString({ q: "", brandIds: [id], pageSize: PAGE_SIZE, sort, onSale, locale })}
               page={page}
               totalPages={totalPages}
               totalCount={totalCount}
               pageSize={PAGE_SIZE}
-              hrefFor={(p) => href({ page: p })}
+              hrefs={Array.from({ length: totalPages }, (_, i) => href({ page: i + 1 }))}
+              brandNames={{ [brand.id]: brand.name }}
               label={t("paginationLabel")}
             />
           </>

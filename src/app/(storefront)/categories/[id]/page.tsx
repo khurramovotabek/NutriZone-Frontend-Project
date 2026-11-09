@@ -3,11 +3,9 @@ import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { ChevronRight, Package, SlidersHorizontal, X } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getBrandNameMap, getCategories, getCategoryDescription, searchProducts } from "@/lib/api";
+import { getBrandNameMap, getCategories, getCategoryDescription, searchProducts, searchQueryString } from "@/lib/api";
 import MediaImage from "@/components/MediaImage";
-import ProductCard from "@/components/ProductCard";
-import ProductGrid from "@/components/ProductGrid";
-import CatalogPagination from "@/components/CatalogPagination";
+import CatalogFeed from "@/components/CatalogFeed";
 import { EmptyState, ErrorState } from "@/components/ui";
 import { getBrand } from "@/lib/brand";
 import { pageMetadata, paged, samePrefixPath } from "@/lib/seo";
@@ -173,18 +171,16 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
 
         {!loadError && products.length > 0 && (
           <>
-            <ProductGrid>
-              {products.map((product, idx) => (
-                <ProductCard key={product.id} product={product} brandName={brandNames[product.brand_id ?? ""] ?? null} priority={idx < 4} />
-              ))}
-            </ProductGrid>
-
-            <CatalogPagination
+            <CatalogFeed
+              initial={products}
+              view="grid"
+              query={searchQueryString({ q: "", categoryId: id, pageSize: PAGE_SIZE, sort: "-popularity", locale: pageLocale })}
               page={page}
               totalPages={totalPages}
               totalCount={totalCount}
               pageSize={PAGE_SIZE}
-              hrefFor={(p) => (p > 1 ? `${categoryPath(category)}?page=${p}` : categoryPath(category))}
+              hrefs={Array.from({ length: totalPages }, (_, i) => (i > 0 ? `${categoryPath(category)}?page=${i + 1}` : categoryPath(category)))}
+              brandNames={brandNames}
               label={t("paginationLabel")}
             />
           </>

@@ -3,13 +3,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { PackageX, Percent, SearchX, X } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getBrands, getCategories, searchProducts } from "@/lib/api";
+import { getBrands, getCategories, searchProducts, searchQueryString } from "@/lib/api";
 import { GOAL_CODES, catalogHref, isSizeBand, parseCatalogParams, toggle } from "@/lib/catalog-params";
 import { formatSizeKey } from "@/lib/format-weight";
 import CatalogSortSelect from "@/components/CatalogSortSelect";
-import ProductCard from "@/components/ProductCard";
-import ProductGrid from "@/components/ProductGrid";
-import CatalogPagination from "@/components/CatalogPagination";
+import CatalogFeed from "@/components/CatalogFeed";
 import CatalogFilterPanel from "@/components/CatalogFilterPanel";
 import CatalogViewToggle from "@/components/CatalogViewToggle";
 import ScrollSideNav from "@/components/ScrollSideNav";
@@ -36,6 +34,24 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const tGoals = await getTranslations("home.goals");
   const locale = await getLocale();
 
+  const searchArgs = {
+    q,
+    categoryId: state.category,
+    brandIds: state.brands,
+    flavourIds: state.flavours,
+    sizes: state.sizes,
+    goals: state.goals,
+    priceMin: state.min,
+    priceMax: state.max,
+    ratingMin: state.rating,
+    inStock: state.stock,
+    onSale: state.sale,
+    // no query and no chosen order: best sellers first (the newest were often protein bars, a weak first impression)
+    sort: state.sort ?? (state.q ? undefined : "-popularity"),
+    locale,
+  };
+  const feedQuery = searchQueryString({ ...searchArgs, pageSize: 24 });
+
   let data: Awaited<ReturnType<typeof searchProducts>> | null = null;
   let loadError = false;
   let categories: Awaited<ReturnType<typeof getCategories>>["data"] = [];
@@ -47,23 +63,10 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
     // all resolved by the backend's catalog browse (GET /products/search).
     [data, { data: categories }, { data: brands }] = await Promise.all([
       searchProducts({
-        q,
+        ...searchArgs,
         page,
         pageSize: 24,
         record: Boolean(q) && page === 1,
-        categoryId: state.category,
-        brandIds: state.brands,
-        flavourIds: state.flavours,
-        sizes: state.sizes,
-        goals: state.goals,
-        priceMin: state.min,
-        priceMax: state.max,
-        ratingMin: state.rating,
-        inStock: state.stock,
-        onSale: state.sale,
-        // no query and no chosen order: best sellers first (the newest were often protein bars, a weak first impression)
-        sort: state.sort ?? (state.q ? undefined : "-popularity"),
-        locale,
       }),
       getCategories(locale),
       getBrands(),
@@ -205,30 +208,18 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
 
           {!loadError && data && data.data.length > 0 && (
             <>
-              {view === "grid" ? (
-                <ProductGrid>
-                  {data.data.map((product, idx) => (
-                    <ProductCard key={product.id} product={product} brandName={product.brand_id ? brandName(product.brand_id) : null} priority={idx < 4} />
-                  ))}
-                </ProductGrid>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  {data.data.map((product) => (
-                    <ProductCard key={product.id} product={product} brandName={product.brand_id ? brandName(product.brand_id) : null} layout="list" />
-                  ))}
-                </div>
-              )}
-
-              {data.pagination && (
-                <CatalogPagination
-                  page={page}
-                  totalPages={data.pagination.total_pages}
-                  totalCount={data.pagination.total_count}
-                  pageSize={data.pagination.page_size}
-                  hrefFor={(p) => catalogHref(state, { page: p })}
-                  label={t("paginationLabel")}
-                />
-              )}
+              <CatalogFeed
+                initial={data.data}
+                view={view}
+                query={feedQuery}
+                page={page}
+                totalPages={data.pagination?.total_pages ?? 1}
+                totalCount={data.pagination?.total_count ?? data.data.length}
+                pageSize={data.pagination?.page_size ?? 24}
+                hrefs={Array.from({ length: data.pagination?.total_pages ?? 1 }, (_, i) => catalogHref(state, { page: i + 1 }))}
+                brandNames={Object.fromEntries(data.data.filter((p) => p.brand_id).map((p) => [p.brand_id as string, brandName(p.brand_id as string)]).concat(brands.map((b) => [b.id, b.name])))}
+                label={t("paginationLabel")}
+              />
             </>
           )}
         </div>
