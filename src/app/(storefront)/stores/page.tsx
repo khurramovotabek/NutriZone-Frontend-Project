@@ -84,19 +84,19 @@ export default async function StoresPage({
         <p className="relative text-xs font-bold uppercase tracking-[0.18em] text-primary">{t("heroEyebrow")}</p>
         <h1 className="relative mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">{t("title")}</h1>
         <p className="relative mt-2 max-w-2xl text-ink-muted">{t("subtitle")}</p>
-        <dl className="relative mt-5 grid max-w-xl grid-cols-3 gap-3">
+        <dl className="relative mt-5 grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
           {[
             { icon: StoreIcon, value: count, label: t("statStores"), tone: "text-emerald-500 bg-emerald-500/12" },
             { icon: DoorOpen, value: openNowCount ?? stores.filter((s) => s.is_open_now).length, label: t("statOpen"), tone: "text-sky-500 bg-sky-500/12" },
             { icon: MapPinned, value: cities.length, label: t("statCities"), tone: "text-violet-500 bg-violet-500/12" },
           ].map(({ icon: Icon, value, label, tone }) => (
-            <div key={label} className="rounded-2xl border border-border/60 bg-surface/40 p-3 backdrop-blur-sm">
+            <div key={label} className="min-w-0 rounded-2xl border border-border/60 bg-surface/40 p-2.5 backdrop-blur-sm sm:p-3">
               <span className={`mb-2 flex h-8 w-8 items-center justify-center rounded-xl ${tone}`}>
                 <Icon className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
               </span>
               <dt className="sr-only">{label}</dt>
               <dd className="text-xl font-bold tabular-nums text-ink">{value}</dd>
-              <dd className="text-xs text-ink-soft">{label}</dd>
+              <dd className="text-[11px] leading-tight text-ink-soft [overflow-wrap:normal] [word-break:normal] sm:text-xs">{label}</dd>
             </div>
           ))}
         </dl>

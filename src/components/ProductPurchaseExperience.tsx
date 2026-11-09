@@ -265,7 +265,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
           </ul>
 
           <div className="mt-4 flex items-center gap-2 border-t border-border pt-4">
-            <WishlistButton productId={product.id} initialWishlisted={isWishlisted} className="!h-10 !w-10" />
+            <WishlistButton productId={product.id} initialWishlisted={isWishlisted} className="!h-10 !w-10 shrink-0" />
             <ShareButton title={product.name} />
             <CompareButton slug={product.slug} />
           </div>

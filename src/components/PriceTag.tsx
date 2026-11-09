@@ -18,7 +18,7 @@ export function isDiscounted(price: string | null | undefined, compareAt: string
 const SIZES = {
   xs: { price: "text-sm", old: "text-[11px]", badge: "text-[10px] px-1.5 py-0.5", save: "text-[11px]" },
   sm: { price: "text-base", old: "text-xs", badge: "text-[11px] px-1.5 py-0.5", save: "text-xs" },
-  md: { price: "text-lg", old: "text-sm", badge: "text-xs px-2 py-0.5", save: "text-xs" },
+  md: { price: "text-base sm:text-lg", old: "text-xs sm:text-sm", badge: "text-xs px-2 py-0.5", save: "text-xs" },
   xl: { price: "text-[1.7rem] leading-tight sm:text-4xl", old: "text-base sm:text-lg", badge: "text-sm px-2.5 py-1", save: "text-sm" },
 } as const;
 

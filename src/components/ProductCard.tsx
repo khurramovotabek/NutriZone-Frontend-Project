@@ -195,10 +195,10 @@ export default function ProductCard({
         </div>
 
         {/* CONTENT */}
-        <div className={`flex flex-1 flex-col ${isCompact ? "p-2.5" : isFeatured ? "p-4" : "p-3 sm:p-3.5"}`}>
+        <div className={`flex flex-1 flex-col ${isCompact ? "p-2.5" : isFeatured ? "p-3 sm:p-4" : "p-3 sm:p-3.5"}`}>
           {brandName && !isCompact && <p className="truncate text-xs font-medium uppercase tracking-wide text-ink-soft">{brandName}</p>}
           <p
-            className={`mt-0.5 line-clamp-2 font-medium text-ink transition-colors group-hover:text-primary ${isFeatured ? "text-base" : isCompact ? "text-xs" : "text-sm"}`}
+            className={`mt-0.5 line-clamp-2 font-medium text-ink transition-colors group-hover:text-primary ${isFeatured ? "text-sm sm:text-base" : isCompact ? "text-xs" : "text-sm"}`}
           >
             {product.name}
           </p>
@@ -220,7 +220,7 @@ export default function ProductCard({
 
           <div className="mt-auto pt-2">
             {product.price_from ? (
-              <p className={`font-bold tracking-tight text-ink ${isFeatured ? "text-lg" : isCompact ? "text-sm" : "text-[15px] sm:text-base"}`}>
+              <p className={`font-bold tracking-tight text-ink ${isFeatured ? "text-[15px] sm:text-lg" : isCompact ? "text-sm" : "text-[15px] sm:text-base"}`}>
                 {t("priceFrom", { price: formatPrice(product.price_from, product.currency) ?? "" })}
               </p>
             ) : formattedPrice ? (
@@ -237,7 +237,7 @@ export default function ProductCard({
             )}
             {isFamily ? (
               // several sizes / flavours: the shopper picks one on the product page, never a silent default
-              <span className={`nz-cta mt-2 flex w-full items-center justify-center rounded-xl px-3 py-2 text-xs font-bold ${isFeatured ? "!py-2.5 !text-sm" : ""}`}>
+              <span className={`nz-cta mt-2 flex min-h-9 w-full items-center justify-center rounded-xl px-2 py-2 text-center text-xs font-bold leading-tight ${isFeatured ? "sm:!py-2.5 sm:!text-sm" : ""}`}>
                 {t("chooseOptions")}
               </span>
             ) : (
@@ -245,7 +245,7 @@ export default function ProductCard({
                 variantId={product.default_variant_id ?? ""}
                 outOfStock={outOfStock}
                 unavailable={!product.default_variant_id}
-                className={`mt-2 w-full ${isFeatured ? "!py-2.5 !text-sm" : ""}`}
+                className={`mt-2 w-full ${isFeatured ? "sm:!py-2.5 sm:!text-sm" : ""}`}
               />
             )}
           </div>
@@ -263,7 +263,7 @@ function StockLine({ status, quantity, size }: { status?: "in_stock" | "low_stoc
   const tone = status === "out_of_stock" ? "text-red-600 dark:text-red-400" : status === "low_stock" ? "text-amber-700 dark:text-amber-300" : "text-success";
   const dot = status === "out_of_stock" ? "bg-red-500" : status === "low_stock" ? "bg-amber-500" : "bg-success";
   return (
-    <p className={`mt-1 inline-flex items-center gap-1.5 font-medium ${tone} ${size === "xs" ? "text-[11px]" : "text-xs"}`}>
+    <p className={`mt-1 flex min-w-0 items-center gap-1.5 whitespace-nowrap font-medium ${tone} ${size === "xs" ? "text-[11px]" : "text-xs"}`}>
       <span aria-hidden="true" className={`h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} />
       {label}
     </p>

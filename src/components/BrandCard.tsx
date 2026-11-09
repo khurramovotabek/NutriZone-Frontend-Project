@@ -24,23 +24,23 @@ export default function BrandCard({ brand, productCount, priority = false }: { b
       <article className="nz-glass nz-glass-interactive flex h-full flex-col overflow-hidden rounded-2xl">
         <div className="relative aspect-[16/10] overflow-hidden border-b border-border/60">
           <div className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.04]">
-            <BrandLogo name={brand.name} logoUrl={brand.logo_url} padding="p-6" textSize="text-3xl" sizes={BRAND_IMAGE_SIZES} loading={priority ? "eager" : "lazy"} />
+            <BrandLogo name={brand.name} logoUrl={brand.logo_url} padding="p-4 sm:p-6" textSize="text-3xl" sizes={BRAND_IMAGE_SIZES} loading={priority ? "eager" : "lazy"} />
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col p-4">
-          <p className="line-clamp-1 text-[15px] font-bold tracking-tight text-ink transition-colors group-hover:text-primary">{brand.name}</p>
+        <div className="flex flex-1 flex-col p-3 sm:p-4">
+          <p className="line-clamp-2 text-sm font-bold leading-snug tracking-tight sm:line-clamp-1 sm:text-[15px] text-ink transition-colors group-hover:text-primary">{brand.name}</p>
           {brand.description && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-ink-muted">{brand.description}</p>}
           <div className="mt-auto flex items-center justify-between gap-2 pt-3">
             {count != null ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold text-ink-muted">
+              <span className="inline-flex min-w-0 items-center gap-1 whitespace-nowrap rounded-full bg-surface-2 px-2 py-1 text-[11px] font-semibold sm:px-2.5 text-ink-muted">
                 <Package className="h-3 w-3" strokeWidth={2} aria-hidden="true" />
                 {t("productCount", { count })}
               </span>
             ) : (
               <span aria-hidden="true" />
             )}
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-primary transition-all group-hover:bg-primary group-hover:text-white">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary transition-all group-hover:bg-primary group-hover:text-white">
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2} aria-hidden="true" />
             </span>
           </div>
