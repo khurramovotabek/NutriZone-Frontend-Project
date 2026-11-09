@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { internalTokenHeader } from "@/lib/internal-token";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest) {
   if (!ids) return NextResponse.json({ success: true, data: [] });
   try {
     const query = new URLSearchParams({ ids, ...(locale ? { locale } : {}) });
-    const response = await fetch(`${API_BASE_URL}/api/v1/products/variants?${query.toString()}`, { next: { revalidate: 300 } });
+    const response = await fetch(`${API_BASE_URL}/api/v1/products/variants?${query.toString()}`, { headers: internalTokenHeader(), next: { revalidate: 300 } });
     const body = await response.json();
     if (!response.ok) {
       return NextResponse.json({ success: false, error: { code: body?.error?.code ?? "UNKNOWN", message: body?.error?.message ?? "Could not load products." } }, { status: response.status });

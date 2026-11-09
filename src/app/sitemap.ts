@@ -30,7 +30,9 @@ async function safely<T>(load: () => Promise<T>, fallback: T): Promise<T> {
 async function productEntries(): Promise<MetadataRoute.Sitemap> {
   const out: MetadataRoute.Sitemap = [];
   for (let page = 1; page <= MAX_PRODUCT_PAGES; page++) {
-    const res = await safely(() => searchProducts({ page, pageSize: 100, sort: "-created_at" }), null);
+    const load = () => searchProducts({ page, pageSize: 100, sort: "-created_at" });
+    // one retry: a single failed page used to end the list there (on 2026-11-09 a 429 on page 11 cut it to 1 000 of 1 185)
+    const res = (await safely(load, null)) ?? (await new Promise((r) => setTimeout(r, 1500)).then(() => safely(load, null)));
     if (!res) break;
     for (const p of res.data) {
       // the product photo rides along as an image-sitemap entry, so Google Images finds it with its page

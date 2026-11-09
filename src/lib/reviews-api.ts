@@ -14,6 +14,7 @@
  * visitor should see. `getProductReviews` (authenticated) remains for
  * any call site that specifically needs an authenticated view.
  */
+import { internalTokenHeader } from "@/lib/internal-token";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 
 export interface ReviewCard {
@@ -83,7 +84,7 @@ export interface PublicReviewCard {
  * client-safe convention (only ever reads NEXT_PUBLIC_API_BASE_URL).
  */
 export async function getPublicProductReviews(productId: string, page = 1, pageSize = 10): Promise<{ items: PublicReviewCard[]; totalCount: number }> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/reviews/products/${encodeURIComponent(productId)}/public?page=${page}&page_size=${pageSize}`, { next: { revalidate: 60 } });
+  const response = await fetch(`${API_BASE_URL}/api/v1/reviews/products/${encodeURIComponent(productId)}/public?page=${page}&page_size=${pageSize}`, { headers: internalTokenHeader(), next: { revalidate: 60 } });
   const body = await response.json();
   if (!response.ok) {
     const errBody = body as BackendErrorBody;

@@ -5,6 +5,7 @@
  * the configured name) so renaming the project needs no code change.
  */
 import { API_BASE_URL } from "@/lib/api";
+import { internalTokenHeader } from "@/lib/internal-token";
 
 export interface Brand {
   name: string;
@@ -18,7 +19,7 @@ export const DEFAULT_BRAND: Brand = { name: DEFAULT_BRAND_NAME, shortName: DEFAU
 
 // One cached request per minute serves both the brand and the search-engine codes (Next dedupes identical fetches).
 async function publicSettings(): Promise<Record<string, unknown> | null> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/settings/public`, { next: { revalidate: 60, tags: ["brand"] } });
+  const res = await fetch(`${API_BASE_URL}/api/v1/settings/public`, { headers: internalTokenHeader(), next: { revalidate: 60, tags: ["brand"] } });
   if (!res.ok) return null;
   return (await res.json())?.data ?? null;
 }

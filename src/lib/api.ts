@@ -15,6 +15,8 @@
  * per this phase's own explicit environment-configuration requirement.
  */
 
+import { internalTokenHeader } from "@/lib/internal-token";
+
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 
 export interface ApiPagination {
@@ -240,7 +242,7 @@ export class ApiError extends Error {
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiEnvelope<T>> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
-    headers: { "Content-Type": "application/json", ...init?.headers },
+    headers: { "Content-Type": "application/json", ...internalTokenHeader(), ...init?.headers },
     // Product catalog data is safe to cache; per-request revalidation
     // keeps it reasonably fresh without hitting the backend on every
     // render -- personalized/sensitive endpoints (cart, orders,

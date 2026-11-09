@@ -1,4 +1,5 @@
 import { API_BASE_URL, apiFetch, ApiError } from "@/lib/api";
+import { internalTokenHeader } from "@/lib/internal-token";
 
 export interface StoreListItem {
   id: string;
@@ -99,7 +100,7 @@ export async function getStores(filters: StoreListFilters = {}): Promise<Paginat
   if (filters.page) params.set("page", String(filters.page));
 
   const query = params.toString();
-  const response = await fetch(`${API_BASE_URL}/api/v1/stores${query ? `?${query}` : ""}`, { next: { revalidate: 60 } });
+  const response = await fetch(`${API_BASE_URL}/api/v1/stores${query ? `?${query}` : ""}`, { headers: internalTokenHeader(), next: { revalidate: 60 } });
   if (!response.ok) {
     throw new ApiError(response.status, `Request to /api/v1/stores failed with status ${response.status}`);
   }

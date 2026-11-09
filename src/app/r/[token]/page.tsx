@@ -7,6 +7,7 @@ import { API_BASE_URL } from "@/lib/api";
 import { getBrand } from "@/lib/brand";
 import ThermalReceipt, { RECEIPT_CSS, som, type PublicReceipt, type ReceiptLabels } from "@/components/receipt/ThermalReceipt";
 import { AutoPrint, ReceiptActions } from "@/components/receipt/ReceiptClient";
+import { forwardedForHeader } from "@/lib/client-ip";
 
 export const metadata: Metadata = { title: "E-chek", robots: { index: false, follow: false } };
 
@@ -16,7 +17,7 @@ type Search = { print?: string; autoprint?: string };
 async function load(token: string, locale: string): Promise<PublicReceipt | null> {
   if (!/^[A-Za-z0-9_-]{8,32}$/.test(token)) return null;
   try {
-    const res = await fetch(`${API_BASE_URL}/api/v1/receipts/${encodeURIComponent(token)}?locale=${locale}`, { cache: "no-store" });
+    const res = await fetch(`${API_BASE_URL}/api/v1/receipts/${encodeURIComponent(token)}?locale=${locale}`, { cache: "no-store", headers: await forwardedForHeader() });
     if (!res.ok) return null;
     const body = await res.json();
     return body?.data ?? null;

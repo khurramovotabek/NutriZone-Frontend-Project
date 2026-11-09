@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { internalTokenHeader } from "@/lib/internal-token";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
   query.set("_lang", language.slice(0, 16)); // part of the URL so the fetch cache never serves one language's names to another
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/${path}?${query.toString()}`, {
-      headers: { "Accept-Language": language },
+      headers: { "Accept-Language": language, ...internalTokenHeader() }, // shared, cached reads -- see internal-token.ts
       next: { revalidate: path === "products/search" || path.startsWith("products/recommendations") ? 15 : 300 },
     });
     return NextResponse.json(await response.json(), { status: response.status });
