@@ -446,7 +446,7 @@
     "sale": {
       "eyebrow": "Cheklangan muddat",
       "title": "Aksiyalar",
-      "subtitle": "{count} ta mahsulot chegirmada — eng katta chegirmalar birinchi",
+      "subtitle": "So'nggi {shown} ta aksiya — jami {count} ta mahsulot chegirmada",
       "viewAll": "Barcha chegirmalar"
     },
     "categoryRails": {

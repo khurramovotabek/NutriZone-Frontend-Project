@@ -316,7 +316,7 @@ export async function getBestSellers(limit = 8, locale?: string): Promise<ApiEnv
  * it only ever reads `NEXT_PUBLIC_API_BASE_URL`, which is why `locale`
  * is an explicit param here rather than read server-side.
  */
-export type CatalogSort = "relevance" | "-created_at" | "price" | "-price" | "-rating" | "-popularity" | "-discount" | "name";
+export type CatalogSort = "relevance" | "-created_at" | "price" | "-price" | "-rating" | "-popularity" | "-discount" | "-sale_since" | "name";
 
 export type SearchParams = {
   q?: string;

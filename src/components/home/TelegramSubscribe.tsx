@@ -15,7 +15,7 @@ export default async function TelegramSubscribe() {
   const coins = info.gift_coins ? info.gift_coins.toLocaleString("ru-RU").replace(/ /g, " ") : null;
 
   return (
-    <section className="relative mt-10 overflow-hidden rounded-[2rem] sm:mt-16 bg-[linear-gradient(135deg,#0b3b5c_0%,#0e5f8a_45%,#1d9bd8_100%)] p-6 text-white shadow-2xl shadow-sky-900/25 sm:p-10">
+    <section className="relative mt-10 overflow-hidden rounded-[2rem] sm:mt-16 bg-[linear-gradient(135deg,#0b3b5c_0%,#0e5f8a_45%,#1d9bd8_100%)] p-5 text-white shadow-2xl shadow-sky-900/25 sm:p-10">
       <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-sky-300/30 blur-3xl" />
       <Send aria-hidden="true" className="pointer-events-none absolute -bottom-10 right-6 h-56 w-56 -rotate-12 text-white/10" strokeWidth={1.25} />
       <div className="relative grid items-center gap-8 lg:grid-cols-[1.2fr_1fr]">
@@ -24,7 +24,7 @@ export default async function TelegramSubscribe() {
             <Bell className="h-3.5 w-3.5" strokeWidth={2.25} aria-hidden="true" />
             {t("eyebrow")}
           </span>
-          <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{coins ? t("titleGift", { coins }) : t("title")}</h2>
+          <h2 className="mt-4 text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">{coins ? t("titleGift", { coins }) : t("title")}</h2>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/80 sm:text-base">{t("subtitle")}</p>
           <ul className="mt-5 grid max-w-lg gap-2 text-sm text-white/90 sm:grid-cols-2">
             {(["p1", "p2", "p3", "p4"] as const).map((k) => (
@@ -42,7 +42,8 @@ export default async function TelegramSubscribe() {
         </div>
 
         {coins && (
-          <div className="relative mx-auto w-full max-w-sm">
+          /* phones: the headline already names the gift -- the card would only add a screen of scrolling */
+          <div className="relative mx-auto hidden w-full max-w-sm sm:block">
             <div className="rotate-[-3deg] rounded-3xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-md transition-transform duration-500 hover:rotate-0">
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 to-orange-500 text-slate-900 shadow-lg">
                 <Gift className="h-7 w-7" strokeWidth={2} aria-hidden="true" />

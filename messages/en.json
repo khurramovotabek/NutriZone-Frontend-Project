@@ -446,7 +446,7 @@
     "sale": {
       "eyebrow": "Limited time",
       "title": "Deals",
-      "subtitle": "{count} products on sale — biggest discounts first",
+      "subtitle": "The {shown} newest deals — {count} products on sale in total",
       "viewAll": "All deals"
     },
     "categoryRails": {

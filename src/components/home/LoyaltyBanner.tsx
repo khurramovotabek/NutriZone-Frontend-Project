@@ -21,7 +21,7 @@ export default async function LoyaltyBanner() {
   const sorted = hidden ? [...all.slice(0, 3), all[all.length - 1]] : all;
 
   return (
-    <section className="relative mt-10 overflow-hidden rounded-[2rem] sm:mt-16 bg-[linear-gradient(135deg,#1c1407_0%,#3b2506_45%,#0f172a_100%)] p-6 text-white shadow-2xl shadow-amber-900/20 sm:p-10">
+    <section className="relative mt-10 overflow-hidden rounded-[2rem] sm:mt-16 bg-[linear-gradient(135deg,#1c1407_0%,#3b2506_45%,#0f172a_100%)] p-5 text-white shadow-2xl shadow-amber-900/20 sm:p-10">
       <span aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-amber-400/30 blur-3xl" />
       <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-orange-500/20 blur-3xl" />
       <div className="relative grid items-center gap-8 lg:grid-cols-[1.15fr_1fr]">
@@ -30,7 +30,7 @@ export default async function LoyaltyBanner() {
             <Coins className="h-3.5 w-3.5" strokeWidth={2.25} aria-hidden="true" />
             NutriZone Coins
           </span>
-          <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+          <h2 className="mt-4 text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">
             {top ? t("titleTop", { percent: top }) : t("title")}
           </h2>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/75 sm:text-base">{t("subtitle")}</p>
@@ -51,7 +51,19 @@ export default async function LoyaltyBanner() {
         </div>
 
         {sorted.length > 0 && (
-          <ol className="relative space-y-2.5">
+          /* phones: the tiers as one compact row of chips (the ladder was a screen tall) */
+          <ol className="relative -mt-2 flex flex-wrap gap-2 sm:hidden">
+            {sorted.map((tier) => (
+              <li key={tier.id} className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.07] py-1 pl-1 pr-3 text-xs font-bold">
+                <TierBadge icon={tier.icon} color={tier.color || "#f59e0b"} size={22} className="shrink-0" />
+                {tier.name}
+                <span className="tabular-nums text-amber-300">{Number(tier.percent)}%</span>
+              </li>
+            ))}
+          </ol>
+        )}
+        {sorted.length > 0 && (
+          <ol className="relative hidden space-y-2.5 sm:block">
             {sorted.map((tier, i) => (
               <Fragment key={tier.id}>
                 {hidden > 0 && i === sorted.length - 1 && (

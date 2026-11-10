@@ -66,23 +66,23 @@ async function WhyNutriZone() {
   const t = await getTranslations("home.whyNutriZone");
 
   return (
-    <section className="mt-16">
+    <section className="mt-12 sm:mt-16">
       <div className="text-center">
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">{t("eyebrow")}</p>
         <h2 className="mt-1.5 text-2xl font-bold tracking-tight text-ink sm:text-3xl">{t("title")}</h2>
         <p className="mx-auto mt-3 max-w-xl text-sm text-ink-muted sm:text-base">{t("subtitle")}</p>
       </div>
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4 lg:grid-cols-4">
         {WHY_NUTRIZONE_ITEMS.map(({ icon: Icon, key }, i) => (
-          <div key={key} className="nz-glass nz-glass-interactive group relative overflow-hidden rounded-3xl p-6">
-            <span aria-hidden="true" className="pointer-events-none absolute -right-2 -top-4 select-none text-7xl font-black text-ink/[0.04] transition-colors group-hover:text-primary/10">
+          <div key={key} className="nz-glass nz-glass-interactive group relative overflow-hidden rounded-2xl p-4 sm:rounded-3xl sm:p-6">
+            <span aria-hidden="true" className="pointer-events-none absolute -right-2 -top-4 select-none text-5xl font-black sm:text-7xl text-ink/[0.04] transition-colors group-hover:text-primary/10">
               0{i + 1}
             </span>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-indigo-600 text-white shadow-lg shadow-primary/25 transition-transform group-hover:-translate-y-0.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-indigo-600 text-white shadow-lg shadow-primary/25 transition-transform group-hover:-translate-y-0.5 sm:h-12 sm:w-12 sm:rounded-2xl">
               <Icon className="h-5 w-5" strokeWidth={1.9} aria-hidden="true" />
             </div>
-            <h3 className="mt-5 text-base font-bold text-ink">{t(`${key}.title`)}</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{t(`${key}.description`)}</p>
+            <h3 className="mt-3 text-sm font-bold text-ink sm:mt-5 sm:text-base">{t(`${key}.title`)}</h3>
+            <p className="mt-1 text-xs leading-relaxed text-ink-muted sm:mt-1.5 sm:text-sm">{t(`${key}.description`)}</p>
           </div>
         ))}
       </div>

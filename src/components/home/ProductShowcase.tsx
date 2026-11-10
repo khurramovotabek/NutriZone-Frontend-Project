@@ -70,9 +70,12 @@ export default function ProductShowcase({ tabs, brandNames }: { tabs: ShowcaseTa
         </div>
       </div>
 
-      <div role="tabpanel" className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+      {/* phones: one swipeable row (8 cards stacked two-wide were four screens tall); tablet / desktop: the grid */}
+      <div role="tabpanel" className={`mt-5 sm:mt-6 ${fillers ? "grid grid-cols-2" : "nz-snap-row -mx-4 flex snap-x snap-mandatory overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:overflow-visible sm:px-0"} gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4`}>
         {products.map((product, idx) => (
-          <ProductCard key={`${current.key}-${product.id}`} product={product} brandName={brandNames[product.brand_id ?? ""] ?? null} variant="featured" priority={idx < 4} />
+          <div key={`${current.key}-${product.id}`} className={fillers ? "" : "w-[46%] shrink-0 snap-start sm:w-auto"}>
+            <ProductCard product={product} brandName={brandNames[product.brand_id ?? ""] ?? null} variant="featured" priority={idx < 4} />
+          </div>
         ))}
         {fillers > 0 && (
           <Link
