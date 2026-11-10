@@ -266,7 +266,10 @@
     }
   },
   "home": {
-    "search": {"placeholder": "Protein, creatine, brand or goal…", "hint": "Type in Latin or Cyrillic — we'll find it even with a typo"},
+    "search": {
+      "placeholder": "Protein, creatine, brand or goal…",
+      "hint": "Type in Latin or Cyrillic — we'll find it even with a typo"
+    },
     "hero": {
       "title": "Original sports nutrition, built for results",
       "subtitle": "Protein, creatine, vitamins and gainers from official brands only. Fast delivery, in-store pickup and coins on every order.",
@@ -1872,7 +1875,12 @@
     "pickupTitle": "Order online — pick it up here",
     "pickupBody": "Choose “Pick up at a store” at checkout: we'll tell you when it's ready, no waiting in line.",
     "landmark": "Landmark",
-    "hoursUnknown": "Hours not set"
+    "hoursUnknown": "Hours not set",
+    "mapCardsTitle": "Find us on the map",
+    "mapCardsBody": "Leave a review on Google Maps or Yandex Maps — it helps other shoppers find a store they can trust.",
+    "mapCardGoogle": "Rate us on Google Maps",
+    "mapCardYandex": "Rate us on Yandex Maps",
+    "mapCard2gis": "Open in 2GIS"
   },
   "myStore": {
     "myStore": "My Store",

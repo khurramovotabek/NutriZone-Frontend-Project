@@ -30,7 +30,9 @@ export function storeJsonLd(store: StoreListItem | StoreDetail, locale: Locale, 
     validThrough: d.date,
     ...(d.closed || !d.open || !d.close ? { opens: "00:00", closes: "00:00" } : { opens: d.open, closes: d.close }),
   }));
+  const listings = [store.google_maps_url, store.yandex_maps_url, store.two_gis_url].filter((u): u is string => Boolean(u));
   const sameAs = [
+    ...listings,
     detail?.instagram_username ? `https://instagram.com/${detail.instagram_username.replace(/^@/, "")}` : null,
     detail?.telegram_username ? `https://t.me/${detail.telegram_username.replace(/^@/, "")}` : null,
   ].filter(Boolean);
@@ -52,7 +54,7 @@ export function storeJsonLd(store: StoreListItem | StoreDetail, locale: Locale, 
       ...(store.district ? { addressRegion: store.district } : {}),
       addressCountry: "UZ",
     },
-    ...(hasGeo ? { geo: { "@type": "GeoCoordinates", latitude: store.latitude, longitude: store.longitude }, hasMap: `https://yandex.uz/maps/?pt=${store.longitude},${store.latitude}&z=17&l=map` } : {}),
+    ...(hasGeo ? { geo: { "@type": "GeoCoordinates", latitude: store.latitude, longitude: store.longitude }, hasMap: listings[0] || `https://yandex.uz/maps/?pt=${store.longitude},${store.latitude}&z=17&l=map` } : listings.length ? { hasMap: listings[0] } : {}),
     ...(hours.length || special.length ? { openingHoursSpecification: [...hours, ...special] } : {}),
     ...(store.rating_count > 0 && store.rating_average ? { aggregateRating: { "@type": "AggregateRating", ratingValue: store.rating_average, reviewCount: store.rating_count, bestRating: 5, worstRating: 1 } } : {}),
     ...(sameAs.length ? { sameAs } : {}),

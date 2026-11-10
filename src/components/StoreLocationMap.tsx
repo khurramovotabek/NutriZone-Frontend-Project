@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { MAP_TILE_ATTRIBUTION, MAP_TILE_URL } from "@/lib/maps";
 import MapSizeFixer from "@/components/MapSizeFixer";
-import MapLinks from "@/components/MapLinks";
+import MapLinks, { type MapListings } from "@/components/MapLinks";
 import MapLocateButton from "@/components/MapLocateButton";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -65,11 +65,13 @@ export default function StoreLocationMap({
   longitude,
   storeName,
   address,
+  listings,
 }: {
   latitude: number;
   longitude: number;
   storeName: string;
   address: string;
+  listings?: MapListings;
   /** Kept for callers; the links now come from MapLinks (Yandex / route / Google / share). */
   mapUrl?: string;
 }) {
@@ -103,7 +105,7 @@ export default function StoreLocationMap({
         </Marker>
       </MapContainer>
       <MapLocateButton map={map} className="absolute right-3 top-3 z-[1000]" targets={[{ lat: latitude, lng: longitude, name: storeName }]} />
-      <MapLinks latitude={latitude} longitude={longitude} label={storeName} className="absolute bottom-3 left-3 right-3 z-[1000] justify-end" />
+      <MapLinks latitude={latitude} longitude={longitude} label={storeName} listings={listings} className="absolute bottom-3 left-3 right-3 z-[1000] justify-end" />
     </div>
   );
 }

@@ -101,6 +101,12 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
   // Yandex route -- the navigator people in Uzbekistan actually use (Google stays one tap away in MapLinks)
   const mapUrl = hasCoordinates ? yandexRouteUrl(store.latitude!, store.longitude!) : null;
   const locationLine = [store.city, store.district].filter(Boolean).join(", ");
+  // the branch's own cards on the map services: reviews there are what ranks a store in "near me" map results
+  const mapCards = [
+    store.google_maps_url && { href: store.google_maps_url, label: t("mapCardGoogle"), color: "#4285F4" },
+    store.yandex_maps_url && { href: store.yandex_maps_url, label: t("mapCardYandex"), color: "#FC3F1D" },
+    store.two_gis_url && { href: store.two_gis_url, label: t("mapCard2gis"), color: "#19AA1E" },
+  ].filter(Boolean) as { href: string; label: string; color: string }[];
   const hasLocation = Boolean(store.address || locationLine || hasCoordinates);
   const hasContact = Boolean(store.phone_numbers.length > 0 || store.email || store.telegram_username || store.instagram_username);
   const firstPhone = store.phone_numbers[0] ?? null;
@@ -359,7 +365,7 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
                           <h2 className="mb-3 text-base font-semibold text-ink">{t("location")}</h2>
                           {hasCoordinates ? (
                             <div className="space-y-3">
-                              <StoreLocationMap latitude={store.latitude!} longitude={store.longitude!} storeName={store.name} address={store.address || locationLine} mapUrl={mapUrl!} />
+                              <StoreLocationMap latitude={store.latitude!} longitude={store.longitude!} storeName={store.name} address={store.address || locationLine} mapUrl={mapUrl!} listings={{ google: store.google_maps_url, yandex: store.yandex_maps_url, twoGis: store.two_gis_url }} />
                               {(store.address || locationLine) && (
                                 <p className="flex items-start gap-2 text-sm text-ink-muted">
                                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
@@ -371,6 +377,23 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ sl
                                   <Landmark className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
                                   <span><b className="text-ink">{t("landmark")}:</b> {store.landmark}</span>
                                 </p>
+                              )}
+                              {mapCards.length > 0 && (
+                                <div className="nz-glass rounded-2xl p-4">
+                                  <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                                    <Star className="h-4 w-4 shrink-0 fill-amber-400 text-amber-400" aria-hidden="true" />
+                                    {t("mapCardsTitle")}
+                                  </p>
+                                  <p className="mt-1 text-xs leading-relaxed text-ink-muted">{t("mapCardsBody")}</p>
+                                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                                    {mapCards.map((c) => (
+                                      <a key={c.href} href={c.href} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-sm font-semibold text-ink transition-colors hover:border-primary hover:text-primary">
+                                        <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: c.color }} aria-hidden="true" />
+                                        {c.label}
+                                      </a>
+                                    ))}
+                                  </div>
+                                </div>
                               )}
                             </div>
                           ) : (

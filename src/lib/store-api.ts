@@ -28,6 +28,10 @@ export interface StoreListItem {
   amenities?: string[];
   landmark?: string;
   pickup_enabled?: boolean;
+  /** The branch's own card on Google Maps / Yandex Maps / 2GIS (Dashboard → store → «Google Maps va Yandex Maps»). */
+  google_maps_url?: string;
+  yandex_maps_url?: string;
+  two_gis_url?: string;
 }
 
 export interface StoreMediaItem {

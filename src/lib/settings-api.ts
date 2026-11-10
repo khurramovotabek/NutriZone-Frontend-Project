@@ -10,6 +10,8 @@ export interface PublicSiteSettings {
   telegram_channel_url: string | null;
   instagram_url: string | null;
   primary_color: string;
+  /** The brand's own cards on the map services (Dashboard → Sozlamalar → Xaritalar). */
+  map_listings?: { google: string; yandex: string; two_gis: string };
   requisites?: { legal_name: string; tin: string; address: string; phone: string };
 }
 

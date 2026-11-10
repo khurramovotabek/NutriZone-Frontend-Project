@@ -34,7 +34,7 @@ export default async function ContactPage() {
   const telegram = settings.telegram_username?.trim().replace(/^@/, "") || null;
   const instagram = settings.instagram_url?.trim() || null;
   const telegramChannelUrl = settings.telegram_channel_url || (telegram ? `https://t.me/${telegram}` : null);
-  const mapsUrl = address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : null;
+  const mapsUrl = settings.map_listings?.google || settings.map_listings?.yandex || (address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : null);
 
   const quickActions = [
     phone && { href: `tel:${phone.replace(/\s+/g, "")}`, label: t("quickCall"), icon: Phone, external: false },

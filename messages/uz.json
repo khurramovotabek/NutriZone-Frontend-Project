@@ -266,7 +266,10 @@
     }
   },
   "home": {
-    "search": {"placeholder": "Protein, kreatin, brend yoki maqsad…", "hint": "Lotin yoki kirillda yozing — xato yozsangiz ham topamiz"},
+    "search": {
+      "placeholder": "Protein, kreatin, brend yoki maqsad…",
+      "hint": "Lotin yoki kirillda yozing — xato yozsangiz ham topamiz"
+    },
     "hero": {
       "title": "Original sport ozuqalari — natija uchun",
       "subtitle": "Protein, kreatin, vitaminlar va gainerlar faqat rasmiy brendlardan. Tez yetkazib berish, do'kondan olib ketish va har xariddan coin.",
@@ -1872,7 +1875,12 @@
     "pickupTitle": "Saytdan buyurtma bering — shu do'kondan olib keting",
     "pickupBody": "Checkoutda «Do'kondan olib ketish»ni tanlang: tayyor bo'lganda xabar beramiz, navbatsiz olasiz.",
     "landmark": "Mo'ljal",
-    "hoursUnknown": "Ish vaqti kiritilmagan"
+    "hoursUnknown": "Ish vaqti kiritilmagan",
+    "mapCardsTitle": "Xaritada biz",
+    "mapCardsBody": "Fikringizni Google Maps yoki Yandex Maps'da qoldiring — boshqa xaridorlarga ishonchli do'konni topishga yordam beradi.",
+    "mapCardGoogle": "Google Maps'da baholash",
+    "mapCardYandex": "Yandex Maps'da baholash",
+    "mapCard2gis": "2GIS'da ochish"
   },
   "myStore": {
     "myStore": "Mening do'konim",

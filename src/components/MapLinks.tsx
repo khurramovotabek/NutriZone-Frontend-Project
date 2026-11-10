@@ -39,7 +39,13 @@ function TwoGisMark({ className = "h-4 w-4" }: { className?: string }) {
  * in Google Maps, Apple Maps (the Maps app on an iPhone) or 2GIS -- and a share menu: the phone's share sheet,
  * Telegram, copy the link, copy the coordinates.
  */
-export default function MapLinks({ latitude, longitude, label, className = "", compact = false }: { latitude: number; longitude: number; label?: string; className?: string; compact?: boolean }) {
+export interface MapListings {
+  google?: string | null;
+  yandex?: string | null;
+  twoGis?: string | null;
+}
+
+export default function MapLinks({ latitude, longitude, label, className = "", compact = false, listings }: { latitude: number; longitude: number; label?: string; className?: string; compact?: boolean; /** The place's own map cards (reviews, photos, hours) -- opened instead of a bare pin when set. */ listings?: MapListings }) {
   const t = useTranslations("maps");
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState<"link" | "coords" | null>(null);
@@ -84,11 +90,11 @@ export default function MapLinks({ latitude, longitude, label, className = "", c
   const btn = "inline-flex items-center gap-1.5 rounded-full border border-border bg-surface/95 text-xs font-semibold text-ink shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:text-primary";
   const pad = compact ? "h-9 w-9 justify-center" : "px-3 py-2";
   const apps = [
-    { href: yandexPointUrl(latitude, longitude), label: t("yandex"), title: t("openYandex"), icon: <YandexMark /> },
+    { href: listings?.yandex || yandexPointUrl(latitude, longitude), label: t("yandex"), title: t("openYandex"), icon: <YandexMark /> },
     { href: yandexRouteUrl(latitude, longitude), label: t("route"), title: t("route"), icon: <Navigation className="h-4 w-4 text-[#FC3F1D]" strokeWidth={2.25} aria-hidden="true" /> },
-    { href: googleMapsUrl(latitude, longitude), label: "Google", title: t("openGoogle"), icon: <MapIcon className="h-4 w-4 text-sky-500" strokeWidth={2.25} aria-hidden="true" /> },
+    { href: listings?.google || googleMapsUrl(latitude, longitude), label: "Google", title: t("openGoogle"), icon: <MapIcon className="h-4 w-4 text-sky-500" strokeWidth={2.25} aria-hidden="true" /> },
     { href: appleMapsUrl(latitude, longitude, label), label: "Apple", title: t("openApple"), icon: <AppleMark className="h-4 w-4 text-ink" /> },
-    { href: twoGisUrl(latitude, longitude), label: "2GIS", title: t("open2gis"), icon: <TwoGisMark /> },
+    { href: listings?.twoGis || twoGisUrl(latitude, longitude), label: "2GIS", title: t("open2gis"), icon: <TwoGisMark /> },
   ];
   const item = "flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm text-ink transition-colors hover:bg-surface-2";
 
