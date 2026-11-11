@@ -681,6 +681,7 @@
     "currentPrice": "Joriy narx",
     "youSave": "Tejaysiz {amount}",
     "discountOff": "-{percent}%",
+    "discountUpTo": "-{percent}% gacha",
     "saleBadge": "Chegirma",
     "newBadge": "Yangi",
     "topRatedBadge": "Top reyting",

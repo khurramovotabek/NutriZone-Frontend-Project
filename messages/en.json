@@ -681,6 +681,7 @@
     "currentPrice": "Current price",
     "youSave": "You save {amount}",
     "discountOff": "-{percent}%",
+    "discountUpTo": "up to -{percent}%",
     "saleBadge": "Sale",
     "newBadge": "New",
     "topRatedBadge": "Top rated",

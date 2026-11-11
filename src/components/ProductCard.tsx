@@ -79,6 +79,8 @@ export default function ProductCard({
   const formattedPrice = formatPrice(product.price, product.currency);
   const hasRating = product.rating_count > 0 && product.rating_average !== null;
   const discounted = isDiscounted(product.price, product.compare_at_price);
+  // a family whose default variant is full price but another size/flavour is marked down: "-17% gacha"
+  const upTo = !discounted && product.price_from && product.max_discount_percent ? product.max_discount_percent : null;
   const isNew = isNewProduct(product.created_at);
   const topRated = hasRating && product.rating_average! >= TOP_RATED_MIN_AVERAGE && product.rating_count >= TOP_RATED_MIN_COUNT;
   // At most two corner badges (discount + one more) so they never cover the packshot; "Top rated" outranks "New".
@@ -115,6 +117,8 @@ export default function ProductCard({
           <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-white">
             {discounted && product.discount_percent ? (
               <span className="absolute left-1 top-1 z-10 rounded-md bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold text-white shadow">{t("discountOff", { percent: product.discount_percent })}</span>
+            ) : upTo ? (
+              <span className="absolute left-1 top-1 z-10 rounded-md bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold text-white shadow">{t("discountUpTo", { percent: upTo })}</span>
             ) : null}
             <ProductMediaImage
               src={product.primary_image_path}
@@ -156,11 +160,15 @@ export default function ProductCard({
           <div className="absolute right-2 top-2 z-10">
             <WishlistButton productId={product.id} initialWishlisted={initialWishlisted} />
           </div>
-          {(discounted || isNew || topRated) && !outOfStock && (
+          {(discounted || upTo || isNew || topRated) && !outOfStock && (
             <div className="absolute left-2 top-2 z-10 flex flex-col items-start gap-1">
               {discounted && product.discount_percent ? (
                 <span className={`rounded-lg bg-gradient-to-br from-rose-500 to-rose-700 font-extrabold text-white shadow-[0_6px_16px_-6px_rgba(225,29,72,0.7)] ${isCompact ? "px-1.5 py-0.5 text-[11px]" : "px-2 py-1 text-xs"}`}>
                   {t("discountOff", { percent: product.discount_percent })}
+                </span>
+              ) : upTo ? (
+                <span className={`rounded-lg bg-gradient-to-br from-rose-500 to-rose-700 font-extrabold text-white shadow-[0_6px_16px_-6px_rgba(225,29,72,0.7)] ${isCompact ? "px-1.5 py-0.5 text-[11px]" : "px-2 py-1 text-xs"}`}>
+                  {t("discountUpTo", { percent: upTo })}
                 </span>
               ) : null}
               {isNew && !topRated && !isCompact && (

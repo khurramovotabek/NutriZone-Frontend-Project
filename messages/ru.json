@@ -681,6 +681,7 @@
     "currentPrice": "Текущая цена",
     "youSave": "Экономия {amount}",
     "discountOff": "-{percent}%",
+    "discountUpTo": "до -{percent}%",
     "saleBadge": "Скидка",
     "newBadge": "Новинка",
     "topRatedBadge": "Топ рейтинг",

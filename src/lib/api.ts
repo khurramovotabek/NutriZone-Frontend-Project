@@ -145,6 +145,7 @@ export interface ProductCard {
   size_count?: number;
   flavour_count?: number;
   price_from?: string | null;
+  max_discount_percent?: number | null;  // deepest markdown among a family's variants ("-17% gacha")
   /** Only on the detail endpoint, for a product that was grouped into another one: where its page lives now. */
   moved_to?: { slug: string; variant_id: string | null };
   variants?: {
