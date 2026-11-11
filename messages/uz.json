@@ -723,7 +723,33 @@
     "storeHowFar": "Mendan qancha uzoqda?",
     "storeHowFarError": "Joylashuvingizni aniqlab bo‘lmadi — telefon sozlamalarida joylashuvga ruxsat bering.",
     "storeNearest": "Eng yaqin filial",
-    "storeRoute": "Yo‘nalish"
+    "storeRoute": "Yo‘nalish",
+    "cardFacts": {
+      "title": "Hisob-kitob",
+      "servings": "{n} porsiya",
+      "protein": "{g} g oqsil / porsiya",
+      "perServing": "Porsiyasi ≈ {price} so'm",
+      "per25g": "25 g oqsil ≈ {price} so'm",
+      "forSize": "{size} hajm uchun",
+      "suitsTitle": "Kimga mos",
+      "suits": {
+        "low_lactose": "Laktoza kam",
+        "lean": "Ozish / quritish",
+        "fast": "Tez so'riladi",
+        "night": "Kechki qabul",
+        "vegan": "Vegan",
+        "dairy_free": "Sutsiz",
+        "muscle": "Mushak massasi",
+        "recovery": "Tiklanish",
+        "strength": "Kuch",
+        "mass": "Vazn olish",
+        "fat_loss": "Yog' yoqish",
+        "energy": "Energiya",
+        "endurance": "Chidamlilik",
+        "joints": "Bo'g'imlar",
+        "sleep": "Uyqu"
+      }
+    }
   },
   "wishlist": {
     "title": "Sevimlilar",

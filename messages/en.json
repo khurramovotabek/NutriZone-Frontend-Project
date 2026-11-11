@@ -723,7 +723,33 @@
     "storeHowFar": "How far is it from me?",
     "storeHowFarError": "Couldn't get your location — allow location access in your settings.",
     "storeNearest": "Nearest branch",
-    "storeRoute": "Route"
+    "storeRoute": "Route",
+    "cardFacts": {
+      "title": "The maths",
+      "servings": "{n} servings",
+      "protein": "{g} g protein / serving",
+      "perServing": "≈ {price} UZS a serving",
+      "per25g": "25 g protein ≈ {price} UZS",
+      "forSize": "for the {size} size",
+      "suitsTitle": "Good for",
+      "suits": {
+        "low_lactose": "Low lactose",
+        "lean": "Fat loss / cutting",
+        "fast": "Fast digesting",
+        "night": "Night-time",
+        "vegan": "Vegan",
+        "dairy_free": "Dairy-free",
+        "muscle": "Muscle gain",
+        "recovery": "Recovery",
+        "strength": "Strength",
+        "mass": "Weight gain",
+        "fat_loss": "Fat burning",
+        "energy": "Energy",
+        "endurance": "Endurance",
+        "joints": "Joints",
+        "sleep": "Sleep"
+      }
+    }
   },
   "wishlist": {
     "title": "My Wishlist",

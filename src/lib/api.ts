@@ -229,6 +229,19 @@ export interface ProductCard {
    * tagged at all -- never fabricated.
    */
   flavours?: { id: string; name: string; color_hex: string | null; image_url: string | null; product_id: string; product_slug: string; is_current: boolean }[];
+  /**
+   * Detail only: what the card's numbers (or, when those fields are empty, its own text) say -- price per serving,
+   * price of 25 g protein (protein only) at the default `size`, and who it suits (backend card_numbers.py).
+   */
+  card_facts?: {
+    servings: number | null;
+    serving_g: number | null;
+    protein: number | null;
+    per_serving: number | null;
+    per_25g_protein: number | null;
+    size: string;
+    suits: string[];
+  };
   /** Detail only: serving facts (compare page "price per serving", replenishment forecasts). */
   nutrition?: { serving_size_grams: number | null; servings_per_container: number | null; calories: number | null };
   /** Detail only: training goal codes this product serves. */

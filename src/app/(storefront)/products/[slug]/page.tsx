@@ -17,6 +17,7 @@ import ReviewsSection from "@/components/ReviewsSection";
 import SupplementFactsSection from "@/components/SupplementFactsSection";
 import TrustBar from "@/components/TrustBar";
 import ProductJsonLd from "@/components/ProductJsonLd";
+import ProductCardFacts from "@/components/ProductCardFacts";
 import { clip, pageMetadata, productPaths } from "@/lib/seo";
 import { categoryPath } from "@/lib/entity-paths";
 import { ErrorState, Skeleton } from "@/components/ui";
@@ -201,7 +202,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </>
           }
         >
-          <ProductPurchaseExperience product={product} categoryName={categoryName} brandName={brandName} isWishlisted={isWishlisted} extras={<TrustBar compact />} />
+          <ProductPurchaseExperience product={product} categoryName={categoryName} brandName={brandName} isWishlisted={isWishlisted} extras={<><ProductCardFacts facts={product.card_facts} /><TrustBar compact /></>} />
         </Suspense>
       </div>
 
