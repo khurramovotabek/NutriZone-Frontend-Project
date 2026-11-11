@@ -47,7 +47,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
     inStock: state.stock,
     onSale: state.sale,
     // no query and no chosen order: best sellers first (the newest were often protein bars, a weak first impression)
-    sort: state.sort ?? (state.q ? undefined : "-popularity"),
+    sort: state.sort ?? (state.q ? undefined : state.sale ? "-discount" : "-popularity"), // the sale page opens on the deepest deals
     locale,
   };
   const feedQuery = searchQueryString({ ...searchArgs, pageSize: 24 });

@@ -23,7 +23,7 @@ export default function CatalogSortSelect({ state }: { state: CatalogState }) {
     { value: "-rating", label: t("sortRating") },
     { value: "name", label: t("sortName") },
   ];
-  const current = state.sort ?? (state.q ? "relevance" : "-popularity");
+  const current = state.sort ?? (state.q ? "relevance" : state.sale ? "-discount" : "-popularity"); // same default as the catalog page
 
   return (
     <label className={`flex items-center gap-2 text-sm text-ink-muted transition-opacity ${pending ? "opacity-60" : ""}`}>
