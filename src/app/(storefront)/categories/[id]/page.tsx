@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
-import { ChevronRight, Package, SlidersHorizontal, X } from "lucide-react";
+import { ChevronRight, Package, Percent, SlidersHorizontal, X } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getBrandNameMap, getCategories, getCategoryDescription, searchProducts, searchQueryString } from "@/lib/api";
 import MediaImage from "@/components/MediaImage";
@@ -15,6 +15,7 @@ import { absoluteUrl } from "@/lib/site-url";
 import type { Locale } from "@/i18n/config";
 import { breadcrumbJsonLd, clip } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
+import { GOAL_CODES, catalogHref, parseCatalogParams } from "@/lib/catalog-params";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -65,6 +66,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
   let brandNames: Record<string, string> = {};
   let totalCount = 0;
   let totalPages = 1;
+  let facets: Awaited<ReturnType<typeof searchProducts>>["meta"]["facets"];
   let loadError = false;
   try {
     const [result, brandMap] = await Promise.all([searchProducts({ q: "", categoryId: id, page, pageSize: PAGE_SIZE, sort: "-popularity", locale: await getLocale() }), getBrandNameMap()]);
@@ -72,6 +74,7 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
     brandNames = brandMap;
     totalCount = result.pagination?.total_count ?? 0;
     totalPages = result.pagination?.total_pages ?? 1;
+    facets = result.meta.facets;
   } catch {
     loadError = true;
   }
@@ -83,6 +86,14 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
   const subCategories = allCategories.filter((c) => c.parent_id === id).sort((a, b) => a.sort_order - b.sort_order);
   const otherCategories = allCategories.filter((c) => c.id !== id && c.parent_id === category.parent_id).sort((a, b) => a.sort_order - b.sort_order).slice(0, 12);
   const pageLocale = (await getLocale()) as Locale;
+  const tGoals = await getTranslations("home.goals");
+  // One tap from a big category into the full catalogue filter, already narrowed to this category: its best-stocked brands,
+  // the training goals its products serve, and its current deals (counts from this category's own facets).
+  const inCategory = parseCatalogParams({ category: id });
+  const topBrands = [...(facets?.brand ?? [])].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)).slice(0, 10);
+  const goals = GOAL_CODES.map((g) => ({ code: g, count: facets?.goal?.find((x) => x.id === g)?.count ?? 0 })).filter((g) => g.count > 0);
+  const onSale = facets?.on_sale_count ?? 0;
+  const showQuickFilters = !loadError && totalCount > PAGE_SIZE && (topBrands.length > 1 || goals.length > 0 || onSale > 0);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-5 sm:py-10">
@@ -160,6 +171,38 @@ export default async function CategoryDetailPage({ params, searchParams }: Props
             </Link>
           ))}
         </nav>
+      )}
+
+      {showQuickFilters && (
+        <div className="mt-4 space-y-2">
+          {(goals.length > 0 || onSale > 0) && (
+            <nav aria-label={tGoals("chip")} className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+              {onSale > 0 && (
+                <Link href={catalogHref(inCategory, { sale: true, sort: "-discount" })} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-rose-600/12 px-3.5 py-1.5 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-600 hover:text-white dark:text-rose-400">
+                  <Percent className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
+                  {t("onSaleCount", { count: onSale })}
+                </Link>
+              )}
+              {goals.map(({ code, count }) => (
+                <Link key={code} href={catalogHref(inCategory, { goals: [code] })} className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-surface/60 px-3.5 py-1.5 text-xs font-semibold text-ink-muted transition-colors hover:border-primary/50 hover:text-ink">
+                  <span aria-hidden="true">{tGoals(`${code}.emoji`)}</span>
+                  {tGoals(`${code}.title`)}
+                  <span className="rounded-full bg-surface-2 px-1.5 text-[10px]">{count}</span>
+                </Link>
+              ))}
+            </nav>
+          )}
+          {topBrands.length > 1 && (
+            <nav aria-label={t("filterBrand")} className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+              {topBrands.map((b) => (
+                <Link key={b.id} href={catalogHref(inCategory, { brands: [b.id] })} className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-ink-muted transition-colors hover:border-primary/40 hover:text-primary">
+                  {b.name}
+                  <span className="text-[10px] text-ink-soft">{b.count}</span>
+                </Link>
+              ))}
+            </nav>
+          )}
+        </div>
       )}
 
       <div className="mt-6">

@@ -263,7 +263,8 @@
       "allShown": "Показано всё",
       "retry": "Повторить",
       "error": "Не удалось загрузить"
-    }
+    },
+    "errorMessage": "Не удалось загрузить страницу. Попробуйте ещё раз — обычно это занимает секунду."
   },
   "home": {
     "search": {
@@ -503,7 +504,7 @@
   },
   "catalog": {
     "filterPrice": "Цена",
-    "priceFrom": "от",
+    "priceFrom": "от {amount} сум",
     "priceTo": "до",
     "apply": "Применить",
     "filterRating": "Рейтинг",
@@ -587,7 +588,9 @@
     },
     "searchFlavours": "Найти вкус...",
     "showResults": "Показать {count} товаров",
-    "showResultsNone": "Показать результаты"
+    "showResultsNone": "Показать результаты",
+    "understood": "Понял запрос:",
+    "priceUpTo": "до {amount} сум"
   },
   "brands": {
     "title": "Бренды",

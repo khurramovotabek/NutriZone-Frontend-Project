@@ -263,7 +263,8 @@
       "allShown": "All shown",
       "retry": "Try again",
       "error": "Couldn't load"
-    }
+    },
+    "errorMessage": "The page didn't load this time. Try again — it usually takes a second."
   },
   "home": {
     "search": {
@@ -503,7 +504,7 @@
   },
   "catalog": {
     "filterPrice": "Price",
-    "priceFrom": "from",
+    "priceFrom": "from {amount} UZS",
     "priceTo": "to",
     "apply": "Apply",
     "filterRating": "Rating",
@@ -587,7 +588,9 @@
     },
     "searchFlavours": "Search flavours...",
     "showResults": "Show {count} products",
-    "showResultsNone": "Show results"
+    "showResultsNone": "Show results",
+    "understood": "Understood:",
+    "priceUpTo": "up to {amount} UZS"
   },
   "brands": {
     "title": "Brands",

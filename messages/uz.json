@@ -263,7 +263,8 @@
       "allShown": "Hammasi ko'rsatildi",
       "retry": "Qayta urinish",
       "error": "Yuklab bo'lmadi"
-    }
+    },
+    "errorMessage": "Sahifani yuklashda qisqa uzilish bo'ldi. Qayta urinib ko'ring — odatda bir soniyada tiklanadi."
   },
   "home": {
     "search": {
@@ -503,7 +504,7 @@
   },
   "catalog": {
     "filterPrice": "Narx",
-    "priceFrom": "dan",
+    "priceFrom": "{amount} so'mdan",
     "priceTo": "gacha",
     "apply": "Qo'llash",
     "filterRating": "Reyting",
@@ -587,7 +588,9 @@
     },
     "searchFlavours": "Ta'mni qidirish...",
     "showResults": "{count} ta mahsulotni ko'rsatish",
-    "showResultsNone": "Natijalarni ko'rsatish"
+    "showResultsNone": "Natijalarni ko'rsatish",
+    "understood": "Tushundim:",
+    "priceUpTo": "{amount} so'mgacha"
   },
   "brands": {
     "title": "Brendlar",

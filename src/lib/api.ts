@@ -58,6 +58,8 @@ export interface ApiMeta {
   facets?: CatalogFacets;
   /** `GET /products/search` only: the corrected query ("did you mean") when the smart search matched the shopper's words only fuzzily; `null`/absent otherwise. */
   suggestion?: string | null;
+  /** `GET /products/search` only: order/filter words the engine took out of the query -- "sort:price", "on_sale", "in_stock", "price_lte:500000", "price_gte:1000000". */
+  understood?: string[];
 }
 
 export interface ApiEnvelope<T> {
@@ -239,18 +241,38 @@ export class ApiError extends Error {
   }
 }
 
+/** Statuses worth one more try on a read: rate limit and the short 502/503/504 gaps of a backend restart. */
+const TRANSIENT_STATUSES = new Set([429, 502, 503, 504]);
+
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiEnvelope<T>> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: { "Content-Type": "application/json", ...internalTokenHeader(), ...init?.headers },
-    // Product catalog data is safe to cache; per-request revalidation
-    // keeps it reasonably fresh without hitting the backend on every
-    // render -- personalized/sensitive endpoints (cart, orders,
-    // wallet) must NOT use this default and are not implemented by
-    // this client yet (see README).
-    // An explicit `cache` (e.g. "no-store") from the caller wins over the default revalidation window.
-    ...(init?.cache ? {} : { next: { revalidate: 60 } }),
-  });
+  const request = () =>
+    fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      headers: { "Content-Type": "application/json", ...internalTokenHeader(), ...init?.headers },
+      // Product catalog data is safe to cache; per-request revalidation
+      // keeps it reasonably fresh without hitting the backend on every
+      // render -- personalized/sensitive endpoints (cart, orders,
+      // wallet) must NOT use this default and are not implemented by
+      // this client yet (see README).
+      // An explicit `cache` (e.g. "no-store") from the caller wins over the default revalidation window.
+      ...(init?.cache ? {} : { next: { revalidate: 60 } }),
+    });
+
+  // Reads are retried once on a network error or a transient status, so a momentary backend hiccup
+  // (deploy swap, a burst hitting the rate limit) does not turn a catalogue page into an error screen.
+  const isRead = !init?.method || init.method.toUpperCase() === "GET";
+  let response: Response;
+  try {
+    response = await request();
+  } catch (error) {
+    if (!isRead) throw error;
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    response = await request();
+  }
+  if (isRead && TRANSIENT_STATUSES.has(response.status)) {
+    await new Promise((resolve) => setTimeout(resolve, response.status === 429 ? 900 : 400));
+    response = await request();
+  }
 
   if (!response.ok) {
     let message = `Request to ${path} failed with status ${response.status}`;

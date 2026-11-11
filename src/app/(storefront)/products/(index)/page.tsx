@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { PackageX, Percent, SearchX, X } from "lucide-react";
+import { PackageX, Percent, SearchX, Sparkles, X } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getBrands, getCategories, searchProducts, searchQueryString } from "@/lib/api";
 import { GOAL_CODES, catalogHref, isSizeBand, parseCatalogParams, toggle } from "@/lib/catalog-params";
@@ -96,6 +96,17 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
     ...(state.stock ? [{ key: "stock", label: t("inStockOnly"), href: catalogHref(state, { stock: false }) }] : []),
     ...(state.sale ? [{ key: "sale", label: t("onSaleOnly"), href: catalogHref(state, { sale: false }) }] : []),
   ];
+  // What the smart search read as an instruction rather than a product word ("arzon", "chegirmadagi", "500 minggacha").
+  const sortLabels: Record<string, string> = { price: t("sortPriceAsc"), "-price": t("sortPriceDesc"), "-created_at": t("sortNewest"), "-popularity": t("sortPopular"), "-rating": t("sortRating") };
+  const understoodLabels = (data?.meta.understood ?? []).flatMap((code) => {
+    if (code.startsWith("sort:")) return sortLabels[code.slice(5)] ? [sortLabels[code.slice(5)]] : [];
+    if (code === "on_sale") return [t("onSaleOnly")];
+    if (code === "in_stock") return [t("inStockOnly")];
+    const [kind, amount] = code.split(":");
+    if (kind === "price_lte" && amount) return [t("priceUpTo", { amount: fmt(amount) })];
+    if (kind === "price_gte" && amount) return [t("priceFrom", { amount: fmt(amount) })];
+    return [];
+  });
   const viewBaseQuery = catalogHref(state, { view: undefined, page: state.page }).split("?")[1] ?? "";
 
   return (
@@ -126,6 +137,15 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                     </Link>
                   )}
                 </div>
+              )}
+              {q && !loadError && understoodLabels.length > 0 && (
+                <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-sm text-ink-muted">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" strokeWidth={2} aria-hidden="true" />
+                  {t("understood")}
+                  {understoodLabels.map((label) => (
+                    <span key={label} className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">{label}</span>
+                  ))}
+                </p>
               )}
               {q && !loadError && data?.meta.suggestion && data.meta.suggestion !== q.toLowerCase() && (
                 <p className="mt-1.5 text-sm text-ink-muted">
