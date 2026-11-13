@@ -76,6 +76,10 @@ export default function MediaImage({ src, alt, fit = "contain", fallbackIcon, fa
   }
 
   const isPriority = loading === "eager";
+  // Above-the-fold (priority) photos are visible as soon as the browser has them: the fade-in waits for onLoad, which
+  // only runs once React has hydrated -- on a slow phone that kept the LCP image invisible for seconds after it had
+  // already downloaded. Below-the-fold images keep the skeleton -> fade-in (they are lazy and load after hydration).
+  const shown = status === "loaded" || isPriority;
 
   return (
     <>
@@ -94,10 +98,10 @@ export default function MediaImage({ src, alt, fit = "contain", fallbackIcon, fa
             setStatus("error");
             onLoadError?.();
           }}
-          className={`${fit === "cover" ? "object-cover" : "object-contain"} ${padding} transition-opacity duration-300 ${status === "loaded" ? "opacity-100" : "opacity-0"} ${className}`}
+          className={`${fit === "cover" ? "object-cover" : "object-contain"} ${padding} ${isPriority ? "" : "transition-opacity duration-300"} ${shown ? "opacity-100" : "opacity-0"} ${className}`}
         />
       )}
-      {status === "loading" && resolved && <div aria-hidden="true" className="absolute inset-0 animate-pulse bg-surface-2" />}
+      {status === "loading" && resolved && !isPriority && <div aria-hidden="true" className="absolute inset-0 animate-pulse bg-surface-2" />}
       {status === "error" && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-ink-soft">
           {fallbackIcon}
