@@ -18,8 +18,10 @@ import AddressForm from "@/components/AddressForm";
  * RecipientForm.tsx) -- this component never asks for it.
  */
 export default function AddressSelector({
-  addresses, selectedId, onSelect, onCreated,
+  addresses, selectedId, onSelect, onCreated, saveRef,
 }: {
+  /** Checkout's "Continue" saves an open new-address form through this (see AddressForm). */
+  saveRef?: React.MutableRefObject<(() => Promise<Address | null>) | null>;
   addresses: Address[];
   selectedId: string | null;
   onSelect: (id: string) => void;
@@ -52,6 +54,7 @@ export default function AddressSelector({
         <AddressForm
           bare
           mode="create"
+          saveRef={saveRef}
           onSaved={(created) => {
             onCreated(created);
             setShowForm(false);

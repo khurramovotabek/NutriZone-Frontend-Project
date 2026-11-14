@@ -39,7 +39,10 @@ export default function AddressForm({
   onSaved,
   onCancel,
   bare = false,
+  saveRef,
 }: {
+  /** Lets a parent (checkout's "Continue") save this form without its own button: resolves to the saved address, or null if invalid / failed. */
+  saveRef?: React.MutableRefObject<(() => Promise<Address | null>) | null>;
   mode: "create" | "edit";
   /** Required when mode === "edit". */
   address?: Address;
@@ -211,7 +214,11 @@ export default function AddressForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSubmit) return;
+    await save();
+  }
+
+  async function save(): Promise<Address | null> {
+    if (!canSubmit) return null;
     setSubmitting(true);
     setFormError(null);
     const metadata = Object.fromEntries(DETAIL_KEYS.map((k) => [k, (details[k] ?? "").trim()]));
@@ -221,7 +228,7 @@ export default function AddressForm({
         const profileBody = await profileRes.json();
         if (!profileRes.ok || !profileBody.success) {
           setFormError(t("profileLoadError"));
-          return;
+          return null;
         }
         const region = regions.find((r) => r.id === regionId);
         const res = await fetch("/api/addresses", {
@@ -235,9 +242,11 @@ export default function AddressForm({
         const body = await res.json();
         if (!res.ok || !body.success) {
           setFormError(body.error?.message ?? t("createError"));
-          return;
+          return null;
         }
-        onSaved((await saveCoordinates(body.data.id)) ?? body.data);
+        const created: Address = (await saveCoordinates(body.data.id)) ?? body.data;
+        onSaved(created);
+        return created;
       } else if (address) {
         const res = await fetch(`/api/addresses/${address.id}`, {
           method: "PATCH",
@@ -247,16 +256,29 @@ export default function AddressForm({
         const body = await res.json();
         if (!res.ok || !body.success) {
           setFormError(body.error?.message ?? t("updateError"));
-          return;
+          return null;
         }
-        onSaved((coordinateChanged.current ? await saveCoordinates(address.id) : null) ?? body.data);
+        const updated: Address = (coordinateChanged.current ? await saveCoordinates(address.id) : null) ?? body.data;
+        onSaved(updated);
+        return updated;
       }
+      return null;
     } catch {
       setFormError(t("networkError"));
+      return null;
     } finally {
       setSubmitting(false);
     }
   }
+
+  // the parent's own button saves this form (latest closure every render; cleared when the form unmounts)
+  useEffect(() => {
+    if (!saveRef) return;
+    saveRef.current = save;
+    return () => {
+      saveRef.current = null;
+    };
+  });
 
   const regionOptions = regions.map((r) => ({ value: r.id, label: r.name }));
   const cityOptions = cities.map((c) => ({ value: c.id, label: c.name }));
@@ -366,10 +388,16 @@ export default function AddressForm({
 
       {formError && <p role="alert" className="text-sm text-red-600 dark:text-red-400">{formError}</p>}
 
-      <div className="flex gap-2">
-        <Button type="submit" disabled={!canSubmit} variant="primary">{submitting ? t("saving") : t("save")}</Button>
-        {onCancel && <Button type="button" variant="ghost" onClick={onCancel} disabled={submitting}>{t("cancel")}</Button>}
-      </div>
+      {/* inside checkout (saveRef) the page's own "Continue" saves the address -- no second button to miss */}
+      {(!saveRef || onCancel) && (
+        <div className="flex gap-2">
+          {!saveRef && <Button type="submit" disabled={!canSubmit} variant="primary">{submitting ? t("saving") : t("save")}</Button>}
+          {onCancel && <Button type="button" variant="ghost" onClick={onCancel} disabled={submitting}>{t("cancel")}</Button>}
+        </div>
+      )}
+      {saveRef && submitting && (
+        <p className="flex items-center gap-2 text-sm text-ink-muted"><LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />{t("saving")}</p>
+      )}
     </form>
   );
 

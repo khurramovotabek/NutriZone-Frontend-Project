@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, ShoppingCart, TriangleAlert } from "lucide-react";
+import { ArrowRight, ChevronRight, LoaderCircle, MessageSquarePlus, Pencil, Phone, ShoppingCart, TriangleAlert, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { CheckoutPreview } from "@/lib/cart-api";
 import type { Address } from "@/lib/geo-api";
@@ -16,6 +16,7 @@ import RecipientForm from "@/components/checkout/RecipientForm";
 import PaymentMethodCard, { withinLimits } from "@/components/checkout/PaymentMethodCard";
 import type { PaymentMethod, PaymentMethodKey } from "@/lib/payments-api";
 import OrderSummary, { DeliveryLine, deliveryFeeOf } from "@/components/checkout/OrderSummary";
+import { formatPrice } from "@/components/PriceTag";
 import CheckoutReview from "@/components/checkout/CheckoutReview";
 import CoinRedeemCard from "@/components/checkout/CoinRedeemCard";
 import FulfilmentPicker, { type PickupOption } from "@/components/checkout/FulfilmentPicker";
@@ -55,6 +56,14 @@ export default function CheckoutPage() {
   const [comment, setComment] = useState("");
   const [step1Error, setStep1Error] = useState<string | null>(null);
   const [fulfilment, setFulfilment] = useState<"delivery" | "pickup">("delivery");
+  // a prefilled, valid recipient shows as one compact line; the form opens on "Edit" or on a validation error
+  const [editRecipient, setEditRecipient] = useState(false);
+  const [showComment, setShowComment] = useState(false);
+  const [continuing, setContinuing] = useState(false);
+  // an open "new address" form is saved by "Continue" itself (AddressForm saveRef) -- no separate save button to miss
+  const addressSaveRef = useRef<(() => Promise<Address | null>) | null>(null);
+  const addressCardRef = useRef<HTMLDivElement | null>(null);
+  const recipientCardRef = useRef<HTMLDivElement | null>(null);
   const [pickupStore, setPickupStore] = useState<PickupOption | null>(null);
 
   const [coinsToRedeem, setCoinsToRedeem] = useState(0);
@@ -167,28 +176,65 @@ export default function CheckoutPage() {
 
   function handleAddressCreated(address: Address) {
     setAddresses((prev) => [...prev, address]);
-    selectAddress(address);
+    // a recipient already typed on this page wins (it is written onto the address at confirm); otherwise prefill from it
+    if (firstName.trim() && phone.trim()) setSelectedAddressId(address.id);
+    else selectAddress(address);
   }
 
-  function validateStep1(): boolean {
+  function phoneValid(value: string) {
+    return /^\+?\d{9,15}$/.test(value.replace(/[\s()-]/g, ""));
+  }
+
+  function scrollTo(el: HTMLElement | null) {
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function validateStep1(addressId: string | null = selectedAddressId): boolean {
     if (fulfilment === "pickup" && !pickupStore) {
       setStep1Error(t("fulfilment.chooseStoreError"));
+      scrollTo(addressCardRef.current);
       return false;
     }
-    if (fulfilment === "delivery" && !selectedAddressId) {
+    if (fulfilment === "delivery" && !addressId) {
       setStep1Error(t("validation.addressRequired"));
+      scrollTo(addressCardRef.current);
       return false;
     }
     if (!firstName.trim()) {
       setStep1Error(t("validation.firstNameRequired"));
+      setEditRecipient(true);
+      scrollTo(recipientCardRef.current);
       return false;
     }
-    if (!/^\+?\d{9,15}$/.test(phone.replace(/[\s()-]/g, ""))) {
+    if (!phoneValid(phone)) {
       setStep1Error(t("validation.invalidPhone"));
+      setEditRecipient(true);
+      scrollTo(recipientCardRef.current);
       return false;
     }
     setStep1Error(null);
     return true;
+  }
+
+  /** Step 1 -> 2. A filled-in new address is saved first, so one tap does it all. */
+  async function handleContinue() {
+    if (continuing) return;
+    let addressId = selectedAddressId;
+    if (fulfilment === "delivery" && addressSaveRef.current) {
+      setContinuing(true);
+      try {
+        const saved = await addressSaveRef.current();
+        if (saved) addressId = saved.id;
+        else if (!addressId) {
+          setStep1Error(t("validation.addressIncomplete"));
+          scrollTo(addressCardRef.current);
+          return;
+        }
+      } finally {
+        setContinuing(false);
+      }
+    }
+    if (validateStep1(addressId)) setStep("review");
   }
 
   /**
@@ -359,16 +405,27 @@ export default function CheckoutPage() {
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId) ?? null;
   const notReady = preview.readiness !== "ready";
 
+  const recipientReady = !!firstName.trim() && phoneValid(phone);
+  const recipientCompact = recipientReady && !editRecipient;
+  const busy = continuing || submitting || redirecting;
+  const confirmLabel = redirecting
+    ? t("pay.redirecting")
+    : submitting
+      ? t("submitting")
+      : paymentMethods.find((m) => m.key === effectiveMethod)?.online
+        ? t("pay.placeAndPay")
+        : t("confirmOrder");
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <nav aria-label={t("breadcrumbLabel")} className="mb-4 flex items-center gap-1.5 text-sm text-ink-soft">
+    <div className="mx-auto max-w-6xl px-4 pb-32 pt-5 sm:pt-8 lg:py-10">
+      <nav aria-label={t("breadcrumbLabel")} className="mb-3 flex items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/cart" className="transition-colors hover:text-primary">
           {t("breadcrumbCart")}
         </Link>
         <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
         <span className="text-ink-muted">{t("title")}</span>
       </nav>
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-ink sm:text-3xl">{t("title")}</h1>
+      <h1 className="mb-4 text-[22px] font-bold tracking-tight text-ink sm:mb-6 sm:text-3xl">{t("title")}</h1>
 
       <CheckoutStepper current={step} />
 
@@ -392,21 +449,13 @@ export default function CheckoutPage() {
           </Link>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
-          <div className="space-y-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[1fr_320px]">
+          <div className="min-w-0 space-y-4 sm:space-y-6">
             {step === "delivery" && (
               <>
+                {/* how to receive comes first: it decides whether an address is needed at all */}
                 <Card>
-                  <h2 className="mb-4 text-sm font-semibold text-ink-muted">{t("recipientInfo")}</h2>
-                  <RecipientForm
-                    firstName={firstName} lastName={lastName} phone={phone} telegramUsername={telegramUsername}
-                    onFirstNameChange={setFirstName} onLastNameChange={setLastName} onPhoneChange={setPhone} onTelegramUsernameChange={setTelegramUsername}
-                  />
-                  {selectedAddress && <p className="mt-2 text-xs text-ink-soft">{t("recipientEditHint")}</p>}
-                </Card>
-
-                <Card>
-                  <h2 className="mb-4 text-sm font-semibold text-ink-muted">{t("fulfilment.label")}</h2>
+                  <h2 className="mb-3 text-sm font-semibold text-ink-muted">{t("fulfilment.label")}</h2>
                   <FulfilmentPicker
                     method={fulfilment} onMethod={setFulfilment} selectedId={pickupStore?.id ?? null} onSelect={setPickupStore}
                     items={preview.items.filter((i) => i.status !== "removed").map((i) => ({ variantId: i.product_variant_id, quantity: i.quantity }))}
@@ -415,72 +464,114 @@ export default function CheckoutPage() {
                 </Card>
 
                 {fulfilment === "delivery" && (
-                  <Card>
-                    <h2 className="mb-4 text-sm font-semibold text-ink-muted">{t("deliveryAddress")}</h2>
-                    <AddressSelector addresses={addresses} selectedId={selectedAddressId} onSelect={handleAddressSelected} onCreated={handleAddressCreated} />
-                    {selectedAddressId && preview.delivery?.method === "delivery" && (
-                      // the price for the picked address right here -- on a phone the summary sits far below
-                      <div className="mt-4 rounded-xl bg-primary-soft/40 px-3 py-2.5" aria-live="polite">
-                        <DeliveryLine preview={preview} pickup={false} />
-                      </div>
-                    )}
-                  </Card>
+                  <div ref={addressCardRef} className="scroll-mt-20">
+                    <Card>
+                      <h2 className="mb-3 text-sm font-semibold text-ink-muted">{t("deliveryAddress")}</h2>
+                      <AddressSelector addresses={addresses} selectedId={selectedAddressId} onSelect={handleAddressSelected} onCreated={handleAddressCreated} saveRef={addressSaveRef} />
+                      {selectedAddressId && preview.delivery?.method === "delivery" && (
+                        // the price for the picked address right here -- on a phone the summary sits far below
+                        <div className="mt-4 rounded-xl bg-primary-soft/40 px-3 py-2.5" aria-live="polite">
+                          <DeliveryLine preview={preview} pickup={false} />
+                        </div>
+                      )}
+                    </Card>
+                  </div>
                 )}
 
-                <Card>
-                  <h2 className="mb-2 text-sm font-semibold text-ink-muted">{t("comment")}</h2>
-                  <textarea
-                    value={comment} onChange={(e) => setComment(e.target.value)} rows={3} maxLength={500}
-                    placeholder={t("commentPlaceholder")} className="nz-glass-input w-full rounded-lg px-4 py-2.5 text-sm"
-                  />
-                  <p className="mt-1 text-xs text-ink-soft">{t("commentLimitation")}</p>
-                </Card>
+                <div ref={recipientCardRef} className="scroll-mt-20">
+                  <Card>
+                    {recipientCompact ? (
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
+                          <User className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-medium text-ink-soft">{t("recipientFor")}</p>
+                          <p className="truncate text-sm font-semibold text-ink">{joinName(firstName, lastName)}</p>
+                          <p className="flex items-center gap-1 text-xs tabular-nums text-ink-muted">
+                            <Phone className="h-3 w-3" strokeWidth={1.75} aria-hidden="true" />
+                            {phone}
+                          </p>
+                        </div>
+                        <button
+                          type="button" onClick={() => setEditRecipient(true)}
+                          className="flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary-soft"
+                        >
+                          <Pencil className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+                          {t("edit")}
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <h2 className="mb-4 text-sm font-semibold text-ink-muted">{t("recipientInfo")}</h2>
+                        <RecipientForm
+                          firstName={firstName} lastName={lastName} phone={phone} telegramUsername={telegramUsername}
+                          onFirstNameChange={setFirstName} onLastNameChange={setLastName} onPhoneChange={setPhone} onTelegramUsernameChange={setTelegramUsername}
+                        />
+                        {selectedAddress && fulfilment === "delivery" && <p className="mt-2 text-xs text-ink-soft">{t("recipientEditHint")}</p>}
+                      </>
+                    )}
+                  </Card>
+                </div>
+
+                {showComment || comment ? (
+                  <Card>
+                    <label htmlFor="checkout-comment" className="mb-2 block text-sm font-semibold text-ink-muted">{t("comment")}</label>
+                    <textarea
+                      id="checkout-comment" value={comment} onChange={(e) => setComment(e.target.value)} rows={3} maxLength={500} autoFocus={showComment && !comment}
+                      placeholder={t("commentPlaceholder")} className="nz-glass-input w-full rounded-lg px-4 py-2.5 text-sm"
+                    />
+                    <p className="mt-1 text-xs text-ink-soft">{t("commentLimitation")}</p>
+                  </Card>
+                ) : (
+                  <button
+                    type="button" onClick={() => setShowComment(true)}
+                    className="flex w-full items-center gap-2 rounded-2xl border border-dashed border-border px-4 py-3 text-sm font-medium text-ink-muted transition-colors hover:border-primary/50 hover:text-primary"
+                  >
+                    <MessageSquarePlus className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                    {t("addComment")}
+                  </button>
+                )}
 
                 {step1Error && (
-                  <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                  <p role="alert" className="rounded-xl bg-red-500/10 px-3 py-2.5 text-sm font-medium text-red-600 dark:text-red-400">
                     {step1Error}
                   </p>
                 )}
 
-                <Button onClick={() => validateStep1() && setStep("payment")} variant="primary" className="w-full sm:w-auto">
-                  {t("continueToPayment")}
-                </Button>
-              </>
-            )}
-
-            {step === "payment" && (
-              <>
-                <PaymentMethodCard methods={paymentMethods} value={effectiveMethod} onChange={setPaymentMethod} amount={payableAmount} pickup={fulfilment === "pickup"} />
-                {preview.loyalty && <CoinRedeemCard loyalty={preview.loyalty} value={effectiveCoins} onChange={setCoinsToRedeem} />}
-                <div className="flex gap-3">
-                  <Button onClick={() => setStep("delivery")} variant="ghost">
-                    {t("back")}
-                  </Button>
-                  <Button onClick={() => setStep("review")} variant="primary">
-                    {t("continueToReview")}
+                <div className="hidden lg:block">
+                  <Button onClick={handleContinue} disabled={continuing} variant="primary">
+                    {continuing && <LoaderCircle className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden="true" />}
+                    {t("continueToPayment")}
+                    <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
                   </Button>
                 </div>
               </>
             )}
 
             {step === "review" && (fulfilment === "pickup" ? !!pickupStore : !!selectedAddress) && (
-              <CheckoutReview
-                address={fulfilment === "pickup" ? null : selectedAddress}
-                pickupStore={fulfilment === "pickup" && pickupStore ? { name: pickupStore.name, address: pickupStore.address, today: pickupStore.today } : null}
-                recipientName={joinName(firstName, lastName)}
-                recipientPhone={phone}
-                recipientTelegramUsername={telegramUsername}
-                comment={comment}
-                preview={preview}
-                onEditDelivery={() => setStep("delivery")}
-                onEditPayment={() => setStep("payment")}
-                onConfirm={handleConfirm}
-                submitting={submitting}
-                submitError={submitError}
-                coins={effectiveCoins}
-                paymentMethod={paymentMethods.find((m) => m.key === effectiveMethod) ?? null}
-                redirecting={redirecting}
-              />
+              <>
+                <PaymentMethodCard methods={paymentMethods} value={effectiveMethod} onChange={setPaymentMethod} amount={payableAmount} pickup={fulfilment === "pickup"} />
+                {preview.loyalty && <CoinRedeemCard loyalty={preview.loyalty} value={effectiveCoins} onChange={setCoinsToRedeem} />}
+                <CheckoutReview
+                  paymentAbove
+                  address={fulfilment === "pickup" ? null : selectedAddress}
+                  pickupStore={fulfilment === "pickup" && pickupStore ? { name: pickupStore.name, address: pickupStore.address, today: pickupStore.today } : null}
+                  recipientName={joinName(firstName, lastName)}
+                  recipientPhone={phone}
+                  recipientTelegramUsername={telegramUsername}
+                  comment={comment}
+                  preview={preview}
+                  onEditDelivery={() => setStep("delivery")}
+                  onEditPayment={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  onConfirm={handleConfirm}
+                  submitting={submitting}
+                  submitError={submitError}
+                  coins={effectiveCoins}
+                  paymentMethod={paymentMethods.find((m) => m.key === effectiveMethod) ?? null}
+                  redirecting={redirecting}
+                />
+              </>
             )}
           </div>
 
@@ -489,6 +580,34 @@ export default function CheckoutPage() {
               <OrderSummary preview={preview} onPreviewChange={refreshPreview} showCoupon={step === "delivery"} coins={effectiveCoins} pickup={fulfilment === "pickup"} />
             </div>
           )}
+        </div>
+      )}
+
+      {/* Phones: what it costs and the next action, always under the thumb (the summary and buttons sit far below the forms). */}
+      {!notReady && (
+        <div
+          className="nz-tg-above-tabbar fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 px-4 pt-3 shadow-[0_-8px_24px_-16px_rgba(15,23,42,0.35)] backdrop-blur-md lg:hidden"
+          style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+        >
+          {(step === "review" ? submitError : step1Error) && (
+            <p role="alert" className="mb-2 text-xs font-medium text-red-600 dark:text-red-400">{step === "review" ? submitError : step1Error}</p>
+          )}
+          <div className="mx-auto flex max-w-6xl items-center gap-3">
+            {payableAmount !== null && preview.total && (
+              <div className="shrink-0 leading-tight">
+                <p className="text-[11px] font-medium text-ink-soft">{t("total")}</p>
+                <p className="whitespace-nowrap text-base font-extrabold tabular-nums text-primary">{formatPrice(String(payableAmount), preview.total.currency)}</p>
+              </div>
+            )}
+            <Button
+              onClick={step === "delivery" ? handleContinue : handleConfirm} disabled={busy}
+              variant="primary" className="min-w-0 flex-1 whitespace-nowrap py-3"
+            >
+              {busy && <LoaderCircle className="h-4 w-4 shrink-0 animate-spin" strokeWidth={2} aria-hidden="true" />}
+              <span className="truncate">{step === "delivery" ? t("continueShort") : confirmLabel}</span>
+              {!busy && step === "delivery" && <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden="true" />}
+            </Button>
+          </div>
         </div>
       )}
     </div>

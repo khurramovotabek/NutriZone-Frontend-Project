@@ -889,7 +889,8 @@
       "delivery": "Delivery Details",
       "confirmation": "Confirmation",
       "payment": "Payment",
-      "review": "Review"
+      "review": "Review",
+      "payReview": "Payment & confirmation"
     },
     "paymentMethod": "Payment Method",
     "cashOnDelivery": "Cash on Delivery",
@@ -933,7 +934,8 @@
     "validation": {
       "addressRequired": "Please select or add a delivery address.",
       "firstNameRequired": "First name is required.",
-      "invalidPhone": "Please enter a valid phone number."
+      "invalidPhone": "Please enter a valid phone number.",
+      "addressIncomplete": "Complete the address: region, city and street/house."
     },
     "paymePayment": "Payme",
     "clickPayment": "Click",
@@ -1019,7 +1021,11 @@
       "freeFrom": "Free delivery on orders from {amount}",
       "weight": "parcel ≈ {kg} kg",
       "pickupFree": "Store pickup — free"
-    }
+    },
+    "addComment": "Add a note (for the courier or operator)",
+    "continueShort": "Continue",
+    "stepOf": "Step {current} of {total}",
+    "recipientFor": "Recipient"
   },
   "auth": {
     "title": "Log in or sign up",

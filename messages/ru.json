@@ -889,7 +889,8 @@
       "delivery": "Данные доставки",
       "confirmation": "Подтверждение",
       "payment": "Оплата",
-      "review": "Проверка"
+      "review": "Проверка",
+      "payReview": "Оплата и подтверждение"
     },
     "paymentMethod": "Способ оплаты",
     "cashOnDelivery": "Наличными при получении",
@@ -933,7 +934,8 @@
     "validation": {
       "addressRequired": "Пожалуйста, выберите или добавьте адрес доставки.",
       "firstNameRequired": "Укажите имя.",
-      "invalidPhone": "Введите корректный номер телефона."
+      "invalidPhone": "Введите корректный номер телефона.",
+      "addressIncomplete": "Заполните адрес: регион, город и улицу/дом."
     },
     "paymePayment": "Payme",
     "clickPayment": "Click",
@@ -1019,7 +1021,11 @@
       "freeFrom": "Заказы от {amount} — бесплатная доставка",
       "weight": "посылка ≈ {kg} кг",
       "pickupFree": "Самовывоз из магазина — бесплатно"
-    }
+    },
+    "addComment": "Добавить комментарий (для курьера или оператора)",
+    "continueShort": "Продолжить",
+    "stepOf": "Шаг {current} из {total}",
+    "recipientFor": "Получатель"
   },
   "auth": {
     "title": "Вход или регистрация",

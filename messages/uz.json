@@ -889,7 +889,8 @@
       "delivery": "Yetkazib berish ma'lumotlari",
       "confirmation": "Tasdiqlash",
       "payment": "To'lov",
-      "review": "Tekshirish"
+      "review": "Tekshirish",
+      "payReview": "To'lov va tasdiqlash"
     },
     "paymentMethod": "To'lov usuli",
     "cashOnDelivery": "Yetkazib berilganda naqd to'lov",
@@ -933,7 +934,8 @@
     "validation": {
       "addressRequired": "Yetkazib berish manzilini tanlang yoki qo'shing.",
       "firstNameRequired": "Ism kiritilishi shart.",
-      "invalidPhone": "Telefon raqami noto'g'ri."
+      "invalidPhone": "Telefon raqami noto'g'ri.",
+      "addressIncomplete": "Manzilni to'ldiring: viloyat, shahar va ko'cha/uy."
     },
     "paymePayment": "Payme",
     "clickPayment": "Click",
@@ -1019,7 +1021,11 @@
       "freeFrom": "{amount} dan qimmat buyurtmalar bepul yetkaziladi",
       "weight": "posilka ≈ {kg} kg",
       "pickupFree": "Do'kondan olib ketish — bepul"
-    }
+    },
+    "addComment": "Izoh qo'shish (kuryer yoki operator uchun)",
+    "continueShort": "Davom etish",
+    "stepOf": "{current}-qadam / {total}",
+    "recipientFor": "Qabul qiluvchi"
   },
   "auth": {
     "title": "Kirish yoki ro'yxatdan o'tish",

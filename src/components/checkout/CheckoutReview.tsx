@@ -15,8 +15,10 @@ import { CoinsLine, DeliveryLine, deliveryFeeOf, payableAfterCoins } from "@/com
 /** Step 3 -- a final, read-only review of everything the order will contain, per this task's own "not another generic form" requirement. Every value shown here was already collected/validated in steps 1-2. */
 export default function CheckoutReview({
   address, recipientName, recipientPhone, recipientTelegramUsername, comment, preview, onEditDelivery, onEditPayment, onConfirm, submitting, submitError, coins = 0,
-  paymentMethod = null, redirecting = false, pickupStore = null,
+  paymentMethod = null, redirecting = false, pickupStore = null, paymentAbove = false,
 }: {
+  /** The payment choice sits right above this review (2-step checkout): skip the read-only payment card, and leave the confirm button to the phone's sticky bar below lg. */
+  paymentAbove?: boolean;
   /** Pickup at a branch: shown instead of the delivery address. */
   pickupStore?: { name: string; address: string; today: string } | null;
   coins?: number;
@@ -80,7 +82,7 @@ export default function CheckoutReview({
         </div>
       </Card>
 
-      <Card>
+      {!paymentAbove && <Card>
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-ink-muted">{t("paymentMethod")}</h2>
           <button type="button" onClick={onEditPayment} className="text-sm font-medium text-primary transition-colors hover:brightness-110">
@@ -95,7 +97,7 @@ export default function CheckoutReview({
             <span className="block text-xs text-ink-muted">{paymentMethod?.online ? t("pay.secure", { name: methodName(paymentMethod.via ? { key: paymentMethod.via, name: "" } : paymentMethod, "") }) : t("pay.secureCash")}</span>
           </span>
         </p>
-      </Card>
+      </Card>}
 
       {comment.trim() && (
         <Card>
@@ -135,10 +137,12 @@ export default function CheckoutReview({
           </p>
         )}
 
-        <Button onClick={onConfirm} disabled={submitting || redirecting} variant="primary" className="mt-4 w-full">
-          {submitting && <LoaderCircle className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden="true" />}
-          {redirecting ? t("pay.redirecting") : submitting ? t("submitting") : paymentMethod?.online ? t("pay.placeAndPay") : t("confirmOrder")}
-        </Button>
+        <div className={paymentAbove ? "hidden lg:block" : undefined}>
+          <Button onClick={onConfirm} disabled={submitting || redirecting} variant="primary" className="mt-4 w-full">
+            {submitting && <LoaderCircle className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden="true" />}
+            {redirecting ? t("pay.redirecting") : submitting ? t("submitting") : paymentMethod?.online ? t("pay.placeAndPay") : t("confirmOrder")}
+          </Button>
+        </div>
         <p className="mt-3 text-center text-xs leading-relaxed text-ink-soft">
           {t.rich("legalConsent", {
             terms: (chunks) => (

@@ -34,7 +34,7 @@ export default function PaymentMethodCard({ methods, value, onChange, amount, pi
   return (
     <Card>
       <h2 className="mb-3 text-sm font-semibold text-ink-muted">{tp("title")}</h2>
-      <div role="radiogroup" aria-label={tp("title")} className="grid gap-2.5 sm:grid-cols-2">
+      <div role="radiogroup" aria-label={tp("title")} className="grid grid-cols-[minmax(0,1fr)] gap-2.5 sm:grid-cols-2">
         {list.map((m) => {
           const usable = m.available && withinLimits(m, amount);
           const on = usable && m.key === value;
@@ -48,7 +48,7 @@ export default function PaymentMethodCard({ methods, value, onChange, amount, pi
               aria-disabled={!usable}
               disabled={!usable}
               onClick={() => usable && onChange(m.key)}
-              className={`group relative flex items-center gap-3 rounded-2xl border p-3 text-left transition-all ${
+              className={`group relative flex min-w-0 items-center gap-3 rounded-2xl border p-3 text-left transition-all ${
                 on ? "border-primary bg-primary-soft shadow-[0_0_0_3px_var(--nz-primary-soft)]" : usable ? "border-border bg-surface hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md" : "cursor-not-allowed border-dashed border-border bg-surface-2/40"
               }`}
               style={{ "--pm": m.color } as React.CSSProperties}
