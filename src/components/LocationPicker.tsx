@@ -177,16 +177,25 @@ export default function LocationPicker({
   useEffect(() => {
     const q = query.trim();
     if (q.length < 3) return;
+    // a slower answer for an older query must never replace the newer one (typing "mirobod 6" -> "mirobod 66")
+    const ctrl = new AbortController();
     const timer = window.setTimeout(() => {
       setSearching(true);
       const c = mapRef.current?.getCenter();
-      fetch(`/api/geo/geocode?q=${encodeURIComponent(q)}&lang=${locale}${c ? `&lat=${c.lat}&lng=${c.lng}` : ""}`)
+      fetch(`/api/geo/geocode?q=${encodeURIComponent(q)}&lang=${locale}${c ? `&lat=${c.lat}&lng=${c.lng}` : ""}`, { signal: ctrl.signal })
         .then((r) => r.json())
         .then((b) => setResults(b?.success ? b.data : []))
-        .catch(() => setResults([]))
-        .finally(() => setSearching(false));
-    }, 380);
-    return () => window.clearTimeout(timer);
+        .catch((e) => {
+          if (e?.name !== "AbortError") setResults([]);
+        })
+        .finally(() => {
+          if (!ctrl.signal.aborted) setSearching(false);
+        });
+    }, 450);
+    return () => {
+      window.clearTimeout(timer);
+      ctrl.abort();
+    };
   }, [query, locale]);
 
   if (!mounted) {

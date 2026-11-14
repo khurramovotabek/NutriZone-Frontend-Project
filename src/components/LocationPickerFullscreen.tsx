@@ -153,16 +153,25 @@ export default function LocationPickerFullscreen({ initial, defaultCenter, autoL
   useEffect(() => {
     const q = query.trim();
     if (q.length < 3) return;
+    // a slower answer for an older query must never replace the newer one (typing "mirobod 6" -> "mirobod 66")
+    const ctrl = new AbortController();
     const timer = window.setTimeout(() => {
       setSearching(true);
       const c = mapRef.current?.getCenter();
-      fetch(`/api/geo/geocode?q=${encodeURIComponent(q)}&lang=${locale}${c ? `&lat=${c.lat}&lng=${c.lng}` : ""}`)
+      fetch(`/api/geo/geocode?q=${encodeURIComponent(q)}&lang=${locale}${c ? `&lat=${c.lat}&lng=${c.lng}` : ""}`, { signal: ctrl.signal })
         .then((r) => r.json())
         .then((b) => setResults(b?.success ? b.data : []))
-        .catch(() => setResults([]))
-        .finally(() => setSearching(false));
-    }, 380);
-    return () => window.clearTimeout(timer);
+        .catch((e) => {
+          if (e?.name !== "AbortError") setResults([]);
+        })
+        .finally(() => {
+          if (!ctrl.signal.aborted) setSearching(false);
+        });
+    }, 450);
+    return () => {
+      window.clearTimeout(timer);
+      ctrl.abort();
+    };
   }, [query, locale]);
 
   async function handleLink() {
@@ -239,7 +248,7 @@ export default function LocationPickerFullscreen({ initial, defaultCenter, autoL
             {results.length === 0 && !searching && <p className="px-3 py-2 text-sm text-ink-soft">{t("noResults")}</p>}
             {results.map((r, i) => (
               <button key={`${r.lat},${r.lng},${i}`} type="button" className="block w-full rounded-xl px-3 py-2.5 text-left hover:bg-surface-2"
-                onClick={() => { goTo(r.lat, r.lng, 17, "search"); setResults(null); setQuery(r.title); }}>
+                onClick={() => { goTo(r.lat, r.lng, 18, "search"); setResults(null); setQuery(r.title); }}>
                 <span className="block text-sm font-semibold text-ink">{r.title}</span>
                 {r.subtitle && <span className="block truncate text-xs text-ink-soft">{r.subtitle}</span>}
               </button>
