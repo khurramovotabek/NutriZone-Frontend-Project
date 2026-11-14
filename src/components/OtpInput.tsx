@@ -117,8 +117,8 @@ export default function OtpInput({ value, onChange, disabled, variant = "default
 
   const baseClassName =
     variant === "premium"
-      ? "nz-glass-input h-14 w-12 rounded-xl text-center text-2xl font-semibold text-ink outline-none transition-all duration-150 focus:shadow-[0_0_0_3px_var(--nz-primary-soft)] disabled:opacity-40 sm:h-16 sm:w-14"
-      : "nz-glass-input h-14 w-11 rounded-lg text-center text-xl font-semibold outline-none disabled:opacity-50";
+      ? "nz-glass-input h-14 w-[42px] min-[360px]:w-12 rounded-xl text-center text-2xl font-semibold text-ink outline-none transition-all duration-150 focus:shadow-[0_0_0_3px_var(--nz-primary-soft)] disabled:opacity-40 sm:h-16 sm:w-14"
+      : "nz-glass-input h-14 w-[42px] min-[360px]:w-11 rounded-lg text-center text-xl font-semibold outline-none disabled:opacity-50";
   const invalidClassName = invalid ? "!border-red-500 focus:!border-red-500" : "";
 
   return (

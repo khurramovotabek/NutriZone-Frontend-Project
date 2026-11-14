@@ -38,23 +38,23 @@ export default async function PrivacyPage() {
         <p className="mt-2 max-w-2xl text-sm text-white/85">{p.contactText}</p>
         <div className="mt-5 flex flex-wrap gap-2.5 text-sm font-semibold">
           {phone && (
-            <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="inline-flex items-center gap-2 rounded-xl bg-white/15 px-4 py-2 ring-1 ring-white/25 transition hover:bg-white/25">
+            <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-xl bg-white/15 px-4 py-2 [overflow-wrap:anywhere] ring-1 ring-white/25 transition hover:bg-white/25">
               <Phone className="h-4 w-4" aria-hidden="true" />
               {phone}
             </a>
           )}
           {telegram && (
-            <a href={`https://t.me/${telegram}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-white/15 px-4 py-2 ring-1 ring-white/25 transition hover:bg-white/25">
+            <a href={`https://t.me/${telegram}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-xl bg-white/15 px-4 py-2 [overflow-wrap:anywhere] ring-1 ring-white/25 transition hover:bg-white/25">
               <Send className="h-4 w-4" aria-hidden="true" />@{telegram}
             </a>
           )}
           {email && (
-            <a href={`mailto:${email}`} className="inline-flex items-center gap-2 rounded-xl bg-white/15 px-4 py-2 ring-1 ring-white/25 transition hover:bg-white/25">
+            <a href={`mailto:${email}`} className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-xl bg-white/15 px-4 py-2 [overflow-wrap:anywhere] ring-1 ring-white/25 transition hover:bg-white/25">
               <Mail className="h-4 w-4" aria-hidden="true" />
               {email}
             </a>
           )}
-          <Link href="/contact" className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-[var(--nz-primary)] transition hover:-translate-y-0.5">
+          <Link href="/contact" className="inline-flex min-w-0 max-w-full items-center gap-2 rounded-xl bg-white px-4 py-2 [overflow-wrap:anywhere] text-[var(--nz-primary)] transition hover:-translate-y-0.5">
             <MapPin className="h-4 w-4" aria-hidden="true" />
             {site?.address || "nutrizone.uz/contact"}
           </Link>

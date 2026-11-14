@@ -264,7 +264,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
             <ProductCoinReward price={price} currency={currency} fallback={<BuyFact icon={Coins} title="NutriZone Coins" text={t("coinsEarn")} href="/loyalty" />} />
           </ul>
 
-          <div className="mt-4 flex items-center gap-2 border-t border-border pt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border pt-4">
             <WishlistButton productId={product.id} initialWishlisted={isWishlisted} className="!h-10 !w-10 shrink-0" />
             <ShareButton title={product.name} />
             <CompareButton slug={product.slug} />

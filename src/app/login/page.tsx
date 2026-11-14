@@ -77,7 +77,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             ))}
           </ul>
 
-          <div className="nz-liquid mt-3 flex items-center gap-3.5 overflow-hidden rounded-2xl p-4">
+          <div className="nz-liquid relative mt-3 flex items-center gap-3.5 overflow-hidden rounded-2xl p-4">
             <span aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full bg-amber-400/20 blur-3xl" />
             <CoinIcon size={40} className="nz-coin-float relative shrink-0" />
             <span className="relative">
