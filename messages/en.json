@@ -488,6 +488,16 @@
         "title": "Vitamins",
         "subtitle": "Multivitamins, omega-3, minerals"
       }
+    },
+    "social": {
+      "eyebrow": "Social",
+      "title": "Follow us",
+      "subtitle": "Be the first to hear about deals, new arrivals and sports nutrition tips.",
+      "telegramLabel": "Telegram channel",
+      "telegramText": "New products, prices and discounts every day.",
+      "telegramCta": "Subscribe",
+      "instagramText": "Reels, training tips and news.",
+      "instagramCta": "Follow"
     }
   },
   "blog": {

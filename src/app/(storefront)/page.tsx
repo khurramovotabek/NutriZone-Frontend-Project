@@ -18,6 +18,7 @@ import GoalsSection from "@/components/home/GoalsSection";
 import ForYouSection from "@/components/home/ForYouSection";
 import ReviewsWall from "@/components/home/ReviewsWall";
 import TelegramSubscribe from "@/components/home/TelegramSubscribe";
+import SocialFollow from "@/components/home/SocialFollow";
 import LoyaltyBanner from "@/components/home/LoyaltyBanner";
 import ProductShowcase, { type ShowcaseTab } from "@/components/home/ProductShowcase";
 import SaleSection from "@/components/home/SaleSection";
@@ -219,6 +220,8 @@ export default async function HomePage() {
       <Suspense fallback={null}>
         <TelegramSubscribe />
       </Suspense>
+
+      <SocialFollow telegramUrl={site?.telegram_channel_url || null} instagramUrl={site?.instagram_url || null} />
 
       <Suspense fallback={null}>
         <BlogSection />

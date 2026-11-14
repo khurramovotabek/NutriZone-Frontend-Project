@@ -488,6 +488,16 @@
         "title": "Vitaminlar",
         "subtitle": "Multivitaminlar, omega-3, minerallar"
       }
+    },
+    "social": {
+      "eyebrow": "Ijtimoiy tarmoqlar",
+      "title": "Bizni kuzatib boring",
+      "subtitle": "Aksiyalar, yangi mahsulotlar va sport ovqatlanishi bo'yicha maslahatlarni birinchi bo'lib biling.",
+      "telegramLabel": "Telegram kanal",
+      "telegramText": "Har kuni yangi mahsulotlar, narxlar va chegirmalar.",
+      "telegramCta": "Obuna bo'lish",
+      "instagramText": "Reels, mashg'ulot maslahatlari va yangiliklar.",
+      "instagramCta": "Kuzatish"
     }
   },
   "blog": {
