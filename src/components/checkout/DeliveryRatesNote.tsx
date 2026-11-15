@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Truck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { formatPrice } from "@/components/PriceTag";
@@ -30,6 +31,11 @@ export function loadDeliveryOptions(): Promise<DeliveryOptions | null> {
   return cached;
 }
 
+/** "В течение 1 рабочего дня" → "в течение 1 рабочего дня" when it continues a sentence. */
+export function lowerFirst(text: string): string {
+  return text ? text.charAt(0).toLocaleLowerCase() + text.slice(1) : text;
+}
+
 /** "Delivery: Tashkent city up to 30 000 so'm, regions from 30 000 so'm. Pickup is free." (+ free threshold when set). */
 export default function DeliveryRatesNote({ className = "" }: { className?: string }) {
   const t = useTranslations("cart");
@@ -52,7 +58,17 @@ export default function DeliveryRatesNote({ className = "" }: { className?: stri
     <div className={`flex items-start gap-2 rounded-xl bg-surface-2/60 p-3 text-xs text-ink-muted ${className}`}>
       <Truck className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={1.8} aria-hidden="true" />
       <p>
-        {t("deliveryRates", { tashkent: formatPrice(options.zones.tashkent.fee, cur) ?? "", regions: formatPrice(options.zones.regions.fee, cur) ?? "" })}
+        {options.zones.tashkent.eta && options.zones.regions.eta
+          ? t("deliveryRatesEta", {
+              tashkent: formatPrice(options.zones.tashkent.fee, cur) ?? "",
+              regions: formatPrice(options.zones.regions.fee, cur) ?? "",
+              tashkentEta: lowerFirst(options.zones.tashkent.eta),
+              regionsEta: lowerFirst(options.zones.regions.eta),
+            })
+          : t("deliveryRates", { tashkent: formatPrice(options.zones.tashkent.fee, cur) ?? "", regions: formatPrice(options.zones.regions.fee, cur) ?? "" })}
+        <Link href="/delivery" className="ml-1 font-semibold text-primary hover:underline">
+          {t("deliveryMore")} →
+        </Link>
         {options.free_from && <span className="mt-0.5 block font-medium text-success">{tq("freeFrom", { amount: formatPrice(options.free_from, cur) ?? "" })}</span>}
       </p>
     </div>

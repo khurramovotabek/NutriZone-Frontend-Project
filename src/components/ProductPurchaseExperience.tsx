@@ -18,7 +18,7 @@ import StockStatus from "@/components/StockStatus";
 import StoreAvailability from "@/components/StoreAvailability";
 import WishlistButton from "@/components/WishlistButton";
 import PriceTag, { formatPrice } from "@/components/PriceTag";
-import { loadDeliveryOptions, type DeliveryOptions } from "@/components/checkout/DeliveryRatesNote";
+import { loadDeliveryOptions, lowerFirst, type DeliveryOptions } from "@/components/checkout/DeliveryRatesNote";
 import ProductCoinReward from "@/components/loyalty/ProductCoinReward";
 
 type Variant = NonNullable<ProductCard["variants"]>[number];
@@ -259,7 +259,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
 
           {/* Delivery, payment and rewards at the point of decision -- facts true for every order on this storefront. */}
           <ul className="mt-4 divide-y divide-border/60 rounded-xl border border-border/70 bg-surface/40 px-3 text-xs [&>li]:py-2.5">
-            <BuyFact icon={Truck} title={t("deliveryTitle")} text={deliveryOptions ? t("deliveryRatesText", { tashkent: formatPrice(deliveryOptions.zones.tashkent.fee, deliveryOptions.currency) ?? "", regions: formatPrice(deliveryOptions.zones.regions.fee, deliveryOptions.currency) ?? "" }) : t("deliveryText")} />
+            <BuyFact icon={Truck} title={t("deliveryTitle")} text={deliveryOptions ? (deliveryOptions.zones.tashkent.eta && deliveryOptions.zones.regions.eta ? t("deliveryRatesEtaText", { tashkent: formatPrice(deliveryOptions.zones.tashkent.fee, deliveryOptions.currency) ?? "", regions: formatPrice(deliveryOptions.zones.regions.fee, deliveryOptions.currency) ?? "", tashkentEta: lowerFirst(deliveryOptions.zones.tashkent.eta), regionsEta: lowerFirst(deliveryOptions.zones.regions.eta) }) : t("deliveryRatesText", { tashkent: formatPrice(deliveryOptions.zones.tashkent.fee, deliveryOptions.currency) ?? "", regions: formatPrice(deliveryOptions.zones.regions.fee, deliveryOptions.currency) ?? "" })) : t("deliveryText")} />
             <BuyFact icon={Banknote} title={t("paymentTitle")} text={t("paymentText")} />
             <ProductCoinReward price={price} currency={currency} fallback={<BuyFact icon={Coins} title="NutriZone Coins" text={t("coinsEarn")} href="/loyalty" />} />
           </ul>

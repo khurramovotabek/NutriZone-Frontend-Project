@@ -110,7 +110,25 @@
       "storeOpenNow": "Open now",
       "storeClosedNow": "Closed now",
       "pickupReadyNote": "Your order is ready — come to the store and give the number {number}.",
-      "paymentAtStore": "Pay at the store"
+      "paymentAtStore": "Pay at the store",
+      "next": {
+        "title": "What happens next?",
+        "step1Title": "Order received",
+        "step1Text": "We'll keep you posted on every change via Telegram and site notifications.",
+        "step2Title": "We pick and pack",
+        "step2Text": "Every item is checked and carefully packed.",
+        "step3Title": "We deliver",
+        "step3Text": "We'll message you again once the order is on its way.",
+        "step3PickupTitle": "You pick it up at the store",
+        "step3PickupText": "We'll let you know as soon as it's ready — just give the order number at the counter.",
+        "etaTitle": "Delivery times",
+        "tashkent": "Tashkent city",
+        "regions": "Regions",
+        "yourZone": "Your order",
+        "workingDaysNote": "Counted in working days — weekends and public holidays are not included.",
+        "etaLine": "Estimated delivery: {eta}",
+        "help": "Questions? Write to us in the chat — we're happy to help."
+      }
     },
     "summary": {
       "title": "Order Summary",
@@ -759,7 +777,8 @@
         "joints": "Joints",
         "sleep": "Sleep"
       }
-    }
+    },
+    "deliveryRatesEtaText": "Tashkent city up to {tashkent}, {tashkentEta}. Regions from {regions}, {regionsEta}. Pickup is free."
   },
   "wishlist": {
     "title": "My Wishlist",
@@ -856,7 +875,9 @@
     "guestCheckoutNote": "No account needed to fill your cart. Sign in with Telegram in seconds to place your order.",
     "signInToCheckout": "Sign in to checkout",
     "crossSellTitle": "Often bought together",
-    "deliveryRates": "Delivery: Tashkent city up to {tashkent}, regions from {regions}. Pickup is free."
+    "deliveryRates": "Delivery: Tashkent city up to {tashkent}, regions from {regions}. Pickup is free.",
+    "deliveryRatesEta": "Delivery: Tashkent city up to {tashkent}, {tashkentEta}; regions from {regions}, {regionsEta}. Pickup is free.",
+    "deliveryMore": "Learn more"
   },
   "checkout": {
     "title": "Checkout",
@@ -1181,7 +1202,7 @@
     },
     "delivery": {
       "title": "Fast Delivery",
-      "description": "Across Uzbekistan"
+      "description": "Tashkent 1, regions 2 working days"
     },
     "returns": {
       "title": "Easy Returns",
@@ -1606,7 +1627,8 @@
     "paymentMethods": "Payment methods",
     "rights": "All rights reserved.",
     "telegramChannel": "Telegram channel",
-    "terms": "Public Offer"
+    "terms": "Public Offer",
+    "delivery": "Delivery and payment"
   },
   "about": {
     "metaTitle": "About us",

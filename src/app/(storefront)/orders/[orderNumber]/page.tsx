@@ -14,6 +14,7 @@ import AccountLayout from "@/components/AccountLayout";
 import OrderProgress from "@/components/orders/OrderProgress";
 import OrderAfterSales from "@/components/orders/OrderAfterSales";
 import OrderPayPanel from "@/components/orders/OrderPayPanel";
+import DeliveryPromise, { useDeliveryEtas } from "@/components/orders/DeliveryPromise";
 import type { OrderPaymentState } from "@/lib/payments-api";
 
 const PAY_NAMES: Record<string, string> = { payme: "Payme", click: "Click", uzum: "Uzum Bank", uzcard: "Uzcard", humo: "Humo" };
@@ -78,6 +79,8 @@ export default function OrderDetailPage() {
   const tNav = useTranslations("navigation");
   const tPayment = useTranslations("payment");
   const tCheckout = useTranslations("checkout");
+  const tNext = useTranslations("orders.detail.next");
+  const etas = useDeliveryEtas();
   const [payInfo, setPayInfo] = useState<OrderPaymentState | null>(null);
   const paidVia = payInfo?.paid && payInfo.latest?.status === "succeeded" ? payInfo.latest.method : null;
   const locale = useLocale();
@@ -224,6 +227,7 @@ export default function OrderDetailPage() {
           </span>
           <h2 className="relative mt-3 text-lg font-bold">{t("successTitle")}</h2>
           <p className="relative mt-1 text-sm text-white/85">{t("successSubtitle", { number: order.order_number })}</p>
+          <DeliveryPromise zone={order.delivery_zone} pickup={pickup} />
           <Link href="/products" className="relative mt-4 inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[var(--nz-success)] transition-transform hover:-translate-y-0.5">
             <ShoppingBag className="h-4 w-4" strokeWidth={1.9} aria-hidden="true" />
             {t("continueShopping")}
@@ -338,6 +342,9 @@ export default function OrderDetailPage() {
                     <span className="block text-xs text-ink-soft">
                       {[order.delivery_zone === "tashkent" ? tCheckout("deliveryQuote.tashkent") : order.delivery_zone === "regions" ? tCheckout("deliveryQuote.regions") : "", order.delivery_carrier].filter(Boolean).join(" · ")}
                     </span>
+                  )}
+                  {order.fulfilment_method !== "pickup" && order.delivery_zone && etas?.[order.delivery_zone] && ["confirmed", "processing", "shipped"].includes(order.status) && (
+                    <span className="block text-xs font-medium text-primary">{tNext("etaLine", { eta: etas[order.delivery_zone] })}</span>
                   )}
                 </dt>
                 <dd className={`shrink-0 tabular-nums ${shippingFee ? "text-ink" : "text-success"}`}>{shippingFee ? formatMoney(shippingFee, order.currency) : tCheckout("deliveryFree")}</dd>

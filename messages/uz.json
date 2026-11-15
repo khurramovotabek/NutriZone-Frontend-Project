@@ -110,7 +110,25 @@
       "storeOpenNow": "Hozir ochiq",
       "storeClosedNow": "Hozir yopiq",
       "pickupReadyNote": "Buyurtmangiz tayyor — do'konga keling va {number} raqamini ayting.",
-      "paymentAtStore": "Do'konda to'lov"
+      "paymentAtStore": "Do'konda to'lov",
+      "next": {
+        "title": "Endi nima bo'ladi?",
+        "step1Title": "Buyurtma qabul qilindi",
+        "step1Text": "Har bir o'zgarish haqida Telegram va saytdagi bildirishnomalar orqali xabar beramiz.",
+        "step2Title": "Yig'amiz va qadoqlaymiz",
+        "step2Text": "Mahsulotlar tekshiriladi va ehtiyotkorlik bilan qadoqlanadi.",
+        "step3Title": "Yetkazib beramiz",
+        "step3Text": "Buyurtma yo'lga chiqqanda alohida xabar yuboramiz.",
+        "step3PickupTitle": "Do'kondan olib ketasiz",
+        "step3PickupText": "Buyurtma tayyor bo'lishi bilan xabar beramiz — kelganda buyurtma raqamini ayting.",
+        "etaTitle": "Yetkazib berish muddati",
+        "tashkent": "Toshkent shahri",
+        "regions": "Viloyatlar",
+        "yourZone": "Sizning buyurtmangiz",
+        "workingDaysNote": "Muddat ish kunlarida hisoblanadi — dam olish va bayram kunlari kirmaydi.",
+        "etaLine": "Taxminiy muddat: {eta}",
+        "help": "Savol bormi? Chat orqali yozing — yordam beramiz."
+      }
     },
     "summary": {
       "title": "Buyurtmalar xulosasi",
@@ -759,7 +777,8 @@
         "joints": "Bo'g'imlar",
         "sleep": "Uyqu"
       }
-    }
+    },
+    "deliveryRatesEtaText": "Toshkent shahri — {tashkent} gacha, {tashkentEta}. Viloyatlar — {regions} dan, {regionsEta}. Olib ketish bepul."
   },
   "wishlist": {
     "title": "Sevimlilar",
@@ -856,7 +875,9 @@
     "guestCheckoutNote": "Savatga qo'shish uchun ro'yxatdan o'tish shart emas. Buyurtma berish uchun Telegram orqali bir zumda kiring.",
     "signInToCheckout": "Kirish va buyurtma berish",
     "crossSellTitle": "Bular bilan ko'pincha olinadi",
-    "deliveryRates": "Yetkazib berish: Toshkent shahri — {tashkent} gacha, viloyatlar — {regions} dan. Olib ketish — bepul."
+    "deliveryRates": "Yetkazib berish: Toshkent shahri — {tashkent} gacha, viloyatlar — {regions} dan. Olib ketish — bepul.",
+    "deliveryRatesEta": "Yetkazib berish: Toshkent shahri — {tashkent} gacha, {tashkentEta}; viloyatlar — {regions} dan, {regionsEta}. Olib ketish — bepul.",
+    "deliveryMore": "Batafsil"
   },
   "checkout": {
     "title": "Buyurtma rasmiylashtirish",
@@ -1181,7 +1202,7 @@
     },
     "delivery": {
       "title": "Tezkor yetkazib berish",
-      "description": "O'zbekiston bo'ylab"
+      "description": "Toshkentga 1, viloyatlarga 2 ish kunida"
     },
     "returns": {
       "title": "Oson qaytarish",
@@ -1606,7 +1627,8 @@
     "paymentMethods": "To'lov usullari",
     "rights": "Barcha huquqlar himoyalangan.",
     "telegramChannel": "Telegram kanal",
-    "terms": "Ommaviy oferta"
+    "terms": "Ommaviy oferta",
+    "delivery": "Yetkazib berish va to'lov"
   },
   "about": {
     "metaTitle": "Biz haqimizda",
