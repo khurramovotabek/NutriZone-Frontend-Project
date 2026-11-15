@@ -6,6 +6,7 @@ import BrandMark from "@/components/BrandMark";
 import LoginCodeForm from "@/components/LoginCodeForm";
 import LoginLanguageSwitcher from "@/components/LoginLanguageSwitcher";
 import CoinIcon from "@/components/loyalty/CoinIcon";
+import SignupGiftBanner from "@/components/loyalty/SignupGiftBanner";
 import { getBrand } from "@/lib/brand";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -94,6 +95,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             <span className="mt-3 text-lg font-extrabold tracking-tight">{brand.name}</span>
           </div>
 
+          <SignupGiftBanner variant="compact" className="mb-4" />
           <div className="nz-liquid nz-login-card relative overflow-hidden rounded-[28px] p-6 sm:p-8">
             <div className="text-center">
               <h1 id="login-title" className="text-xl font-extrabold tracking-tight sm:text-2xl">

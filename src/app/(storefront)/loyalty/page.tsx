@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import SignupGiftBanner from "@/components/loyalty/SignupGiftBanner";
 import { getTranslations } from "next-intl/server";
 import { getLoyaltyTiers, type LoyaltyTier } from "@/lib/loyalty-api";
 import ContactSpotlight from "@/components/contact/ContactSpotlight";
@@ -40,6 +41,7 @@ export default async function LoyaltyPage() {
             {t("title")}
           </span>
         </nav>
+        <SignupGiftBanner className="-mt-4 mb-10" />
 
         <LoyaltyExperience tiers={tiers} />
       </div>

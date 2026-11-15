@@ -3669,5 +3669,20 @@
     "cta": "Telegram orqali kirish",
     "later": "Keyinroq",
     "close": "Yopish"
+  },
+  "signupGift": {
+    "eyebrow": "Ochilish sovg'asi",
+    "title": "Birinchi {limit} mijozga {coins} coin sovg'a!",
+    "titleUnlimited": "Ro'yxatdan o'ting — {coins} coin sovg'a!",
+    "text": "Telegram orqali bir daqiqada ro'yxatdan o'ting — coinlar darhol hisobingizga tushadi. 1 coin = 1 so'm: xaridda buyurtmaning {percent}% gacha qismini coin bilan to'lang.",
+    "left": "{count} ta joy qoldi",
+    "progressLabel": "Berilgan sovg'alar",
+    "cta": "Sovg'ani olish",
+    "compactTitle": "Ro'yxatdan o'ting — {coins} coin sovg'a",
+    "compactText": "Faqat birinchi {limit} mijoz uchun. 1 coin = 1 so'm.",
+    "compactTextUnlimited": "1 coin = 1 so'm — keyingi xaridda ishlating.",
+    "mineTitle": "Sizga {coins} coin sovg'a qilindi — siz №{number} mijozsiz!",
+    "mineText": "Xaridda buyurtmaning {percent}% gacha qismini coin bilan to'lashingiz mumkin.",
+    "mineCta": "Coinlarim"
   }
 }

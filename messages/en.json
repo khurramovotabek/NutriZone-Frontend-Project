@@ -3669,5 +3669,20 @@
     "cta": "Continue with Telegram",
     "later": "Later",
     "close": "Close"
+  },
+  "signupGift": {
+    "eyebrow": "Opening gift",
+    "title": "{coins} coins free for our first {limit} customers!",
+    "titleUnlimited": "Sign up and get {coins} coins!",
+    "text": "Sign up via Telegram in a minute — the coins land in your wallet right away. 1 coin = 1 UZS: pay up to {percent}% of an order with them.",
+    "left": "{count} spots left",
+    "progressLabel": "Gifts given",
+    "cta": "Claim the gift",
+    "compactTitle": "Sign up — get {coins} coins",
+    "compactText": "For the first {limit} customers only. 1 coin = 1 UZS.",
+    "compactTextUnlimited": "1 coin = 1 UZS — use them on your next order.",
+    "mineTitle": "You got {coins} coins — you're customer №{number}!",
+    "mineText": "Pay up to {percent}% of an order with coins.",
+    "mineCta": "My coins"
   }
 }
