@@ -4,9 +4,20 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type CS
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { Banner } from "@/lib/api";
+import { API_BASE_URL, type Banner } from "@/lib/api";
 import MediaImage from "@/components/MediaImage";
 import { useTabVisible } from "@/hooks/useTabVisible";
+
+/** Tells the dashboard a banner's button was tapped (Bannerlar -> "bosishlar"); fire-and-forget, never blocks navigation. */
+function countBannerClick(id: string) {
+  try {
+    const url = `${API_BASE_URL}/api/v1/settings/banners/${encodeURIComponent(id)}/click`;
+    if (typeof navigator !== "undefined" && navigator.sendBeacon) navigator.sendBeacon(url);
+    else void fetch(url, { method: "POST", keepalive: true, mode: "no-cors" });
+  } catch {
+    /* counting is best effort */
+  }
+}
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
@@ -265,7 +276,7 @@ export default function HeroSlider({ banners }: { banners: Banner[] }) {
         {banner.subtitle && <p className="mt-2 line-clamp-3 max-w-lg text-sm text-white/85 [text-shadow:0_1px_3px_rgb(0_0_0/0.5)] sm:line-clamp-none sm:text-base">{banner.subtitle}</p>}
         {banner.cta_text && banner.cta_url && (
           // a "go to Telegram" call-to-action is pointless inside the Telegram Mini App -- hidden there (html[data-tg])
-          <Link href={banner.cta_url} className={`nz-cta nz-shimmer-btn mt-5 inline-flex w-fit items-center rounded-xl px-6 py-3 text-sm font-bold${/^https?:\/\/(t\.me|telegram\.me)\//.test(banner.cta_url) ? " nz-tg-hide" : ""}`}>
+          <Link href={banner.cta_url} onClick={() => countBannerClick(banner.id)} className={`nz-cta nz-shimmer-btn mt-5 inline-flex w-fit items-center rounded-xl px-6 py-3 text-sm font-bold${/^https?:\/\/(t\.me|telegram\.me)\//.test(banner.cta_url) ? " nz-tg-hide" : ""}`}>
             {banner.cta_text}
           </Link>
         )}
