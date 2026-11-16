@@ -20,6 +20,8 @@ export default function CoinRedeemCard({ loyalty, value, onChange }: { loyalty: 
   const available = loyalty.enabled && max > 0;
   const step = max >= 10_000 ? 1_000 : 100;
   const fill = max > min ? ((value - min) / (max - min)) * 100 : 100;
+  // no coins yet: nothing to switch on -- keep the checkout short
+  if (!on && loyalty.balance <= 0) return null;
 
   return (
     <div className={`relative overflow-hidden rounded-2xl border p-5 transition-colors ${on ? "border-amber-500/40 bg-amber-500/[0.07]" : "border-border bg-surface"}`}>

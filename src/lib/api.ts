@@ -113,6 +113,8 @@ export interface ProductCard {
    */
   stock_quantity?: number | null;
   stock_status?: "in_stock" | "low_stock" | "out_of_stock" | null;
+  /** Units of the default variant itself (what the card's quick add buys); 0 = sold out even if other sizes aren't. */
+  default_variant_stock?: number | null;
   created_at: string;
   /**
    * Real, closed gap: previously absent from every card, list and

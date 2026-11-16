@@ -23,7 +23,6 @@ export default function HomeSearch() {
         <Search className="h-5 w-5 shrink-0 text-primary" strokeWidth={2} aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate">{t("placeholder")}</span>
       </button>
-      <p className="mt-1.5 px-1 text-xs text-ink-soft">{t("hint")}</p>
     </div>
   );
 }

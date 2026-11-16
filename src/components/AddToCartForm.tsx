@@ -27,6 +27,7 @@ type FlowState = "idle" | "adding" | "pricing" | "success" | "error" | "buying";
 export default function AddToCartForm({ variants, selectedId, onSelectVariant, fallbackPrice = null, fallbackCurrency = null }: Props) {
   const router = useRouter();
   const t = useTranslations("product");
+  const tCart = useTranslations("cart");
   const purchasableVariants = variants.filter((v) => v.status === "active");
   const [internalVariantId, setInternalVariantId] = useState<string>(() => {
     const initial = purchasableVariants.find((v) => v.is_default) ?? purchasableVariants[0];
@@ -88,7 +89,7 @@ export default function AddToCartForm({ variants, selectedId, onSelectVariant, f
           router.push(`/login?next=${encodeURIComponent(window.location.pathname)}`);
           return false;
         }
-        setError(addBody.error?.message ?? t("addError"));
+        setError(addBody.error?.code === "OUT_OF_STOCK" ? tCart("notEnoughStock") : (addBody.error?.message ?? t("addError")));
         setState("error");
         return false;
       }

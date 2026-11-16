@@ -25,8 +25,8 @@ export default async function TelegramSubscribe() {
             {t("eyebrow")}
           </span>
           <h2 className="mt-4 text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">{coins ? t("titleGift", { coins }) : t("title")}</h2>
-          <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/80 sm:text-base">{t("subtitle")}</p>
-          <ul className="mt-5 grid max-w-lg gap-2 text-sm text-white/90 sm:grid-cols-2">
+          <p className="mt-3 hidden max-w-lg text-sm leading-relaxed text-white/80 sm:block sm:text-base">{t("subtitle")}</p>
+          <ul className="mt-5 hidden max-w-lg gap-2 text-sm text-white/90 sm:grid sm:grid-cols-2">
             {(["p1", "p2", "p3", "p4"] as const).map((k) => (
               <li key={k} className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-sky-200" strokeWidth={2.25} aria-hidden="true" />

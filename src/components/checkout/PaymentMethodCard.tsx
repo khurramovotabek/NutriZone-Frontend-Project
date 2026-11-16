@@ -28,7 +28,9 @@ export function withinLimits(m: PaymentMethod, amount: number | null): boolean {
 export default function PaymentMethodCard({ methods, value, onChange, amount, pickup = false }: { methods: PaymentMethod[]; value: PaymentMethodKey; onChange: (key: PaymentMethodKey) => void; amount: number | null; pickup?: boolean }) {
   const t = useTranslations("checkout");
   const tp = useTranslations("checkout.pay");
-  const list = methods.length ? methods : [CASH_FALLBACK];
+  // only what the customer can actually pick -- not-yet-connected providers ("coming soon") stay off the page
+  const ready = methods.filter((m) => m.available);
+  const list = ready.length ? ready : [CASH_FALLBACK];
   const selected = list.find((m) => m.key === value);
 
   return (

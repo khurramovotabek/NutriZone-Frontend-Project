@@ -140,7 +140,11 @@ export default function ProductCard({
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <WishlistButton productId={product.id} initialWishlisted={initialWishlisted} />
-            <AddToCartButton variantId={product.default_variant_id ?? ""} outOfStock={outOfStock} unavailable={!product.default_variant_id} />
+            {isFamily ? (
+              <span className="nz-cta flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold">{t("chooseOptions")}</span>
+            ) : (
+              <AddToCartButton variantId={product.default_variant_id ?? ""} outOfStock={outOfStock || product.default_variant_stock === 0} unavailable={!product.default_variant_id} />
+            )}
           </div>
         </Card>
       </Link>
@@ -251,7 +255,7 @@ export default function ProductCard({
             ) : (
               <AddToCartButton
                 variantId={product.default_variant_id ?? ""}
-                outOfStock={outOfStock}
+                outOfStock={outOfStock || product.default_variant_stock === 0}
                 unavailable={!product.default_variant_id}
                 className={`mt-2 w-full ${isFeatured ? "sm:!py-2.5 sm:!text-sm" : ""}`}
               />

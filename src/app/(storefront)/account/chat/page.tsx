@@ -823,8 +823,8 @@ function ChatPageInner() {
     <Card
       className={
         sheet.fullscreen
-          ? "fixed inset-x-0 top-0 z-[70] flex h-[100dvh] overflow-hidden rounded-none border-0 bg-bg p-0 backdrop-blur-none"
-          : "flex h-[calc(100dvh-11rem)] min-h-[440px] max-h-[820px] overflow-hidden p-0 sm:h-[75vh] sm:min-h-[520px]"
+          ? "fixed inset-x-0 top-0 z-[70] flex h-[100dvh] overflow-hidden !rounded-none border-0 bg-bg !p-0 backdrop-blur-none"
+          : "flex h-[calc(100dvh-11rem)] min-h-[440px] max-h-[820px] overflow-hidden !p-0 sm:h-[75vh] sm:min-h-[520px]"
       }
       style={sheet.style}
     >

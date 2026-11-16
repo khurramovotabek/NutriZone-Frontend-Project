@@ -39,7 +39,7 @@ const uz: DeliveryInfoText = {
   lead: "Butun O'zbekiston bo'ylab yetkazamiz. Narx va muddat buyurtma berishdan oldin ko'rinadi — hech qanday yashirin to'lovlarsiz.",
   zones: {
     tashkent: { title: "Toshkent shahri", price: "{tashkent} gacha", priceNote: "Narx eng yaqin filialdan manzilgacha bo'lgan masofaga qarab hisoblanadi." },
-    regions: { title: "Viloyatlar", price: "{regions} dan", priceNote: "Narx posilka og'irligiga qarab hisoblanadi. Toshkent viloyati ham shu tarifda." },
+    regions: { title: "Viloyatlar", price: "{regions} dan", priceNote: "BTS rasmiy tarifi: narx viloyat va posilka og'irligiga qarab aniq hisoblanadi." },
     pickup: { title: "Do'kondan olib ketish", price: "Bepul", eta: "Tayyor bo'lganda xabar beramiz", priceNote: "Buyurtmani o'zingizga qulay filialdan olib keting.", link: "Filiallar" },
   },
   etaLabel: "Muddat",
@@ -54,8 +54,8 @@ const uz: DeliveryInfoText = {
   ],
   workingDays: "Muddat buyurtma tasdiqlangan paytdan boshlab ish kunlarida hisoblanadi — dam olish va bayram kunlari kirmaydi.",
   paymentTitle: "To'lov usullari",
-  paymentLead: "Onlayn kartadan yoki buyurtmani qabul qilganda naqd to'lashingiz mumkin.",
-  paymentCash: "Naqd — qabul qilganda",
+  paymentLead: "Naqd yoki onlayn karta bilan to'lashingiz mumkin.",
+  paymentCash: "Naqd",
   faqTitle: "Ko'p beriladigan savollar",
   faq: [
     { q: "«Ish kuni» nima degani?", a: "Muddat buyurtma tasdiqlangan kundan boshlab hisoblanadi, dam olish va bayram kunlari kirmaydi. Masalan, Toshkentda juma kuni tasdiqlangan buyurtma keyingi ish kunida yetkaziladi." },
@@ -77,7 +77,7 @@ const ru: DeliveryInfoText = {
   lead: "Доставляем по всему Узбекистану. Стоимость и срок видны ещё до оформления заказа — без скрытых платежей.",
   zones: {
     tashkent: { title: "Ташкент", price: "до {tashkent}", priceNote: "Стоимость зависит от расстояния от ближайшего филиала до адреса." },
-    regions: { title: "Регионы", price: "от {regions}", priceNote: "Стоимость зависит от веса посылки. Ташкентская область — по этому же тарифу." },
+    regions: { title: "Регионы", price: "от {regions}", priceNote: "Официальный тариф BTS: цена точно считается по региону и весу посылки." },
     pickup: { title: "Самовывоз из магазина", price: "Бесплатно", eta: "Сообщим, когда будет готов", priceNote: "Заберите заказ в удобном для вас филиале.", link: "Филиалы" },
   },
   etaLabel: "Срок",
@@ -92,8 +92,8 @@ const ru: DeliveryInfoText = {
   ],
   workingDays: "Срок считается в рабочих днях с момента подтверждения заказа — выходные и праздники не входят.",
   paymentTitle: "Способы оплаты",
-  paymentLead: "Оплатите картой онлайн или наличными при получении.",
-  paymentCash: "Наличными — при получении",
+  paymentLead: "Наличными или картой онлайн.",
+  paymentCash: "Наличные",
   faqTitle: "Частые вопросы",
   faq: [
     { q: "Что значит «рабочий день»?", a: "Срок отсчитывается со дня подтверждения заказа, выходные и праздники не учитываются. Например, заказ по Ташкенту, подтверждённый в пятницу, доставим в следующий рабочий день." },
@@ -115,7 +115,7 @@ const en: DeliveryInfoText = {
   lead: "We deliver across Uzbekistan. You see the price and the delivery time before you place the order — no hidden fees.",
   zones: {
     tashkent: { title: "Tashkent city", price: "up to {tashkent}", priceNote: "The price depends on the distance from the nearest branch to your address." },
-    regions: { title: "Regions", price: "from {regions}", priceNote: "The price depends on the parcel weight. Tashkent region uses the same tariff." },
+    regions: { title: "Regions", price: "from {regions}", priceNote: "Official BTS tariff: the price is worked out from your region and the parcel weight." },
     pickup: { title: "Store pickup", price: "Free", eta: "We'll tell you when it's ready", priceNote: "Pick the order up at the branch that suits you.", link: "Branches" },
   },
   etaLabel: "Time",
@@ -130,8 +130,8 @@ const en: DeliveryInfoText = {
   ],
   workingDays: "Times are counted in working days from the moment the order is confirmed — weekends and public holidays are not included.",
   paymentTitle: "Payment methods",
-  paymentLead: "Pay online by card, or in cash when you receive the order.",
-  paymentCash: "Cash — on delivery",
+  paymentLead: "Pay in cash or by card online.",
+  paymentCash: "Cash",
   faqTitle: "Frequently asked questions",
   faq: [
     { q: "What does «working day» mean?", a: "The time is counted from the day the order is confirmed; weekends and holidays don't count. For example, a Tashkent order confirmed on Friday arrives on the next working day." },

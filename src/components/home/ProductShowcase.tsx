@@ -38,7 +38,6 @@ export default function ProductShowcase({ tabs, brandNames }: { tabs: ShowcaseTa
     <section id="featured-products" className="mt-10 sm:mt-16 scroll-mt-24">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">{t("eyebrow")}</p>
           <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{t("title")}</h2>
         </div>
         <div className="flex items-center gap-3">

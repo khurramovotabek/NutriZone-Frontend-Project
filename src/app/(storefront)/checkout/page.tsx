@@ -305,7 +305,8 @@ export default function CheckoutPage() {
           setCoinsToRedeem(0);
           await refreshPreview();
         }
-        setSubmitError(coinError ?? checkoutBody.error?.message ?? t("checkoutError"));
+        if (checkoutBody.error?.code === "CART_OUT_OF_STOCK" || checkoutBody.error?.code === "PICKUP_STORE_OUT_OF_STOCK") await refreshPreview();
+        setSubmitError(coinError ?? (checkoutBody.error?.code === "CART_OUT_OF_STOCK" ? tCart("shortageBlock") : checkoutBody.error?.message) ?? t("checkoutError"));
         return;
       }
 
@@ -403,7 +404,9 @@ export default function CheckoutPage() {
   const effectiveMethod: PaymentMethodKey = pickedMethod && pickedMethod.available && withinLimits(pickedMethod, payableAmount) ? paymentMethod : "cash";
 
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId) ?? null;
-  const notReady = preview.readiness !== "ready";
+  // a line the warehouse can no longer cover (sold out meanwhile) blocks the checkout -- the cart page lets them fix it
+  const outOfStock = (preview.stock_shortages?.length ?? 0) > 0;
+  const notReady = preview.readiness !== "ready" || outOfStock;
 
   const recipientReady = !!firstName.trim() && phoneValid(phone);
   const recipientCompact = recipientReady && !editRecipient;
@@ -433,7 +436,7 @@ export default function CheckoutPage() {
         <Card className="border-amber-500/30">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
             <TriangleAlert className="h-4 w-4 shrink-0 text-amber-500" strokeWidth={2} aria-hidden="true" />
-            {preview.readiness === "blocked" ? t("blocked") : t("notReady")}
+            {outOfStock ? tCart("shortageBlock") : preview.readiness === "blocked" ? t("blocked") : t("notReady")}
           </p>
           {preview.issues.length > 0 && (
             <ul className="mt-3 space-y-1.5">

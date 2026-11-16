@@ -205,7 +205,6 @@ export default function OrderSummary({
           </>
         )}
 
-        <p className="text-xs text-ink-soft">{t("deliveryNote")}</p>
       </div>
     </Card>
   );

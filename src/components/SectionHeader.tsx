@@ -13,14 +13,13 @@ import type { ReactNode } from "react";
  */
 export default function SectionHeader({
   icon,
-  eyebrow,
   title,
   subtitle,
   viewAllHref,
   viewAllLabel,
 }: {
   icon?: ReactNode;
-  /** Small uppercase kicker above the title (home page sections). */
+  /** Accepted for older callers but no longer shown: no kicker above every title keeps the page calm. */
   eyebrow?: string;
   title: string;
   subtitle?: string;
@@ -30,12 +29,12 @@ export default function SectionHeader({
   return (
     <div className="flex items-end justify-between gap-3">
       <div className="min-w-0">
-        {eyebrow && <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">{eyebrow}</p>}
         <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-ink sm:text-2xl">
           {icon}
           {title}
         </h2>
-        {subtitle && <p className="mt-1 line-clamp-2 text-[13px] text-ink-muted sm:text-sm">{subtitle}</p>}
+        {/* phones: title only -- the explanation line is desktop-only, the cards speak for themselves */}
+        {subtitle && <p className="mt-1 hidden line-clamp-2 text-sm text-ink-muted sm:block">{subtitle}</p>}
       </div>
       {viewAllHref && viewAllLabel && (
         <Link href={viewAllHref} className="group/viewall flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-primary/10 px-3 py-1.5 sm:min-h-0 text-[13px] font-semibold text-primary sm:bg-transparent sm:p-0 sm:text-sm transition-colors hover:brightness-110">

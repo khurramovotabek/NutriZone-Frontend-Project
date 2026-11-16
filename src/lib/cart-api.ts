@@ -28,6 +28,8 @@ export interface CartItem {
   price_reference: { price_snapshot_id: string; unit_amount: string; currency: string; applied_at: string } | null;
   reservation_reference: { reservation_id: string; reserved_at: string; expires_at: string | null } | null;
   note: string | null;
+  /** Units the warehouse can still sell for this variant (0 = sold out). Absent on older responses. */
+  available_quantity?: number;
 }
 
 export interface Cart {
@@ -165,6 +167,8 @@ export interface CheckoutPreview {
   items: CartItem[];
   priced_item_count: number;
   total_item_count: number;
+  /** Lines the warehouse can't cover right now -- checkout is blocked until the shopper fixes them. */
+  stock_shortages?: { product_variant_id: string; requested: number; available: number }[];
   subtotal: { amount: string; currency: string } | null;
   applied_coupons: AppliedCoupon[];
   discount: { amount: string; currency: string } | null;

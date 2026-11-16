@@ -76,6 +76,7 @@ export default function AddressForm({
     line1Ref.current = line1;
   }, [line1]);
   const [details, setDetails] = useState<AddressDetails>(() => Object.fromEntries(DETAIL_KEYS.map((k) => [k, address?.metadata?.[k] ?? ""])) as AddressDetails);
+  const [detailsInitiallyOpen] = useState(() => DETAIL_KEYS.some((k) => !!address?.metadata?.[k]));
 
   const [coordinate, setCoordinate] = useState<Point | null>(
     address?.coordinate_latitude != null && address?.coordinate_longitude != null
@@ -287,10 +288,13 @@ export default function AddressForm({
 
   const form = (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-ink-muted">{t("addressType")}</label>
-        <AddressTypePicker value={addressType} onChange={setAddressType} disabled={submitting} />
-      </div>
+      {/* checkout keeps to what the courier needs; the type (home/work/...) is set in the address book */}
+      {!saveRef && (
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-ink-muted">{t("addressType")}</label>
+          <AddressTypePicker value={addressType} onChange={setAddressType} disabled={submitting} />
+        </div>
+      )}
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-ink-muted">{t("exactLocation")}</label>
@@ -365,9 +369,13 @@ export default function AddressForm({
         )}
       </div>
 
-      <fieldset className="space-y-3 rounded-2xl border border-border p-4">
-        <legend className="px-1 text-sm font-semibold text-ink">{t("detailsTitle")}</legend>
-        <p className="-mt-1 text-xs text-ink-soft">{t("detailsHint")}</p>
+      {/* optional courier details: folded away until the customer wants them (open when editing a filled address) */}
+      <details className="group rounded-2xl border border-border" open={detailsInitiallyOpen || undefined}>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
+          <span>{t("detailsToggle")}</span>
+          <span aria-hidden="true" className="text-lg leading-none text-primary transition-transform group-open:rotate-45">+</span>
+        </summary>
+        <div className="space-y-3 px-4 pb-4">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {(["entrance", "floor", "unit", "entrance_code"] as const).map((k) => (
             <label key={k} className="block">
@@ -384,7 +392,8 @@ export default function AddressForm({
           <span className="mb-1 block text-xs font-medium text-ink-muted">{t("landmark")}</span>
           <textarea value={details.delivery_instructions ?? ""} onChange={(e) => setDetail("delivery_instructions", e.target.value)} disabled={submitting} placeholder={t("landmarkPlaceholder")} className={`${INPUT_CLASS} min-h-[72px] resize-y`} maxLength={500} rows={2} />
         </label>
-      </fieldset>
+        </div>
+      </details>
 
       {formError && <p role="alert" className="text-sm text-red-600 dark:text-red-400">{formError}</p>}
 

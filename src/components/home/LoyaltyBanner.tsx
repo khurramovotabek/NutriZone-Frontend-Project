@@ -33,8 +33,8 @@ export default async function LoyaltyBanner() {
           <h2 className="mt-4 text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">
             {top ? t("titleTop", { percent: top }) : t("title")}
           </h2>
-          <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/75 sm:text-base">{t("subtitle")}</p>
-          <ul className="mt-5 grid max-w-lg gap-2.5 text-sm text-white/85 sm:grid-cols-2">
+          <p className="mt-3 hidden max-w-lg text-sm leading-relaxed text-white/75 sm:block sm:text-base">{t("subtitle")}</p>
+          <ul className="mt-5 hidden max-w-lg gap-2.5 text-sm text-white/85 sm:grid sm:grid-cols-2">
             <li className="flex items-center gap-2">
               <Gift className="h-4 w-4 shrink-0 text-amber-300" strokeWidth={2} aria-hidden="true" />
               {t("pointEarn")}

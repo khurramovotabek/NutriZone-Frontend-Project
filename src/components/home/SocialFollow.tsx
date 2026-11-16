@@ -29,9 +29,7 @@ export default async function SocialFollow({ telegramUrl, instagramUrl }: { tele
   return (
     <section aria-labelledby="social-follow-title" className="mt-10 sm:mt-16">
       <div className="mb-5 text-center sm:mb-7">
-        <p className="text-xs font-bold uppercase tracking-wider text-primary">{t("eyebrow")}</p>
         <h2 id="social-follow-title" className="mt-2 text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">{t("title")}</h2>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-ink-muted sm:text-base">{t("subtitle")}</p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-5">

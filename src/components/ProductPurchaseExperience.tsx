@@ -302,7 +302,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
             {formattedPrice && <PriceTag price={price} compareAt={compareAt} discountPercent={discountPercent} currency={currency} size="sm" showBadge={false} stacked className="shrink-0" />}
             {/* AddToCartButton renders a block wrapper div, so the flex-1 has to sit on a parent of it or the CTA shrinks to its label. */}
             <div className="min-w-0 flex-1">
-              <AddToCartButton variantId={selected.id} className="w-full whitespace-nowrap !py-3 !text-sm" />
+              <AddToCartButton variantId={selected.id} outOfStock={selected.stock_status === "out_of_stock" || selected.stock_quantity === 0} className="w-full whitespace-nowrap !py-3 !text-sm" />
             </div>
           </div>
         </div>

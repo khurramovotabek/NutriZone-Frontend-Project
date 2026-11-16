@@ -20,8 +20,9 @@ interface Campaign {
 const nf = (n: number) => n.toLocaleString("en-US").replace(/,/g, " ");
 
 /**
- * Launch gift: "the first 500 customers get 5 000 coins" with the live number of slots left.
- * - guests (and signed-in shoppers without a slot while it's open): the offer + sign-up button;
+ * Opening gift: "the first 500 buyers get 5 000 coins" (paid when the first order is confirmed), with the live number
+ * of slots left.
+ * - everyone without a slot while it's open: the offer + a "start shopping" button;
  * - shoppers who got it: a thank-you line with their slot number (home only);
  * - nothing at all once the campaign is closed or off.
  */
@@ -120,7 +121,7 @@ export default function SignupGiftBanner({ variant = "home", className = "" }: {
           <div className="max-w-md">{progress}</div>
         </div>
         <Link
-          href="/login?next=/account/loyalty"
+          href="/products"
           className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 to-orange-400 px-6 text-sm font-extrabold text-[#1c1407] shadow-lg shadow-amber-900/30 transition-transform hover:-translate-y-0.5 md:w-auto"
         >
           <Gift className="h-4 w-4" aria-hidden="true" />

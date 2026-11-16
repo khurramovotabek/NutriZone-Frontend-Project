@@ -98,7 +98,7 @@
       "discount": "Discount & coins",
       "deliveryAddress": "Delivery address",
       "paymentMethod": "Payment method",
-      "paymentCash": "Cash on delivery",
+      "paymentCash": "Cash",
       "needHelpTitle": "Question about this order?",
       "needHelpText": "Message support chat and mention your order number.",
       "contactSupport": "Support chat",
@@ -255,10 +255,10 @@
     "cancelledDescription": "This order was cancelled.",
     "unknownTitle": "Order status unavailable",
     "unknownDescription": "We could not determine the current status of this order.",
-    "codTitle": "Payment on delivery",
-    "codDescription": "Pay the courier in cash when your order arrives.",
-    "codPickupTitle": "Pay at the store",
-    "codPickupDescription": "Pay at the counter by cash or card when you pick the order up."
+    "codTitle": "Cash payment",
+    "codDescription": "You pay for the order in cash.",
+    "codPickupTitle": "Cash payment",
+    "codPickupDescription": "At the store — cash or card."
   },
   "common": {
     "loading": "Loading...",
@@ -718,7 +718,7 @@
     "deliveryText": "Across Uzbekistan once your order is confirmed",
     "deliveryRatesText": "Tashkent city up to {tashkent}, regions from {regions}. Pickup is free.",
     "paymentTitle": "Payment",
-    "paymentText": "Cash on delivery",
+    "paymentText": "Cash or card online",
     "originalTitle": "100% original",
     "originalText": "From official distributors",
     "coinsEarn": "This purchase earns you coins",
@@ -877,7 +877,13 @@
     "crossSellTitle": "Often bought together",
     "deliveryRates": "Delivery: Tashkent city up to {tashkent}, regions from {regions}. Pickup is free.",
     "deliveryRatesEta": "Delivery: Tashkent city up to {tashkent}, {tashkentEta}; regions from {regions}, {regionsEta}. Pickup is free.",
-    "deliveryMore": "Learn more"
+    "deliveryMore": "Learn more",
+    "lineSoldOut": "Sold out — remove it from the cart",
+    "lineOnlyLeft": "Only {count} left",
+    "lineReduceTo": "Reduce to {count}",
+    "shortageBlock": "Your cart has a sold-out item. Remove it or lower the quantity, then you can check out.",
+    "shortageShort": "Remove the sold-out item",
+    "notEnoughStock": "Not enough in stock — lower the quantity or pick another option"
   },
   "checkout": {
     "title": "Checkout",
@@ -924,8 +930,8 @@
       "payReview": "Payment & confirmation"
     },
     "paymentMethod": "Payment Method",
-    "cashOnDelivery": "Cash on Delivery",
-    "cashOnDeliveryDescription": "Pay in cash when your order arrives.",
+    "cashOnDelivery": "Cash",
+    "cashOnDeliveryDescription": "Pay in cash.",
     "breadcrumbLabel": "Breadcrumb",
     "breadcrumbCart": "Cart",
     "couponLabel": "Coupon Code",
@@ -994,7 +1000,7 @@
     "pay": {
       "title": "Payment method",
       "desc": {
-        "cash": "Pay the courier in cash on delivery",
+        "cash": "Pay in cash",
         "payme": "Payme app or any card",
         "click": "Click Up app or card",
         "uzum": "Through the Uzum Bank app",
@@ -1006,7 +1012,7 @@
       "test": "Test",
       "outOfLimit": "Not available for this amount",
       "secure": "You pay on {name}'s secure page — we never store your card details.",
-      "secureCash": "You pay when the order is delivered.",
+      "secureCash": "Payment is accepted in cash.",
       "placeAndPay": "Place order and pay",
       "redirecting": "Taking you to the payment page…",
       "startFailed": "Your order was created, but the payment page couldn't be opened. Try again from the order page.",
@@ -1041,7 +1047,7 @@
       "pickupAt": "Pickup point",
       "chooseStoreError": "Choose a store to pick up from."
     },
-    "cashAtStore": "Pay at the store (cash or card)",
+    "cashAtStore": "Cash",
     "legalConsent": "By placing an order you accept the <terms>Public Offer</terms> and the <privacy>Privacy Policy</privacy>.",
     "deliveryQuote": {
       "tashkent": "Tashkent city",
@@ -1419,7 +1425,8 @@
       "useStreet": "Use street: {street}",
       "outsideArea": "This point is far from the cities we deliver to ({km} km). Please check the address.",
       "detecting": "Detecting the address…",
-      "detailsLine": "entrance {entrance}, floor {floor}, apt {unit}"
+      "detailsLine": "entrance {entrance}, floor {floor}, apt {unit}",
+      "detailsToggle": "Entrance, floor, flat, landmark (optional)"
     },
     "notifications": "Notifications",
     "chat": "Support Chat",
@@ -3672,14 +3679,14 @@
   },
   "signupGift": {
     "eyebrow": "Opening gift",
-    "title": "{coins} coins free for our first {limit} customers!",
-    "titleUnlimited": "Sign up and get {coins} coins!",
-    "text": "Sign up via Telegram in a minute — the coins land in your wallet right away. 1 coin = 1 UZS: pay up to {percent}% of an order with them.",
+    "title": "{coins} coins for our first {limit} buyers!",
+    "titleUnlimited": "{coins} coins for your first order!",
+    "text": "Coins land in your wallet once your first order is confirmed. 1 coin = 1 UZS.",
     "left": "{count} spots left",
     "progressLabel": "Gifts given",
-    "cta": "Claim the gift",
-    "compactTitle": "Sign up — get {coins} coins",
-    "compactText": "For the first {limit} customers only. 1 coin = 1 UZS.",
+    "cta": "Start shopping",
+    "compactTitle": "{coins} coins for your first order",
+    "compactText": "For the first {limit} buyers only. 1 coin = 1 UZS.",
     "compactTextUnlimited": "1 coin = 1 UZS — use them on your next order.",
     "mineTitle": "You got {coins} coins — you're customer №{number}!",
     "mineText": "Pay up to {percent}% of an order with coins.",

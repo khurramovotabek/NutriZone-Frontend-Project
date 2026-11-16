@@ -98,7 +98,7 @@
       "discount": "Chegirma va coins",
       "deliveryAddress": "Yetkazib berish manzili",
       "paymentMethod": "To'lov usuli",
-      "paymentCash": "Yetkazib berilganda naqd",
+      "paymentCash": "Naqd",
       "needHelpTitle": "Buyurtma bo'yicha savol bormi?",
       "needHelpText": "Yordam chatida yozing — buyurtma raqamini ko'rsating.",
       "contactSupport": "Yordam chati",
@@ -255,10 +255,10 @@
     "cancelledDescription": "Ushbu buyurtma bekor qilingan.",
     "unknownTitle": "Buyurtma holati mavjud emas",
     "unknownDescription": "Ushbu buyurtmaning joriy holatini aniqlab bo'lmadi.",
-    "codTitle": "Yetkazib berishda to'lov",
-    "codDescription": "Buyurtma yetib kelganda kuryerga naqd pul bilan to'laysiz.",
-    "codPickupTitle": "Do'konda to'lov",
-    "codPickupDescription": "Buyurtmani olayotganda kassada naqd yoki karta bilan to'laysiz."
+    "codTitle": "Naqd to'lov",
+    "codDescription": "Buyurtma uchun naqd pul bilan to'laysiz.",
+    "codPickupTitle": "Naqd to'lov",
+    "codPickupDescription": "Do'konda naqd yoki karta bilan to'laysiz."
   },
   "common": {
     "loading": "Yuklanmoqda...",
@@ -718,7 +718,7 @@
     "deliveryText": "Butun O'zbekiston bo'ylab, buyurtma tasdiqlangach",
     "deliveryRatesText": "Toshkent shahri — {tashkent} gacha, viloyatlar — {regions} dan. Olib ketish bepul.",
     "paymentTitle": "To'lov",
-    "paymentText": "Yetkazib berilganda naqd",
+    "paymentText": "Naqd yoki onlayn karta",
     "originalTitle": "100% original",
     "originalText": "Rasmiy distribyutorlardan",
     "coinsEarn": "Bu xariddan coins to'planadi",
@@ -877,7 +877,13 @@
     "crossSellTitle": "Bular bilan ko'pincha olinadi",
     "deliveryRates": "Yetkazib berish: Toshkent shahri — {tashkent} gacha, viloyatlar — {regions} dan. Olib ketish — bepul.",
     "deliveryRatesEta": "Yetkazib berish: Toshkent shahri — {tashkent} gacha, {tashkentEta}; viloyatlar — {regions} dan, {regionsEta}. Olib ketish — bepul.",
-    "deliveryMore": "Batafsil"
+    "deliveryMore": "Batafsil",
+    "lineSoldOut": "Tugagan — savatdan olib tashlang",
+    "lineOnlyLeft": "Faqat {count} ta qoldi",
+    "lineReduceTo": "{count} taga kamaytirish",
+    "shortageBlock": "Savatda tugagan mahsulot bor. Uni olib tashlang yoki sonini kamaytiring — keyin buyurtma berishingiz mumkin.",
+    "shortageShort": "Tugagan mahsulotni olib tashlang",
+    "notEnoughStock": "Omborda yetarli emas — sonini kamaytiring yoki boshqa variantni tanlang"
   },
   "checkout": {
     "title": "Buyurtma rasmiylashtirish",
@@ -924,8 +930,8 @@
       "payReview": "To'lov va tasdiqlash"
     },
     "paymentMethod": "To'lov usuli",
-    "cashOnDelivery": "Yetkazib berilganda naqd to'lov",
-    "cashOnDeliveryDescription": "Buyurtmangiz yetib kelganda naqd pul bilan to'lang.",
+    "cashOnDelivery": "Naqd",
+    "cashOnDeliveryDescription": "Naqd pul bilan to'laysiz.",
     "breadcrumbLabel": "Yo'l ko'rsatuvchi",
     "breadcrumbCart": "Savat",
     "couponLabel": "Kupon kodi",
@@ -994,7 +1000,7 @@
     "pay": {
       "title": "To'lov usuli",
       "desc": {
-        "cash": "Buyurtmani olganda kuryerga naqd to'laysiz",
+        "cash": "Naqd pul bilan to'lash",
         "payme": "Payme ilovasi yoki istalgan karta",
         "click": "Click Up ilovasi yoki karta",
         "uzum": "Uzum Bank ilovasi orqali",
@@ -1006,7 +1012,7 @@
       "test": "Test",
       "outOfLimit": "Bu summa uchun mavjud emas",
       "secure": "To'lov {name} ning xavfsiz sahifasida amalga oshiriladi — karta ma'lumotlaringiz bizda saqlanmaydi.",
-      "secureCash": "To'lov buyurtma yetkazilganda amalga oshiriladi.",
+      "secureCash": "To'lov naqd pul bilan qabul qilinadi.",
       "placeAndPay": "Buyurtma berish va to'lash",
       "redirecting": "To'lov sahifasiga o'tilmoqda…",
       "startFailed": "Buyurtma yaratildi, lekin to'lov sahifasini ochib bo'lmadi. Buyurtma sahifasidan qayta urinib ko'ring.",
@@ -1041,7 +1047,7 @@
       "pickupAt": "Olib ketish joyi",
       "chooseStoreError": "Olib ketish uchun do'konni tanlang."
     },
-    "cashAtStore": "Do'konda to'lov (naqd yoki karta)",
+    "cashAtStore": "Naqd",
     "legalConsent": "Buyurtma berish orqali siz <terms>Ommaviy oferta</terms> va <privacy>Maxfiylik siyosati</privacy> shartlarini qabul qilasiz.",
     "deliveryQuote": {
       "tashkent": "Toshkent shahri",
@@ -1419,7 +1425,8 @@
       "useStreet": "Ko'chani qo'yish: {street}",
       "outsideArea": "Bu nuqta yetkazib berish shaharlarimizdan uzoq ({km} km). Manzilni tekshiring.",
       "detecting": "Manzil aniqlanmoqda…",
-      "detailsLine": "{entrance}-podyezd, {floor}-qavat, {unit}-xonadon"
+      "detailsLine": "{entrance}-podyezd, {floor}-qavat, {unit}-xonadon",
+      "detailsToggle": "Podyezd, qavat, xonadon, mo'ljal (ixtiyoriy)"
     },
     "notifications": "Bildirishnomalar",
     "chat": "Yordam chat",
@@ -3672,14 +3679,14 @@
   },
   "signupGift": {
     "eyebrow": "Ochilish sovg'asi",
-    "title": "Birinchi {limit} mijozga {coins} coin sovg'a!",
-    "titleUnlimited": "Ro'yxatdan o'ting — {coins} coin sovg'a!",
-    "text": "Telegram orqali bir daqiqada ro'yxatdan o'ting — coinlar darhol hisobingizga tushadi. 1 coin = 1 so'm: xaridda buyurtmaning {percent}% gacha qismini coin bilan to'lang.",
+    "title": "Birinchi buyurtma bergan {limit} mijozga {coins} coin!",
+    "titleUnlimited": "Birinchi buyurtmangizga {coins} coin sovg'a!",
+    "text": "Birinchi buyurtmangiz tasdiqlangach coinlar hisobingizga tushadi. 1 coin = 1 so'm.",
     "left": "{count} ta joy qoldi",
     "progressLabel": "Berilgan sovg'alar",
-    "cta": "Sovg'ani olish",
-    "compactTitle": "Ro'yxatdan o'ting — {coins} coin sovg'a",
-    "compactText": "Faqat birinchi {limit} mijoz uchun. 1 coin = 1 so'm.",
+    "cta": "Xaridni boshlash",
+    "compactTitle": "Birinchi buyurtmaga {coins} coin sovg'a",
+    "compactText": "Faqat birinchi {limit} xaridor uchun. 1 coin = 1 so'm.",
     "compactTextUnlimited": "1 coin = 1 so'm — keyingi xaridda ishlating.",
     "mineTitle": "Sizga {coins} coin sovg'a qilindi — siz №{number} mijozsiz!",
     "mineText": "Xaridda buyurtmaning {percent}% gacha qismini coin bilan to'lashingiz mumkin.",

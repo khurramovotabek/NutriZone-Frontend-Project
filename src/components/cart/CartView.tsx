@@ -93,7 +93,8 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
       }));
       const body = await res.json();
       if (res.ok && body.success) setCart(body.data);
-      else setError(body.error?.message ?? "update");
+      // a stock refusal only means "no more units" -- the line already shows how many are left; never blank the cart
+      else if (body.error?.code !== "OUT_OF_STOCK") setError(body.error?.message ?? "update");
     } finally {
       setPendingLineId(null);
     }
@@ -190,6 +191,8 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
     );
   }
 
+  const isShort = (i: (typeof activeItems)[number]) => typeof i.available_quantity === "number" && i.quantity > i.available_quantity;
+  const hasShortage = activeItems.some(isShort);
   const pricedItems = activeItems.filter((i) => i.price_reference !== null);
   const currency = pricedItems[0]?.price_reference?.currency;
   const allSameCurrency = pricedItems.length > 0 && pricedItems.every((i) => i.price_reference!.currency === currency);
@@ -236,7 +239,7 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
             const cached = getCachedVariantDisplay(item.product_variant_id);
             return (
               <li key={item.id}>
-                <Card className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <Card className={`flex flex-col gap-4 sm:flex-row sm:items-center ${isShort(item) ? "border-red-300 bg-red-50/40 dark:border-red-500/40 dark:bg-red-500/5" : ""}`}>
                   <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-2">
                     <ProductMediaImage
                       src={cached?.image ?? null}
@@ -251,6 +254,16 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
                   <div className="flex-1">
                     <p className="line-clamp-1 text-sm font-semibold text-ink">{cached?.productName ?? t("variant", { id: item.product_variant_id.slice(0, 8) })}</p>
                     {cached?.variantLabel && <p className="text-xs text-ink-soft">{cached.variantLabel}</p>}
+                    {isShort(item) && (
+                      <p role="alert" className="mt-1 flex flex-wrap items-center gap-x-2 text-xs font-semibold text-red-600 dark:text-red-400">
+                        {item.available_quantity === 0 ? t("lineSoldOut") : t("lineOnlyLeft", { count: item.available_quantity ?? 0 })}
+                        {(item.available_quantity ?? 0) > 0 && (
+                          <button type="button" onClick={() => updateQuantity(item.id, item.available_quantity!)} disabled={pendingLineId === item.id} className="text-primary underline hover:no-underline">
+                            {t("lineReduceTo", { count: item.available_quantity ?? 0 })}
+                          </button>
+                        )}
+                      </p>
+                    )}
                     {priced ? (
                       <p className="mt-1 text-sm text-ink-muted">
                         {formatAmount(Number(item.price_reference!.unit_amount))} {item.price_reference!.currency} {t("each")}
@@ -312,7 +325,7 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
                       </span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        disabled={pendingLineId === item.id}
+                        disabled={pendingLineId === item.id || (typeof item.available_quantity === "number" && item.quantity >= item.available_quantity)}
                         aria-label={t("increase")}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-muted transition-all hover:text-primary disabled:opacity-40"
                       >
@@ -374,6 +387,11 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
             {!authenticated && estimatedTotal !== null && <OrderCoinEarn amount={estimatedTotal} currency={estimateCurrency} />}
             <DeliveryRatesNote className="mt-3" />
 
+            {hasShortage ? (
+              <p role="alert" className="mt-5 rounded-xl border border-red-300 bg-red-50 p-3 text-sm font-medium text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">
+                {t("shortageBlock")}
+              </p>
+            ) : (
             <Link href={authenticated ? "/checkout" : "/login?next=/checkout"} className="mt-5 block">
               <Button variant="primary" className="w-full">
                 {authenticated ? (
@@ -389,6 +407,7 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
                 )}
               </Button>
             </Link>
+            )}
           </Card>
         </div>
       </div>
@@ -406,12 +425,16 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
                 </p>
               </div>
             )}
+            {hasShortage ? (
+              <p className="min-w-0 flex-1 text-xs font-semibold text-red-600 dark:text-red-400">{t("shortageShort")}</p>
+            ) : (
             <Link href={authenticated ? "/checkout" : "/login?next=/checkout"} className="min-w-0 flex-1">
               <Button variant="primary" className="w-full whitespace-nowrap">
                 {authenticated ? t("proceedToCheckout") : t("signInToCheckout")}
                 <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden="true" />
               </Button>
             </Link>
+            )}
           </div>
         </div>
       )}
