@@ -1073,7 +1073,7 @@
     "welcome": {
       "brand": "NutriZone",
       "title": "Welcome to NutriZone",
-      "subtitle": "Sign in instantly with your Telegram account, or enter the 6-digit code the bot sends you.",
+      "subtitle": "Sign in with Telegram in one tap. New here? Registration takes 30 seconds.",
       "openBotButton": "Open Telegram Bot",
       "or": "or",
       "securityHint": "Your code is only ever sent through Telegram, never displayed or logged anywhere else.",
@@ -1180,12 +1180,12 @@
       "autoHint": "You'll be signed in automatically once all 6 digits are in",
       "newCode": "Get a new code",
       "oneTapWaiting": "Waiting for your confirmation in Telegram…",
-      "oneTapWaitingHint": "Tap “✅ Sign in to the website” in the bot and come back — this page updates by itself.",
+      "oneTapWaitingHint": "Tap «✅ Sign in» in the bot — the site opens and you're in.",
       "oneTapOpen": "Telegram didn't open? Tap here",
       "oneTapReopen": "Open Telegram again",
       "oneTapExpired": "The request expired. Tap the button once more.",
       "codeToggle": "Or sign in with a code",
-      "codeHow": "In the bot tap “🔑 Get a code for the website” and type the 6-digit code here.",
+      "codeHow": "In the bot tap “🔑 Login code” and type the 6-digit code here.",
       "getCode": "Get a code from the bot"
     }
   },
@@ -2660,7 +2660,8 @@
         "adjustment": "Balance adjustment",
         "spend": "Paid at checkout",
         "reversal": "Reward reversed",
-        "expiry": "Expired"
+        "expiry": "Expired",
+        "bonus": "Gift coins"
       },
       "filter": {
         "all": "All",

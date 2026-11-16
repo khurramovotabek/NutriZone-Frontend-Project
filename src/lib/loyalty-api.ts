@@ -72,7 +72,7 @@ export interface LoyaltyRate {
 
 export interface WalletTransaction {
   id: string;
-  kind: "earn" | "referral" | "refund" | "adjustment" | "spend" | "reversal" | "expiry";
+  kind: "earn" | "referral" | "refund" | "adjustment" | "bonus" | "spend" | "reversal" | "expiry";
   amount: number;
   balance_after: number;
   order_id: string | null;

@@ -22,7 +22,7 @@ async function fetchPage(page: number, filter: Filter): Promise<Page | null> {
   }
 }
 
-const KIND_ICON = { earn: ArrowDownLeft, referral: Gift, refund: RotateCcw, adjustment: Sparkles, spend: ShoppingCart, reversal: Undo2, expiry: Hourglass } as const;
+const KIND_ICON = { earn: ArrowDownLeft, referral: Gift, refund: RotateCcw, adjustment: Sparkles, bonus: Gift, spend: ShoppingCart, reversal: Undo2, expiry: Hourglass } as const;
 
 /**
  * Wallet ledger. Full mode: All / Received / Spent filtered by the API (so

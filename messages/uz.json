@@ -1073,7 +1073,7 @@
     "welcome": {
       "brand": "NutriZone",
       "title": "NutriZone'ga xush kelibsiz",
-      "subtitle": "Telegram hisobingiz orqali bir zumda kiring yoki bot yuborgan 6 xonali kodni kiriting.",
+      "subtitle": "Telegram orqali bir tugma bilan kiring. Yangi bo'lsangiz — ro'yxatdan o'tish 30 soniya.",
       "openBotButton": "Telegram botni ochish",
       "or": "yoki",
       "securityHint": "Kodingiz faqat Telegram orqali yuboriladi va hech qayerda ko'rsatilmaydi yoki saqlanmaydi.",
@@ -1180,12 +1180,12 @@
       "autoHint": "6 ta raqam kiritilgach, avtomatik kirasiz",
       "newCode": "Yangi kod olish",
       "oneTapWaiting": "Telegramda tasdiqlashingizni kutyapmiz…",
-      "oneTapWaitingHint": "Botdagi «✅ Saytga kirish» tugmasini bosing va shu sahifaga qayting — u o'zi yangilanadi.",
+      "oneTapWaitingHint": "Botdagi «✅ Saytga kirish» tugmasini bosing — sayt ochiladi va siz kirasiz.",
       "oneTapOpen": "Telegram ochilmadimi? Shu yerni bosing",
       "oneTapReopen": "Telegramni qayta ochish",
       "oneTapExpired": "So'rov muddati tugadi. Tugmani yana bir bor bosing.",
       "codeToggle": "Yoki kod bilan kirish",
-      "codeHow": "Botda «🔑 Sayt uchun kod olish» tugmasini bosing va 6 xonali kodni shu yerga yozing.",
+      "codeHow": "Botda «🔑 Kirish kodi» tugmasini bosing va 6 xonali kodni shu yerga yozing.",
       "getCode": "Botdan kod olish"
     }
   },
@@ -2660,7 +2660,8 @@
         "adjustment": "Balans tuzatildi",
         "spend": "Xaridda to'landi",
         "reversal": "Coin qaytarib olindi",
-        "expiry": "Muddati tugadi"
+        "expiry": "Muddati tugadi",
+        "bonus": "Sovg'a coinlari"
       },
       "filter": {
         "all": "Barchasi",

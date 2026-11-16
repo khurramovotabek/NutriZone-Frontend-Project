@@ -236,16 +236,6 @@ export default function LoginCodeForm({ redirectTo }: { redirectTo: string }) {
         />
       )}
 
-      {/* how it works */}
-      <ol className="mb-5 space-y-2">
-        {(["step1", "step2", "step3"] as const).map((key, i) => (
-          <li key={key} className="flex items-center gap-3 text-[13px] text-ink-muted">
-            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${i === 2 && code.length > 0 ? "bg-primary text-primary-contrast" : "bg-primary-soft text-primary"}`}>{i + 1}</span>
-            {tPage(key)}
-          </li>
-        ))}
-      </ol>
-
       {TELEGRAM_BOT_USERNAME && (
         <button
           type="button"
