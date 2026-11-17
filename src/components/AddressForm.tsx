@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { LoaderCircle, MapPinCheck, TriangleAlert, Wand2 } from "lucide-react";
 import type { Address, AddressDetails, AddressTypeValue, CoordinateSource, District, Region, RegionCity } from "@/lib/geo-api";
 import type { LocateResult } from "@/lib/geo-locate";
+import { streetLineFrom } from "@/lib/street-line";
 import type { PickMeta } from "@/components/LocationPicker";
 import { Button, Card } from "@/components/ui";
 import Combobox from "@/components/Combobox";
@@ -20,6 +21,13 @@ const LocationPicker = dynamic(() => import("@/components/LocationPicker"), {
 const INPUT_CLASS = "nz-glass-input w-full rounded-lg px-4 py-2.5";
 const DETAIL_KEYS = ["building_name", "entrance", "floor", "unit", "entrance_code", "delivery_instructions"] as const;
 type Point = { latitude: number; longitude: number; source: CoordinateSource; accuracy: number | null };
+
+/** An address typed by a shopper who isn't signed in: nothing is saved until the guest order is placed. */
+export type AddressDraft = {
+  countryId: string; regionId: string; cityId: string; districtId: string | null; line1: string;
+  metadata: Record<string, string>; latitude: number | null; longitude: number | null; source: string; accuracy: number | null;
+};
+export type AddressPlace = { regionId: string; cityId: string; lat: number | null; lng: number | null };
 
 /**
  * The delivery-location form -- Region → City → District → street → exact point → courier details -- shared by the
@@ -40,7 +48,16 @@ export default function AddressForm({
   onCancel,
   bare = false,
   saveRef,
+  draftRef,
+  onPlaceChange,
+  compact = false,
 }: {
+  /** Guest checkout: no account to save to -- the page reads the typed address through this (null + an error shown when incomplete). */
+  draftRef?: React.MutableRefObject<(() => AddressDraft | null) | null>;
+  /** Region / city / map point changed -- the checkout re-quotes delivery. */
+  onPlaceChange?: (place: AddressPlace) => void;
+  /** Checkout look: "locate me" on the map, the detected place as one line, courier details inline. */
+  compact?: boolean;
   /** Lets a parent (checkout's "Continue") save this form without its own button: resolves to the saved address, or null if invalid / failed. */
   saveRef?: React.MutableRefObject<(() => Promise<Address | null>) | null>;
   mode: "create" | "edit";
@@ -91,6 +108,7 @@ export default function AddressForm({
 
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [placeOpen, setPlaceOpen] = useState(false);
   const autoSelectedSingleRegion = useRef(false);
 
   useEffect(() => {
@@ -164,13 +182,14 @@ export default function AddressForm({
             setCityId(r.city.id);
             setDistrictId(r.district?.id ?? "");
           }
-          const street = (r.street || "").trim();
+          const street = streetLineFrom(r);
           const current = line1Ref.current.trim();
           if (street && !current) {
             setLine1(street);
             setStreetSuggestion(null);
           } else {
-            setStreetSuggestion(street && current.toLowerCase() !== street.toLowerCase() ? street : null);
+            // only a real street is worth offering over what the customer typed (not a mahalla guess)
+            setStreetSuggestion(r.street?.trim() && current.toLowerCase() !== street.toLowerCase() ? street : null);
           }
         })
         .catch(() => undefined)
@@ -281,15 +300,49 @@ export default function AddressForm({
     };
   });
 
+  useEffect(() => {
+    onPlaceChange?.({ regionId, cityId, lat: coordinate?.latitude ?? null, lng: coordinate?.longitude ?? null });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regionId, cityId, coordinate?.latitude, coordinate?.longitude]);
+
+  function draft(): AddressDraft | null {
+    const region = regions.find((r) => r.id === regionId);
+    if (!regionId || !cityId || !region) {
+      setFormError(coordinate ? t("draftPlaceMissing") : t("draftLocateFirst"));
+      setPlaceOpen(true);
+      return null;
+    }
+    if (!line1.trim()) {
+      setFormError(t("draftStreetMissing"));
+      return null;
+    }
+    setFormError(null);
+    return {
+      countryId: region.country_id, regionId, cityId, districtId: districtId || null, line1: line1.trim(),
+      metadata: Object.fromEntries(DETAIL_KEYS.map((k) => [k, (details[k] ?? "").trim()]).filter(([, v]) => v)),
+      latitude: coordinate?.latitude ?? null, longitude: coordinate?.longitude ?? null, source: coordinate?.source ?? "map_pin", accuracy: coordinate?.accuracy ?? null,
+    };
+  }
+
+  useEffect(() => {
+    if (!draftRef) return;
+    draftRef.current = draft;
+    return () => {
+      draftRef.current = null;
+    };
+  });
+
   const regionOptions = regions.map((r) => ({ value: r.id, label: r.name }));
   const cityOptions = cities.map((c) => ({ value: c.id, label: c.name }));
   const districtOptions = districts.map((d) => ({ value: d.id, label: d.name }));
   const detectedPlace = detected?.in_service_area ? [detected.district?.name, detected.city?.name].filter(Boolean).join(", ") : "";
+  // checkout: once the map point found the region / city, they collapse into one confirmed line (tap to change)
+  const placeCollapsed = compact && !placeOpen && !!detectedPlace && !!regionId && !!cityId;
 
   const form = (
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* checkout keeps to what the courier needs; the type (home/work/...) is set in the address book */}
-      {!saveRef && (
+      {!saveRef && !draftRef && (
         <div>
           <label className="mb-1.5 block text-sm font-medium text-ink-muted">{t("addressType")}</label>
           <AddressTypePicker value={addressType} onChange={setAddressType} disabled={submitting} />
@@ -316,8 +369,9 @@ export default function AddressForm({
           onLocateDenied={() => setLocationError(t("geolocationPermissionDenied"))}
           onLocateUnavailable={() => setLocationError(t("geolocationUnavailable"))}
           onLocateTimeout={() => setLocationError(t("geolocationTimeout"))}
-          heightClassName="h-72"
+          heightClassName={compact ? "h-60 sm:h-72" : "h-72"}
           shareLabel={line1 || undefined}
+          compact={compact}
         />
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
           {coordinate && (
@@ -328,7 +382,7 @@ export default function AddressForm({
           {detecting && (
             <span className="inline-flex items-center gap-1 text-ink-soft"><LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />{t("detecting")}</span>
           )}
-          {!detecting && detectedPlace && (
+          {!detecting && detectedPlace && !compact && (
             <span className="inline-flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400"><MapPinCheck className="h-3.5 w-3.5" aria-hidden="true" />{t("autoFilled", { place: detectedPlace })}</span>
           )}
         </div>
@@ -340,6 +394,13 @@ export default function AddressForm({
         )}
       </div>
 
+      {placeCollapsed ? (
+        <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-3">
+          <MapPinCheck className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+          <p className="min-w-0 flex-1 text-sm font-semibold text-ink">{detectedPlace}</p>
+          <button type="button" onClick={() => setPlaceOpen(true)} className="shrink-0 text-xs font-semibold text-primary">{t("changePlace")}</button>
+        </div>
+      ) : (
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="address-form-region" className="mb-1 block text-sm font-medium text-ink-muted">{t("region")}</label>
@@ -358,6 +419,7 @@ export default function AddressForm({
           </div>
         )}
       </div>
+      )}
 
       <div>
         <label htmlFor="address-form-line1" className="mb-1 block text-sm font-medium text-ink-muted">{t("addressLine")}</label>
@@ -369,15 +431,25 @@ export default function AddressForm({
         )}
       </div>
 
+      {compact && (
+        <div className="grid grid-cols-3 gap-2.5">
+          {(["entrance", "floor", "unit"] as const).map((k) => (
+            <label key={k} className="block">
+              <span className="mb-1 block text-xs font-medium text-ink-muted">{t(k)}</span>
+              <input type="text" value={details[k] ?? ""} onChange={(e) => setDetail(k, e.target.value)} disabled={submitting} className={INPUT_CLASS} maxLength={16} inputMode="numeric" />
+            </label>
+          ))}
+        </div>
+      )}
       {/* optional courier details: folded away until the customer wants them (open when editing a filled address) */}
       <details className="group rounded-2xl border border-border" open={detailsInitiallyOpen || undefined}>
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
-          <span>{t("detailsToggle")}</span>
+          <span>{t(compact ? "detailsToggleMore" : "detailsToggle")}</span>
           <span aria-hidden="true" className="text-lg leading-none text-primary transition-transform group-open:rotate-45">+</span>
         </summary>
         <div className="space-y-3 px-4 pb-4">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {(["entrance", "floor", "unit", "entrance_code"] as const).map((k) => (
+          {((compact ? ["entrance_code"] : ["entrance", "floor", "unit", "entrance_code"]) as ("entrance" | "floor" | "unit" | "entrance_code")[]).map((k) => (
             <label key={k} className="block">
               <span className="mb-1 block text-xs font-medium text-ink-muted">{t(({ entrance: "entrance", floor: "floor", unit: "unit", entrance_code: "entranceCode" } as const)[k])}</span>
               <input type="text" value={details[k] ?? ""} onChange={(e) => setDetail(k, e.target.value)} disabled={submitting} className={INPUT_CLASS} maxLength={k === "entrance_code" ? 32 : 16} inputMode={k === "entrance_code" ? "text" : "numeric"} />
@@ -398,9 +470,9 @@ export default function AddressForm({
       {formError && <p role="alert" className="text-sm text-red-600 dark:text-red-400">{formError}</p>}
 
       {/* inside checkout (saveRef) the page's own "Continue" saves the address -- no second button to miss */}
-      {(!saveRef || onCancel) && (
+      {((!saveRef && !draftRef) || onCancel) && (
         <div className="flex gap-2">
-          {!saveRef && <Button type="submit" disabled={!canSubmit} variant="primary">{submitting ? t("saving") : t("save")}</Button>}
+          {!saveRef && !draftRef && <Button type="submit" disabled={!canSubmit} variant="primary">{submitting ? t("saving") : t("save")}</Button>}
           {onCancel && <Button type="button" variant="ghost" onClick={onCancel} disabled={submitting}>{t("cancel")}</Button>}
         </div>
       )}

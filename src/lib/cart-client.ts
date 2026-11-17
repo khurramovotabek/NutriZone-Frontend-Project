@@ -8,7 +8,7 @@
  * with no cart cookie yet two parallel adds even created two carts (the first item was lost). Every cart write from
  * the storefront goes through this queue, so they reach the server in order.
  */
-import { emitCartUpdated } from "@/lib/cart-events";
+import { emitCartAdded, emitCartUpdated } from "@/lib/cart-events";
 
 export interface CartLine {
   id: string;
@@ -46,6 +46,7 @@ export function addToCart(variantId: string, quantity = 1): Promise<{ res: Respo
     const res = await post("/api/cart", { product_variant_id: variantId, quantity });
     const body = await json(res);
     const line = body.data?.items?.find((i) => i.product_variant_id === variantId && i.status !== "removed") ?? null;
+    if (res.ok && body.success) emitCartAdded();
     return { res, body, line };
   });
 }

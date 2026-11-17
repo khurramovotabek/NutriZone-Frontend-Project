@@ -117,6 +117,9 @@ export interface LocationPickerProps {
   tools?: boolean;
   /** Label for the share menu (e.g. the address line). */
   shareLabel?: string;
+  /** Checkout: the "locate me" button sits ON the map and fills the point straight away (phones too, no fullscreen
+   *  detour); search / paste-a-link fold behind a small chip. */
+  compact?: boolean;
 }
 
 const TASHKENT_CENTER: [number, number] = [41.2995, 69.2401];
@@ -124,7 +127,7 @@ const TASHKENT_CENTER: [number, number] = [41.2995, 69.2401];
 export default function LocationPicker({
   latitude, longitude, onChange, hintText, emptyText, coordinatesText, accuracyText, locateLabel, locatingLabel,
   onLocateUnsupported, onLocateDenied, onLocateUnavailable, onLocateTimeout,
-  defaultCenter = TASHKENT_CENTER, defaultZoom = 11, heightClassName = "h-72", tools = true, shareLabel,
+  defaultCenter = TASHKENT_CENTER, defaultZoom = 11, heightClassName = "h-72", tools = true, shareLabel, compact = false,
 }: LocationPickerProps) {
   const t = useTranslations("locationPicker");
   const locale = useLocale();
@@ -143,6 +146,7 @@ export default function LocationPicker({
   const [link, setLink] = useState("");
   const [linkError, setLinkError] = useState(false);
   const [linkBusy, setLinkBusy] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(!compact);
   const mapRef = useRef<L.Map | null>(null);
   const firstFixRef = useRef(true);
   // only the last GPS fix this picker produced shows an accuracy circle -- a click / drag / search has none
@@ -217,7 +221,7 @@ export default function LocationPicker({
 
   function handleLocate() {
     setHelp(null);
-    if (touch) {
+    if (touch && !compact) {
       setFullscreen({ autoLocate: true }); // see it, correct it, confirm it -- all on the big map
       return;
     }
@@ -255,15 +259,15 @@ export default function LocationPicker({
 
   return (
     <div className="space-y-2">
-      <button
+      {!compact && <button
         type="button" onClick={handleLocate} aria-live="polite" title={locateLabel}
         className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-primary/30 bg-primary-soft px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white active:scale-[0.99]"
       >
         {locating ? <LoaderCircle className="h-4.5 w-4.5 animate-spin" aria-hidden="true" /> : <LocateFixed className="h-4.5 w-4.5" aria-hidden="true" />}
         <span className="truncate">{locating ? (accuracy != null ? t("improving", { meters: Math.round(accuracy) }) : locatingLabel) : t("locateCta")}</span>
         {locating && <X className="h-4 w-4 opacity-70" aria-label={t("stop")} />}
-      </button>
-      {tools && (
+      </button>}
+      {tools && toolsOpen && (
         <div className="relative flex gap-2">
           <label className="nz-glass-input flex min-w-0 flex-1 items-center gap-2 rounded-xl px-3 py-2">
             {searching ? <LoaderCircle className="h-4 w-4 shrink-0 animate-spin text-ink-soft" aria-hidden="true" /> : <Search className="h-4 w-4 shrink-0 text-ink-soft" aria-hidden="true" />}
@@ -291,7 +295,7 @@ export default function LocationPicker({
           )}
         </div>
       )}
-      {tools && linkOpen && (
+      {tools && toolsOpen && linkOpen && (
         <div className="space-y-1">
           <div className="flex gap-2">
             <input
@@ -330,13 +334,37 @@ export default function LocationPicker({
           )}
         </MapContainer>
 
+        {compact && (
+          <>
+            <button
+              type="button" onClick={(e) => { e.stopPropagation(); if (locating) gpsLocate.stop(); else handleLocate(); }} aria-live="polite" title={locateLabel}
+              className="absolute bottom-3 left-1/2 z-[1100] flex h-11 max-w-[calc(100%-1.5rem)] -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-primary px-5 text-sm font-bold text-white shadow-[0_10px_30px_-8px_rgba(37,99,235,0.7)] transition active:scale-[0.97]"
+            >
+              {locating ? <LoaderCircle className="h-4.5 w-4.5 animate-spin" aria-hidden="true" /> : <LocateFixed className="h-4.5 w-4.5" aria-hidden="true" />}
+              <span className="truncate">{locating ? (accuracy != null ? t("improving", { meters: Math.round(accuracy) }) : locatingLabel) : hasLocation ? t("locateAgain") : t("locateCta")}</span>
+            </button>
+            {tools && (
+              <button type="button" onClick={(e) => { e.stopPropagation(); setToolsOpen((v) => !v); }} className={`${chip} absolute left-3 top-3 z-[1100]`} aria-expanded={toolsOpen} aria-label={t("searchPlaceholder")}>
+                <Search className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>{t("searchShort")}</span>
+              </button>
+            )}
+          </>
+        )}
         {touch ? (
+          compact ? (
+            <button type="button" onClick={() => setFullscreen({ autoLocate: false })} className={`${chip} absolute right-3 top-3 z-[1100]`} aria-label={t("openFullscreen")}>
+              <Expand className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>{hasLocation ? t("adjustShort") : t("mapShort")}</span>
+            </button>
+          ) : (
           <button type="button" onClick={() => setFullscreen({ autoLocate: false })} className="absolute inset-0 z-[900] flex items-end justify-center bg-transparent pb-3" aria-label={t("openFullscreen")}>
             <span className={`${chip} px-4 py-2.5 text-sm`}>
               <Expand className="h-4 w-4" aria-hidden="true" />
               {hasLocation ? t("adjustOnMap") : t("openFullscreen")}
             </span>
           </button>
+          )
         ) : (
           <>
             {!hasLocation && (

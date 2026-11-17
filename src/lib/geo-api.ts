@@ -28,10 +28,11 @@ async function siteLanguage(): Promise<string> {
   }
 }
 
-async function geoFetch<T>(path: string, accessToken: string, init: RequestInit = {}): Promise<T> {
+async function geoFetch<T>(path: string, accessToken: string | null, init: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json", Authorization: `Bearer ${accessToken}`, "Accept-Language": await siteLanguage(), ...(init.headers as Record<string, string>),
+    "Content-Type": "application/json", "Accept-Language": await siteLanguage(), ...(init.headers as Record<string, string>),
   };
+  if (accessToken) headers.Authorization = `Bearer ${accessToken}`; // the region / city / district lists are public (guest checkout)
   const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers, cache: "no-store" });
 
   // Confirmed via live testing against the real backend: a 204
@@ -76,7 +77,7 @@ export interface CityAncestors {
  * one call per city -- acceptable at this project's current scale
  * (a small, fixed set of served cities), not a high-traffic path.
  */
-export async function listCities(accessToken: string): Promise<City[]> {
+export async function listCities(accessToken: string | null): Promise<City[]> {
   const rawCities = await geoFetch<RawCity[]>("/api/v1/geo/cities?page_size=200", accessToken, { method: "GET" });
   const enriched = await Promise.all(
     rawCities.map(async (city) => {
@@ -94,7 +95,7 @@ export interface Country {
 }
 
 /** Real, existing `GET /countries` -- AllowAny, returns every active country. */
-export async function listCountries(accessToken: string): Promise<Country[]> {
+export async function listCountries(accessToken: string | null): Promise<Country[]> {
   return geoFetch<Country[]>("/api/v1/geo/countries", accessToken, { method: "GET" });
 }
 
@@ -114,11 +115,11 @@ export interface District {
 }
 
 /** `GET /regions/{id}/districts` -- the region's active districts (tumanlar), in the site language. */
-export async function listDistricts(accessToken: string, regionId: string): Promise<District[]> {
+export async function listDistricts(accessToken: string | null, regionId: string): Promise<District[]> {
   return geoFetch<District[]>(`/api/v1/geo/regions/${regionId}/districts`, accessToken, { method: "GET" });
 }
 
-export async function listRegions(accessToken: string, countryId: string): Promise<Region[]> {
+export async function listRegions(accessToken: string | null, countryId: string): Promise<Region[]> {
   return geoFetch<Region[]>(`/api/v1/geo/countries/${countryId}/regions`, accessToken, { method: "GET" });
 }
 
@@ -140,7 +141,7 @@ export interface RegionCity {
  * real country_id (see `Region` above), so a caller never needs to
  * resolve it a second time via the per-city ancestors N+1 endpoint.
  */
-export async function listCitiesByRegion(accessToken: string, regionId: string): Promise<RegionCity[]> {
+export async function listCitiesByRegion(accessToken: string | null, regionId: string): Promise<RegionCity[]> {
   const query = new URLSearchParams({ "filter[region_id]": regionId, page_size: "200" });
   const rawCities = await geoFetch<RawCity[]>(`/api/v1/geo/cities?${query.toString()}`, accessToken, { method: "GET" });
   return rawCities.map((c) => ({ id: c.id, name: c.name, region_id: c.region_id }));
@@ -153,7 +154,7 @@ export async function listCitiesByRegion(accessToken: string, regionId: string):
  * real Database Blueprint hierarchy), so the Region dropdown can be
  * correctly pre-selected instead of defaulting to nothing.
  */
-export async function getCityAncestors(accessToken: string, cityId: string): Promise<CityAncestors> {
+export async function getCityAncestors(accessToken: string | null, cityId: string): Promise<CityAncestors> {
   return geoFetch<CityAncestors>(`/api/v1/geo/cities/${cityId}/ancestors`, accessToken, { method: "GET" });
 }
 

@@ -392,21 +392,20 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
                 {t("shortageBlock")}
               </p>
             ) : (
-            <Link href={authenticated ? "/checkout" : "/login?next=/checkout"} className="mt-5 block">
+            <>
+            <Link href="/checkout" className="mt-5 block">
               <Button variant="primary" className="w-full">
-                {authenticated ? (
-                  <>
-                    {t("proceedToCheckout")}
-                    <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
-                    {t("signInToCheckout")}
-                  </>
-                )}
+                {t("proceedToCheckout")}
+                <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
               </Button>
             </Link>
+            {!authenticated && (
+              <Link href="/login?next=/checkout" className="mt-2.5 flex items-center justify-center gap-1.5 text-xs font-semibold text-primary hover:underline">
+                <LogIn className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+                {t("signInForCoins")}
+              </Link>
+            )}
+            </>
             )}
           </Card>
         </div>
@@ -428,9 +427,9 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
             {hasShortage ? (
               <p className="min-w-0 flex-1 text-xs font-semibold text-red-600 dark:text-red-400">{t("shortageShort")}</p>
             ) : (
-            <Link href={authenticated ? "/checkout" : "/login?next=/checkout"} className="min-w-0 flex-1">
+            <Link href="/checkout" className="min-w-0 flex-1">
               <Button variant="primary" className="w-full whitespace-nowrap">
-                {authenticated ? t("proceedToCheckout") : t("signInToCheckout")}
+                {t("proceedToCheckout")}
                 <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden="true" />
               </Button>
             </Link>

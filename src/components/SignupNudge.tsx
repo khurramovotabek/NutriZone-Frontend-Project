@@ -6,9 +6,11 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Gift, PackageSearch, Send, X } from "lucide-react";
 import CoinIcon from "@/components/loyalty/CoinIcon";
+import { onCartAdded } from "@/lib/cart-events";
 
 const DISMISS_KEY = "nz_signup_nudge_dismissed_at";
 const VIEWS_KEY = "nz_signup_nudge_views";
+const QUIET_KEY = "nz_signup_nudge_quiet";
 const DISMISS_DAYS = 3;
 const VIEWS_BEFORE_NUDGE = 2;
 const SECONDS_BEFORE_NUDGE = 40;
@@ -47,6 +49,7 @@ export default function SignupNudge() {
     if (dismissedAt && Date.now() - dismissedAt < DISMISS_DAYS * 86400_000) return;
     if (typeof window !== "undefined" && (window as unknown as { Telegram?: { WebApp?: { initData?: string } } }).Telegram?.WebApp?.initData) return;
     if (QUIET_PATHS.some((p) => pathname.startsWith(p))) return;
+    if (read(QUIET_KEY, "session")) return; // something went into the cart this visit -- stay out of the way
     let views = 0;
     if (pathname.startsWith("/products/")) {
       views = Number(read(VIEWS_KEY, "session") || 0) + 1;
@@ -56,6 +59,13 @@ export default function SignupNudge() {
     const timer = setTimeout(() => setOpen(true), views >= VIEWS_BEFORE_NUDGE ? 1500 : SECONDS_BEFORE_NUDGE * 1000);
     return () => clearTimeout(timer);
   }, [pathname]);
+
+  // A product just went into the cart: the "Go to cart / Checkout" bar owns the bottom of the screen now -- never
+  // stack a sign-up card on it (signing up is offered at checkout, where it earns the cashback).
+  useEffect(() => onCartAdded(() => {
+    write(QUIET_KEY, "1", "session");
+    setOpen(false);
+  }), []);
 
   function dismiss() {
     write(DISMISS_KEY, String(Date.now()), "local");

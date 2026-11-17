@@ -865,14 +865,14 @@
     "itemCount": "({count, plural, one {# item} other {# items}})",
     "orderSummary": "Order Summary",
     "totalLabel": "Total",
-    "proceedToCheckout": "Proceed to Checkout",
+    "proceedToCheckout": "Checkout",
     "priceRetry": "Refresh price",
     "priceRetrying": "Refreshing...",
     "priceRetryFailed": "Could not refresh the price. Please try again.",
     "priceRetryNeedsLogin": "Sign in to see the price.",
     "guestPriceNote": "price confirmed at checkout",
     "estimatedTotal": "Estimated total",
-    "guestCheckoutNote": "No account needed to fill your cart. Sign in with Telegram in seconds to place your order.",
+    "guestCheckoutNote": "You can order without signing up — a name, phone and address are enough. Sign in to earn coin cashback.",
     "signInToCheckout": "Sign in to checkout",
     "crossSellTitle": "Often bought together",
     "deliveryRates": "Delivery: Tashkent city up to {tashkent}, regions from {regions}. Pickup is free.",
@@ -883,7 +883,15 @@
     "lineReduceTo": "Reduce to {count}",
     "shortageBlock": "Your cart has a sold-out item. Remove it or lower the quantity, then you can check out.",
     "shortageShort": "Remove the sold-out item",
-    "notEnoughStock": "Not enough in stock — lower the quantity or pick another option"
+    "notEnoughStock": "Not enough in stock — lower the quantity or pick another option",
+    "addedBar": {
+      "added": "Added",
+      "items": "{count} items",
+      "cart": "Cart",
+      "checkout": "Checkout",
+      "close": "Close"
+    },
+    "signInForCoins": "Sign in to order — earn coin cashback"
   },
   "checkout": {
     "title": "Checkout",
@@ -1062,7 +1070,36 @@
     "addComment": "Add a note (for the courier or operator)",
     "continueShort": "Continue",
     "stepOf": "Step {current} of {total}",
-    "recipientFor": "Recipient"
+    "recipientFor": "Recipient",
+    "fast": {
+      "subtitle": "{count} items · check out on one page",
+      "receive": "How will you get it?",
+      "contact": "Who receives it?",
+      "name": "Your name",
+      "namePlaceholder": "e.g. Alisher",
+      "phone": "Phone number",
+      "phoneHint": "Our operator will call this number to confirm the order.",
+      "guestNoAccount": "No sign-up needed — your name and number are enough.",
+      "phoneInvalid": "Enter the full number, e.g. 94 205 20 40",
+      "addressIncomplete": "Complete the address: mark the spot on the map and enter the street and house.",
+      "placeOrder": "Place order",
+      "guestBanner": "Sign in before ordering and every purchase earns coin cashback.",
+      "signIn": "Sign in",
+      "legal": "By placing the order you agree to the privacy policy and terms of use.",
+      "editCart": "Edit cart"
+    },
+    "success": {
+      "title": "Your order is placed!",
+      "number": "Order number",
+      "call": "Our operator will call {phone} shortly to confirm the order.",
+      "total": "Total",
+      "payCash": "Payment: cash or card on delivery",
+      "coinsTitle": "Earn coins on your next purchases",
+      "coinsBody": "Sign in with Telegram in one tap — cashback on every order and order tracking.",
+      "signIn": "Sign in with Telegram",
+      "continue": "Continue shopping",
+      "myOrder": "View order"
+    }
   },
   "auth": {
     "title": "Log in or sign up",
@@ -1426,7 +1463,12 @@
       "outsideArea": "This point is far from the cities we deliver to ({km} km). Please check the address.",
       "detecting": "Detecting the address…",
       "detailsLine": "entrance {entrance}, floor {floor}, apt {unit}",
-      "detailsToggle": "Entrance, floor, flat, landmark (optional)"
+      "detailsToggle": "Entrance, floor, flat, landmark (optional)",
+      "draftPlaceMissing": "Choose the region and city.",
+      "draftLocateFirst": "Tap «Use my location» on the map or choose the region and city.",
+      "draftStreetMissing": "Enter the street and house number.",
+      "changePlace": "Change",
+      "detailsToggleMore": "Door code, building, landmark (optional)"
     },
     "notifications": "Notifications",
     "chat": "Support Chat",
@@ -3370,7 +3412,7 @@
     "adjustOnMap": "Adjust on the map",
     "fullscreenTitle": "Set your address on the map",
     "back": "Back",
-    "searchShort": "Street, landmark or place",
+    "searchShort": "Search",
     "pinnedPoint": "Pinned point",
     "finding": "Finding your location…",
     "moveMapHint": "Move the map — keep the pin over your door",
@@ -3388,7 +3430,10 @@
     "locateCta": "Use my current location",
     "nearestBranch": "Nearest branch",
     "fromYou": "Distance from you",
-    "route": "Route"
+    "route": "Route",
+    "locateAgain": "Locate again",
+    "adjustShort": "Adjust",
+    "mapShort": "Map"
   },
   "storeAmenity": {
     "card_payment": "Card payment",

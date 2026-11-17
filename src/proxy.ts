@@ -19,7 +19,8 @@ import { EMBED_COOKIE, cookieAttrs } from "@/lib/cookie-policy";
  *    each language has its own indexable URL. The visitor's language cookie follows the address they opened.
  *    /uz/… is not an address of its own: it redirects (308) to the plain path and sets the Uzbek cookie.
  */
-const PROTECTED_PREFIXES = ["/account", "/profile", "/checkout", "/orders"];
+// /checkout is open: guests order with a name + phone (one-page checkout, /api/checkout/guest)
+const PROTECTED_PREFIXES = ["/account", "/profile", "/orders"];
 const GUEST_ONLY_PREFIXES = ["/login", "/verify-otp"];
 const ACCESS_COOKIE = "nz_access_token";
 const REFRESH_COOKIE = "nz_refresh_token";
@@ -96,7 +97,8 @@ export async function proxy(req: NextRequest) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("next", req.nextUrl.pathname);
     response = NextResponse.redirect(loginUrl);
-  } else if (GUEST_ONLY_PREFIXES.some((p) => pathname.startsWith(p)) && hasSession && pathname !== "/verify-otp") {
+  } else if (GUEST_ONLY_PREFIXES.some((p) => pathname.startsWith(p)) && hasSession && pathname !== "/verify-otp" && req.nextUrl.searchParams.get("claim") !== "1") {
+    // (?claim=1: a guest-order account -- name + phone typed at checkout -- signing in properly to unlock cashback)
     // An already-signed-in visitor opening /login?next=/checkout goes straight to that (safe) destination.
     const next = req.nextUrl.searchParams.get("next");
     response = NextResponse.redirect(new URL(isSafeRedirectPath(next) ? next : "/", req.url));

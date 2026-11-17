@@ -92,3 +92,10 @@ export async function getCartToken(): Promise<string | null> {
   const store = await cookies();
   return store.get(CART_TOKEN_COOKIE)?.value ?? null;
 }
+
+/** Forget the cart reference (after a guest order converted it) -- the next /api/cart makes a fresh one. */
+export async function clearCartCookies() {
+  const store = await cookies();
+  expire(store, CART_CODE_COOKIE);
+  expire(store, CART_TOKEN_COOKIE);
+}

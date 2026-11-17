@@ -6,9 +6,6 @@ import { getAccessToken } from "@/lib/session";
 export async function GET(_req: Request, { params }: { params: Promise<{ cityId: string }> }) {
   const { cityId } = await params;
   const accessToken = await getAccessToken();
-  if (!accessToken) {
-    return NextResponse.json({ success: false, error: { code: "NO_SESSION", message: "Please log in." } }, { status: 401 });
-  }
 
   try {
     const ancestors = await getCityAncestors(accessToken, cityId);

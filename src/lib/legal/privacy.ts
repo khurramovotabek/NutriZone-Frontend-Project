@@ -7,7 +7,7 @@
  */
 import type { Locale } from "@/i18n/config";
 
-export const EFFECTIVE_DATE = "2026-10-18";
+export const EFFECTIVE_DATE = "2026-11-17";
 
 export interface PolicySection {
   id: string;
@@ -39,6 +39,7 @@ const uz: PolicyText = {
       title: "1. Umumiy qoidalar",
       paragraphs: [
         "Ushbu Maxfiylik siyosati NutriZone sport ozuqalari do'konining nutrizone.uz sayti, Telegram boti va Mini App ilovasi, shuningdek filiallardagi kassalar orqali ko'rsatiladigan xizmatlarga taalluqli.",
+        "Shaxsiy ma'lumotlar operatori — «LIFENUTRITION» MCHJ (NutriZone savdo belgisi egasi). Siyosatda «biz», «NutriZone» deyilganda shu tashkilot nazarda tutiladi.",
         "Xizmatlarimizdan foydalanib, ro'yxatdan o'tib yoki buyurtma berib, siz ma'lumotlaringiz ushbu siyosatda ko'rsatilgan tartibda qayta ishlanishiga rozilik bildirasiz. Shaxsiy ma'lumotlar O'zbekiston Respublikasining «Shaxsga doir ma'lumotlar to'g'risida»gi Qonuni va boshqa amaldagi qonun hujjatlariga muvofiq qayta ishlanadi.",
       ],
     },
@@ -153,6 +154,7 @@ const ru: PolicyText = {
       title: "1. Общие положения",
       paragraphs: [
         "Настоящая Политика конфиденциальности распространяется на сайт nutrizone.uz магазина спортивного питания NutriZone, его Telegram-бот и Mini App, а также на услуги, оказываемые через кассы филиалов.",
+        "Оператор персональных данных — ООО «LIFENUTRITION» (владелец торговой марки NutriZone). Под «мы» и «NutriZone» в Политике понимается эта организация.",
         "Пользуясь нашими сервисами, регистрируясь или оформляя заказ, вы соглашаетесь на обработку данных в порядке, описанном в этой политике. Персональные данные обрабатываются в соответствии с Законом Республики Узбекистан «О персональных данных» и иным действующим законодательством.",
       ],
     },
@@ -267,6 +269,7 @@ const en: PolicyText = {
       title: "1. General",
       paragraphs: [
         "This Privacy Policy applies to the NutriZone sports nutrition store website nutrizone.uz, its Telegram bot and Mini App, and to services provided through our store tills.",
+        "The personal data controller is LIFENUTRITION LLC (owner of the NutriZone brand). \"We\" and \"NutriZone\" in this Policy refer to this company.",
         "By using our services, signing up or placing an order, you agree to your data being processed as described in this policy. Personal data is processed in accordance with the Law of the Republic of Uzbekistan “On Personal Data” and other applicable legislation.",
       ],
     },

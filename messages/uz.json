@@ -865,14 +865,14 @@
     "itemCount": "({count, plural, other {# ta mahsulot}})",
     "orderSummary": "Buyurtma xulosasi",
     "totalLabel": "Jami",
-    "proceedToCheckout": "Buyurtma berishga o'tish",
+    "proceedToCheckout": "Rasmiylashtirish",
     "priceRetry": "Narxni yangilash",
     "priceRetrying": "Yangilanmoqda...",
     "priceRetryFailed": "Narxni yangilab bo'lmadi. Qayta urinib ko'ring.",
     "priceRetryNeedsLogin": "Narxni ko'rish uchun tizimga kiring.",
     "guestPriceNote": "narx buyurtma berishda tasdiqlanadi",
     "estimatedTotal": "Taxminiy jami",
-    "guestCheckoutNote": "Savatga qo'shish uchun ro'yxatdan o'tish shart emas. Buyurtma berish uchun Telegram orqali bir zumda kiring.",
+    "guestCheckoutNote": "Ro'yxatdan o'tmasdan ham buyurtma bera olasiz — ism, telefon va manzil yetarli. Kirib buyurtma bersangiz, coins cashback qaytadi.",
     "signInToCheckout": "Kirish va buyurtma berish",
     "crossSellTitle": "Bular bilan ko'pincha olinadi",
     "deliveryRates": "Yetkazib berish: Toshkent shahri — {tashkent} gacha, viloyatlar — {regions} dan. Olib ketish — bepul.",
@@ -883,7 +883,15 @@
     "lineReduceTo": "{count} taga kamaytirish",
     "shortageBlock": "Savatda tugagan mahsulot bor. Uni olib tashlang yoki sonini kamaytiring — keyin buyurtma berishingiz mumkin.",
     "shortageShort": "Tugagan mahsulotni olib tashlang",
-    "notEnoughStock": "Omborda yetarli emas — sonini kamaytiring yoki boshqa variantni tanlang"
+    "notEnoughStock": "Omborda yetarli emas — sonini kamaytiring yoki boshqa variantni tanlang",
+    "addedBar": {
+      "added": "Qo'shildi",
+      "items": "{count} ta mahsulot",
+      "cart": "Savat",
+      "checkout": "Rasmiylashtirish",
+      "close": "Yopish"
+    },
+    "signInForCoins": "Kirib buyurtma berish — coins cashback"
   },
   "checkout": {
     "title": "Buyurtma rasmiylashtirish",
@@ -1062,7 +1070,36 @@
     "addComment": "Izoh qo'shish (kuryer yoki operator uchun)",
     "continueShort": "Davom etish",
     "stepOf": "{current}-qadam / {total}",
-    "recipientFor": "Qabul qiluvchi"
+    "recipientFor": "Qabul qiluvchi",
+    "fast": {
+      "subtitle": "{count} ta mahsulot · bir sahifada rasmiylashtiring",
+      "receive": "Qanday olasiz?",
+      "contact": "Kim qabul qiladi?",
+      "name": "Ismingiz",
+      "namePlaceholder": "Masalan: Alisher",
+      "phone": "Telefon raqamingiz",
+      "phoneHint": "Operator buyurtmani tasdiqlash uchun shu raqamga qo'ng'iroq qiladi.",
+      "guestNoAccount": "Ro'yxatdan o'tish shart emas — ism va raqamingiz yetarli.",
+      "phoneInvalid": "Telefon raqamini to'liq kiriting, masalan: 94 205 20 40",
+      "addressIncomplete": "Manzilni to'ldiring: xaritada joylashuvni belgilang va ko'cha, uy raqamini yozing.",
+      "placeOrder": "Buyurtma berish",
+      "guestBanner": "Tizimga kirib buyurtma bersangiz, har xariddan coins cashback qaytadi.",
+      "signIn": "Kirish",
+      "legal": "Buyurtma berish orqali siz maxfiylik siyosati va foydalanish shartlariga rozilik bildirasiz.",
+      "editCart": "Savatni o'zgartirish"
+    },
+    "success": {
+      "title": "Buyurtmangiz qabul qilindi!",
+      "number": "Buyurtma raqami",
+      "call": "Operatorimiz tez orada {phone} raqamiga qo'ng'iroq qilib, buyurtmani tasdiqlaydi.",
+      "total": "Jami",
+      "payCash": "To'lov: qabul qilganda naqd yoki karta orqali",
+      "coinsTitle": "Keyingi xaridlardan coins oling",
+      "coinsBody": "Telegram orqali bir bosishda kiring — har buyurtmadan cashback qaytadi va buyurtmalaringizni kuzatasiz.",
+      "signIn": "Telegram orqali kirish",
+      "continue": "Xaridni davom ettirish",
+      "myOrder": "Buyurtmani ko'rish"
+    }
   },
   "auth": {
     "title": "Kirish yoki ro'yxatdan o'tish",
@@ -1426,7 +1463,12 @@
       "outsideArea": "Bu nuqta yetkazib berish shaharlarimizdan uzoq ({km} km). Manzilni tekshiring.",
       "detecting": "Manzil aniqlanmoqda…",
       "detailsLine": "{entrance}-podyezd, {floor}-qavat, {unit}-xonadon",
-      "detailsToggle": "Podyezd, qavat, xonadon, mo'ljal (ixtiyoriy)"
+      "detailsToggle": "Podyezd, qavat, xonadon, mo'ljal (ixtiyoriy)",
+      "draftPlaceMissing": "Viloyat va shaharni tanlang.",
+      "draftLocateFirst": "Xaritada «Joylashuvimni aniqlash» tugmasini bosing yoki viloyat va shaharni tanlang.",
+      "draftStreetMissing": "Ko'cha va uy raqamini yozing.",
+      "changePlace": "O'zgartirish",
+      "detailsToggleMore": "Domofon kodi, bino nomi, mo'ljal (ixtiyoriy)"
     },
     "notifications": "Bildirishnomalar",
     "chat": "Yordam chat",
@@ -3370,7 +3412,7 @@
     "adjustOnMap": "Xaritada to'g'rilash",
     "fullscreenTitle": "Manzilni xaritada belgilash",
     "back": "Orqaga",
-    "searchShort": "Ko'cha, mo'ljal yoki joy nomi",
+    "searchShort": "Qidirish",
     "pinnedPoint": "Belgilangan nuqta",
     "finding": "Joylashuvingiz aniqlanmoqda…",
     "moveMapHint": "Xaritani suring — pin eshigingiz ustida tursin",
@@ -3388,7 +3430,10 @@
     "locateCta": "Joylashuvimni aniqlash",
     "nearestBranch": "Eng yaqin filial",
     "fromYou": "Sizdan masofa",
-    "route": "Yo'nalish"
+    "route": "Yo'nalish",
+    "locateAgain": "Qayta aniqlash",
+    "adjustShort": "Aniqlashtirish",
+    "mapShort": "Xarita"
   },
   "storeAmenity": {
     "card_payment": "Karta orqali to'lov",

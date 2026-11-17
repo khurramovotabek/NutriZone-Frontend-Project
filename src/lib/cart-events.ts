@@ -20,6 +20,20 @@ export function emitCartUpdated(): void {
   window.dispatchEvent(new Event(CART_UPDATED_EVENT));
 }
 
+const CART_ADDED_EVENT = "nutrizone:cart-added";
+
+/** A product just went into the cart (any "Add to cart" button) -- the bottom "Go to cart / Checkout" bar shows. */
+export function emitCartAdded(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(CART_ADDED_EVENT));
+}
+
+export function onCartAdded(handler: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener(CART_ADDED_EVENT, handler);
+  return () => window.removeEventListener(CART_ADDED_EVENT, handler);
+}
+
 export function onCartUpdated(handler: () => void): () => void {
   if (typeof window === "undefined") return () => {};
   window.addEventListener(CART_UPDATED_EVENT, handler);

@@ -21,6 +21,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import UserAvatar from "@/components/UserAvatar";
 import Footer from "@/components/Footer";
+import HideOnFocusRoutes from "@/components/HideOnFocusRoutes";
+import CartAddedBar from "@/components/cart/CartAddedBar";
 import NotificationBell from "@/components/notifications/NotificationBell";
 import TelegramMiniAppBridge from "@/components/TelegramMiniAppBridge";
 import MiniAppTabBar from "@/components/MiniAppTabBar";
@@ -133,12 +135,15 @@ export default async function StorefrontLayout({ children }: { children: React.R
         </div>
       </header>
       <main className="flex-1">{children}</main>
-      <Footer />
+      <HideOnFocusRoutes><Footer /></HideOnFocusRoutes>
       <ReferralCapture />
       <GlobalSearchOverlay />
-      <CompareBar />
-      <AssistantWidget />
-      {!signedIn && <SignupNudge />}
+      <HideOnFocusRoutes>
+        <CompareBar />
+        <AssistantWidget />
+        {!signedIn && <SignupNudge />}
+      </HideOnFocusRoutes>
+      <CartAddedBar />
       <MiniAppTabBar />
     </SearchOverlayProvider>
     </WishlistProvider>

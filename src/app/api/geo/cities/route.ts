@@ -4,9 +4,6 @@ import { getAccessToken } from "@/lib/session";
 
 export async function GET(req: NextRequest) {
   const accessToken = await getAccessToken();
-  if (!accessToken) {
-    return NextResponse.json({ success: false, error: { code: "NO_SESSION", message: "Please log in." } }, { status: 401 });
-  }
 
   const regionId = req.nextUrl.searchParams.get("regionId");
 

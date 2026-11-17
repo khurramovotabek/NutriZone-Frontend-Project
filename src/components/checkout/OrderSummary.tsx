@@ -99,7 +99,16 @@ export default function OrderSummary({
   showCoupon = true,
   coins = 0,
   pickup = false,
+  guest = false,
+  noCoins = false,
+  children,
 }: {
+  /** Not signed in: no coupon box (coupons are per customer) and coins are offered for signing up instead. */
+  guest?: boolean;
+  /** A guest-order account: no "you'll earn N coins" line (it wouldn't be paid). */
+  noCoins?: boolean;
+  /** Below the total (the checkout's confirm button on wide screens). */
+  children?: React.ReactNode;
   /** Picked up at a store: the delivery line reads "Pickup — free". */
   pickup?: boolean;
   preview: CheckoutPreview;
@@ -168,7 +177,7 @@ export default function OrderSummary({
 
         <DeliveryLine preview={preview} pickup={pickup} />
 
-        {showCoupon && preview.subtotal && (
+        {showCoupon && !guest && preview.subtotal && (
           <div className="pt-1">
             <CouponInput
               appliedCoupons={preview.applied_coupons}
@@ -198,12 +207,15 @@ export default function OrderSummary({
                 )}
               </span>
             </div>
-            <OrderCoinEarn
-              amount={Number(payableAfterCoins(preview.total.amount, coins))}
-              currency={preview.total.currency}
-            />
+            {!guest && !noCoins && (
+              <OrderCoinEarn
+                amount={Number(payableAfterCoins(preview.total.amount, coins))}
+                currency={preview.total.currency}
+              />
+            )}
           </>
         )}
+        {children}
 
       </div>
     </Card>

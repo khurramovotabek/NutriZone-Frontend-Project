@@ -162,6 +162,8 @@ export interface AppliedCoupon {
 }
 
 export interface CheckoutPreview {
+  /** Signed in with an account a guest order created (never verified): no coins until the owner signs in. */
+  guest_account?: boolean;
   readiness: "ready" | "not_ready" | "blocked";
   issues: CheckoutPreviewIssue[];
   items: CartItem[];
@@ -296,5 +298,66 @@ export async function priceCartItem(accessToken: string, code: string, cartToken
     cartToken,
     headers: { "Idempotency-Key": idempotencyKey },
     body: JSON.stringify(couponCode ? { coupon_code: couponCode } : {}),
+  });
+}
+
+/* ---------------------------------------------------------------- guest checkout (no sign-in) */
+
+export interface GuestPlace {
+  cityId?: string | null;
+  regionId?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+}
+
+/** Prices the guest cart server-side and quotes delivery for a place that isn't saved yet. */
+export async function getGuestCheckoutPreview(code: string, cartToken: string, opts: GuestPlace & { method?: string | null; lang?: string | null } = {}): Promise<CheckoutPreview> {
+  const q = new URLSearchParams();
+  if (opts.method) q.set("method", opts.method);
+  if (opts.cityId) q.set("city_id", opts.cityId);
+  if (opts.regionId) q.set("region_id", opts.regionId);
+  if (opts.lat != null && opts.lng != null) {
+    q.set("lat", String(opts.lat));
+    q.set("lng", String(opts.lng));
+  }
+  if (opts.lang) q.set("lang", opts.lang);
+  const qs = q.toString();
+  return cartFetch<CheckoutPreview>(`/api/v1/cart/${code}/guest-preview${qs ? `?${qs}` : ""}`, null, { method: "GET", cartToken });
+}
+
+export interface GuestCheckoutInput {
+  full_name: string;
+  phone: string;
+  fulfilment_method: "delivery" | "pickup";
+  pickup_store_id?: string;
+  address?: {
+    country_id: string;
+    city_id: string;
+    region_id?: string | null;
+    district_id?: string | null;
+    line1: string;
+    metadata?: Record<string, string>;
+    latitude?: number | null;
+    longitude?: number | null;
+    source?: string;
+    accuracy_meters?: number | null;
+  };
+  comment?: string;
+  payment_method?: string;
+  language?: string;
+  return_url?: string;
+}
+
+export interface GuestCheckoutResult extends CheckoutOrderResult {
+  total: string;
+  shipping_amount: string;
+  account: "new" | "guest" | "existing";
+  session?: { access_token: string; refresh_token: string; session_id: string; is_new_user: boolean };
+  checkout_url?: string | null;
+}
+
+export async function submitGuestCheckout(code: string, cartToken: string, input: GuestCheckoutInput, idempotencyKey: string): Promise<GuestCheckoutResult> {
+  return cartFetch<GuestCheckoutResult>(`/api/v1/cart/${code}/guest-checkout`, null, {
+    method: "POST", cartToken, headers: { "Idempotency-Key": idempotencyKey }, body: JSON.stringify(input),
   });
 }

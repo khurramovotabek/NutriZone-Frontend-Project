@@ -23,9 +23,6 @@ import { getAccessToken } from "@/lib/session";
 const DELIVERY_COUNTRY_CODE = "UZ";
 export async function GET() {
   const accessToken = await getAccessToken();
-  if (!accessToken) {
-    return NextResponse.json({ success: false, error: { code: "NO_SESSION", message: "Please log in." } }, { status: 401 });
-  }
 
   try {
     const countries = await listCountries(accessToken);
