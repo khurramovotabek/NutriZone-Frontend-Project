@@ -8,6 +8,9 @@ import { Card } from "@/components/ui";
 /** Cash on delivery: always offered when the payments service can't be reached. */
 export const CASH_FALLBACK: PaymentMethod = { key: "cash", name: "", color: "#16a34a", online: false, available: true, status: "active", test_mode: false, min_amount: null, max_amount: null, via: null };
 
+/** Not connected yet but shown (disabled) so customers see them coming; Uzcard / Humo stay hidden until live. */
+const COMING_SOON_SHOWN: PaymentMethodKey[] = ["payme", "click", "uzum"];
+
 const NAMES: Record<PaymentMethodKey, string> = { cash: "", payme: "Payme", click: "Click", uzum: "Uzum Bank", uzcard: "Uzcard", humo: "Humo" };
 
 export function methodName(m: Pick<PaymentMethod, "key" | "name">, cashLabel: string) {
@@ -28,9 +31,11 @@ export function withinLimits(m: PaymentMethod, amount: number | null): boolean {
 export default function PaymentMethodCard({ methods, value, onChange, amount, pickup = false }: { methods: PaymentMethod[]; value: PaymentMethodKey; onChange: (key: PaymentMethodKey) => void; amount: number | null; pickup?: boolean }) {
   const t = useTranslations("checkout");
   const tp = useTranslations("checkout.pay");
-  // only what the customer can actually pick -- not-yet-connected providers ("coming soon") stay off the page
+  // what the customer can pick, then the main wallets that are on their way (Payme / Click / Uzum) as greyed
+  // "coming soon" cards -- visible so shoppers know they are coming, never selectable
   const ready = methods.filter((m) => m.available);
-  const list = ready.length ? ready : [CASH_FALLBACK];
+  const soon = methods.filter((m) => !m.available && COMING_SOON_SHOWN.includes(m.key));
+  const list = [...(ready.length ? ready : [CASH_FALLBACK]), ...soon];
   const selected = list.find((m) => m.key === value);
 
   return (
