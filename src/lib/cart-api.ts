@@ -18,6 +18,8 @@
  * Both `code` and `token` must therefore be persisted together,
  * exactly like the auth tokens in `session.ts`.
  */
+import { forwardedForHeader } from "@/lib/client-ip";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 
 export interface CartItem {
@@ -322,7 +324,8 @@ export async function getGuestCheckoutPreview(code: string, cartToken: string, o
   }
   if (opts.lang) q.set("lang", opts.lang);
   const qs = q.toString();
-  return cartFetch<CheckoutPreview>(`/api/v1/cart/${code}/guest-preview${qs ? `?${qs}` : ""}`, null, { method: "GET", cartToken });
+  // the shopper's IP: the guest endpoints are rate-limited per IP and every call comes from this one server
+  return cartFetch<CheckoutPreview>(`/api/v1/cart/${code}/guest-preview${qs ? `?${qs}` : ""}`, null, { method: "GET", cartToken, headers: await forwardedForHeader() });
 }
 
 export interface GuestCheckoutInput {
@@ -358,6 +361,6 @@ export interface GuestCheckoutResult extends CheckoutOrderResult {
 
 export async function submitGuestCheckout(code: string, cartToken: string, input: GuestCheckoutInput, idempotencyKey: string): Promise<GuestCheckoutResult> {
   return cartFetch<GuestCheckoutResult>(`/api/v1/cart/${code}/guest-checkout`, null, {
-    method: "POST", cartToken, headers: { "Idempotency-Key": idempotencyKey }, body: JSON.stringify(input),
+    method: "POST", cartToken, headers: { "Idempotency-Key": idempotencyKey, ...(await forwardedForHeader()) }, body: JSON.stringify(input),
   });
 }
