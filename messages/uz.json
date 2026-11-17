@@ -837,7 +837,8 @@
     "saveChanges": "O'zgarishlarni saqlash",
     "networkError": "Nimadir xato ketdi. Internet aloqangizni tekshiring.",
     "yourReview": "Sizning sharhingiz",
-    "ratingCannotBeChanged": "Yuborilgandan keyin reytingni o'zgartirib bo'lmaydi."
+    "ratingCannotBeChanged": "Yuborilgandan keyin reytingni o'zgartirib bo'lmaydi.",
+    "storeReply": "Do'kon javobi"
   },
   "cart": {
     "title": "Sizning savatingiz",

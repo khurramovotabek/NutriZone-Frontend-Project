@@ -837,7 +837,8 @@
     "saveChanges": "Save changes",
     "networkError": "Something went wrong. Please check your connection.",
     "yourReview": "Your review",
-    "ratingCannotBeChanged": "Rating cannot be changed after submitting."
+    "ratingCannotBeChanged": "Rating cannot be changed after submitting.",
+    "storeReply": "Store reply"
   },
   "cart": {
     "title": "Your Cart",

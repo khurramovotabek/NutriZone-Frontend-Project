@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Pencil, Star } from "lucide-react";
+import { Pencil, Star, Store } from "lucide-react";
 import type { PublicReviewCard } from "@/lib/reviews-api";
 import { Badge } from "@/components/ui";
 // Same output on server and browser (Intl's "uz" data differs between Node and Chrome, which broke hydration).
@@ -82,6 +82,24 @@ export default function ReviewsList({
                   )}
                 </a>
               ))}
+            </div>
+          )}
+          {review.store_reply?.body && (
+            <div
+              className="mt-3 rounded-xl border-l-[3px] bg-primary/5 px-3.5 py-2.5"
+              // inline: the unlayered `* { border-color }` in globals.css outranks Tailwind's border-colour utilities
+              style={{ borderLeftColor: "var(--nz-primary)" }}
+            >
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                  <Store className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+                  {t("storeReply")}
+                </span>
+                {review.store_reply.created_at && (
+                  <span className="text-[11px] text-ink-soft">{formatDate(review.store_reply.created_at, locale, "long")}</span>
+                )}
+              </div>
+              <p className="mt-1 whitespace-pre-line text-sm text-ink-muted">{review.store_reply.body}</p>
             </div>
           )}
         </li>

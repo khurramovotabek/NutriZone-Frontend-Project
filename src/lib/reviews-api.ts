@@ -26,6 +26,14 @@ export interface ReviewCard {
   body: string | null;
   status: string;
   verified_purchase: boolean;
+  /** The store's public answer under the review (null when none). */
+  store_reply?: StoreReply | null;
+}
+
+/** Shown under a review as "Do'kon javobi"; who wrote it stays internal. */
+export interface StoreReply {
+  body: string;
+  created_at: string | null;
 }
 
 export interface ReviewDetail extends ReviewCard {
@@ -75,6 +83,7 @@ export interface PublicReviewCard {
   author_name: string;
   created_at: string;
   media: { id: string; media_type: string; url: string }[];
+  store_reply?: StoreReply | null;
 }
 
 /**
