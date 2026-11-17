@@ -1130,7 +1130,9 @@
       "openBotButton": "Open Telegram Bot",
       "or": "or",
       "securityHint": "Your code is only ever sent through Telegram, never displayed or logged anywhere else.",
-      "consent": "By signing in you agree to the <terms>Public Offer</terms> and our <link>Privacy Policy</link>."
+      "consent": "By signing in you agree to the <terms>Public Offer</terms> and our <link>Privacy Policy</link>.",
+      "titleBoth": "Sign in or sign up",
+      "subtitleBoth": "One button — if you're new, the account is created for you. No password, no SMS."
     },
     "loginCode": {
       "title": "Enter your code",
@@ -1223,7 +1225,7 @@
       "eyebrow": "Your account",
       "headline": "Sports nutrition — genuine, fast and rewarding",
       "lead": "Track your orders, earn coins on every purchase and level up your cashback.",
-      "stepsTitle": "How to sign in",
+      "stepsTitle": "How it works",
       "step1": "Tap “Continue with Telegram”",
       "step2": "In the bot tap “✅ Sign in to the website” (new here? register in 30 seconds)",
       "step3": "The site signs you in by itself — no code to type",
@@ -1239,7 +1241,9 @@
       "oneTapExpired": "The request expired. Tap the button once more.",
       "codeToggle": "Or sign in with a code",
       "codeHow": "In the bot tap “🔑 Login code” and type the 6-digit code here.",
-      "getCode": "Get a code from the bot"
+      "getCode": "Get a code from the bot",
+      "fromCheckout": "Your cart is kept — after signing in you continue your order right here.",
+      "claimNote": "If your Telegram number matches the one on your order, your guest orders move into your account and you start earning coins on every order."
     }
   },
   "otp": {

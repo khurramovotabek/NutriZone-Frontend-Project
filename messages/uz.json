@@ -1130,7 +1130,9 @@
       "openBotButton": "Telegram botni ochish",
       "or": "yoki",
       "securityHint": "Kodingiz faqat Telegram orqali yuboriladi va hech qayerda ko'rsatilmaydi yoki saqlanmaydi.",
-      "consent": "Kirish orqali siz <terms>Ommaviy oferta</terms> va <link>Maxfiylik siyosati</link> shartlariga rozilik bildirasiz."
+      "consent": "Kirish orqali siz <terms>Ommaviy oferta</terms> va <link>Maxfiylik siyosati</link> shartlariga rozilik bildirasiz.",
+      "titleBoth": "Kirish yoki ro'yxatdan o'tish",
+      "subtitleBoth": "Bitta tugma — yangi bo'lsangiz akkaunt o'zi ochiladi. Parol va SMS kerak emas."
     },
     "loginCode": {
       "title": "Kodni kiriting",
@@ -1223,7 +1225,7 @@
       "eyebrow": "Shaxsiy kabinet",
       "headline": "Sport ozuqasi — ishonchli, tez va foydali",
       "lead": "Buyurtmalaringizni kuzating, har xariddan coin yig'ing va darajangizni oshiring.",
-      "stepsTitle": "Qanday kiriladi",
+      "stepsTitle": "Qanday ishlaydi",
       "step1": "«Telegram orqali kirish» tugmasini bosing",
       "step2": "Botda «✅ Saytga kirish»ni bosing (yangi bo'lsangiz — 30 soniyada ro'yxatdan o'tasiz)",
       "step3": "Sayt o'zi kiradi — kod yozish shart emas",
@@ -1239,7 +1241,9 @@
       "oneTapExpired": "So'rov muddati tugadi. Tugmani yana bir bor bosing.",
       "codeToggle": "Yoki kod bilan kirish",
       "codeHow": "Botda «🔑 Kirish kodi» tugmasini bosing va 6 xonali kodni shu yerga yozing.",
-      "getCode": "Botdan kod olish"
+      "getCode": "Botdan kod olish",
+      "fromCheckout": "Savatingiz saqlanadi — kirgach buyurtmani shu yerdan davom ettirasiz.",
+      "claimNote": "Telegram'dagi raqamingiz buyurtmadagi raqam bilan bir xil bo'lsa, mehmon buyurtmalaringiz akkauntingizga o'tadi va endi har xariddan coin yig'asiz."
     }
   },
   "otp": {

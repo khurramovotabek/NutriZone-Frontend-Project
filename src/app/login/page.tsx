@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { ArrowLeft, Info, ShieldCheck, ShoppingBag, Sparkles, Zap } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import BrandMark from "@/components/BrandMark";
 import LoginCodeForm from "@/components/LoginCodeForm";
@@ -19,13 +19,16 @@ export async function generateMetadata(): Promise<Metadata> {
  * the card first with a compact brand header; the value points follow
  * underneath. Sign-in itself is Telegram-code only (see LoginCodeForm).
  */
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
-  const { next } = await searchParams;
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; claim?: string }> }) {
+  const { next, claim } = await searchParams;
   const t = await getTranslations("auth");
   const tp = await getTranslations("auth.loginPage");
   const locale = await getLocale();
   const brand = await getBrand();
   const redirectTo = next ?? "/";
+  // where the shopper came from: a guest order (?claim=1) or the checkout -- tell them nothing is lost by signing in
+  const context = claim === "1" ? { icon: Info, text: tp("claimNote") } : redirectTo.startsWith("/checkout") ? { icon: ShoppingBag, text: tp("fromCheckout") } : null;
+  const steps = [tp("step1"), tp("step2"), tp("step3")];
 
   const features = [
     { icon: ShieldCheck, title: t("features.secureTitle"), body: t("features.secureBody") },
@@ -99,12 +102,30 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <div className="nz-liquid nz-login-card relative overflow-hidden rounded-[28px] p-6 sm:p-8">
             <div className="text-center">
               <h1 id="login-title" className="text-xl font-extrabold tracking-tight sm:text-2xl">
-                {t("welcome.title")}
+                {t("welcome.titleBoth")}
               </h1>
-              <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-muted">{t("welcome.subtitle")}</p>
+              <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-muted">{t("welcome.subtitleBoth")}</p>
             </div>
+            {context && (
+              <p className="mt-5 flex items-start gap-2.5 rounded-2xl border border-sky-400/25 bg-sky-400/10 px-3.5 py-3 text-[13px] leading-snug text-ink">
+                <context.icon className="mt-0.5 h-4 w-4 shrink-0 text-sky-300" strokeWidth={2} aria-hidden="true" />
+                {context.text}
+              </p>
+            )}
             <div className="mt-6">
               <LoginCodeForm redirectTo={redirectTo} />
+            </div>
+            {/* registration and sign-in are one flow -- say so in three steps */}
+            <div className="mt-6 border-t border-white/10 pt-5">
+              <p className="text-center text-[11px] font-bold uppercase tracking-[0.16em] text-ink-soft">{tp("stepsTitle")}</p>
+              <ol className="mt-3 space-y-2.5">
+                {steps.map((text, i) => (
+                  <li key={i} className="flex items-start gap-3 text-[13px] leading-snug text-ink-muted">
+                    <span className="nz-liquid-icon flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold text-ink">{i + 1}</span>
+                    <span className="pt-0.5">{text}</span>
+                  </li>
+                ))}
+              </ol>
             </div>
             <p className="mt-6 flex items-start justify-center gap-1.5 text-center text-[11px] leading-relaxed text-ink-soft">
               <ShieldCheck className="mt-px h-3.5 w-3.5 shrink-0 text-success" strokeWidth={2} aria-hidden="true" />
