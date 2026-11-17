@@ -53,6 +53,7 @@ export default function AddressSelector({
         // bare: the checkout already wraps this in a Card -- a second card inside it left a ~230px map on phones
         <AddressForm
           bare
+          compact
           mode="create"
           saveRef={saveRef}
           onSaved={(created) => {

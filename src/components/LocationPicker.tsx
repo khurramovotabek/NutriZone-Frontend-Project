@@ -33,8 +33,9 @@ function subscribeTouch(cb: () => void) {
  * keeps the most precise fix, with its accuracy circle), search a place or street, or paste a Yandex / Google /
  * Apple / 2GIS link or "41.31, 69.27". Four map looks (map · satellite · hybrid · terrain), remembered per browser.
  * The caller learns how each point was found (`source`) and how precise a GPS fix was (`accuracy`, metres).
- * On phones the small map is a preview: tapping it -- or "use my location" -- opens LocationPickerFullscreen, where the
- * customer moves the map under a fixed pin and sees the street / house under it before confirming.
+ * On phones "use my location" sits on the map and fills the point in place; the small map itself is a preview --
+ * tapping it (or "Aniqlashtirish") opens LocationPickerFullscreen, where the customer moves the map under a fixed pin
+ * and sees the street / house under it before confirming.
  *
  * The caller still passes its own copy for the hint / empty / coordinates / locate texts (several namespaces use
  * it); the picker's own controls use the "locationPicker" messages.
@@ -117,8 +118,8 @@ export interface LocationPickerProps {
   tools?: boolean;
   /** Label for the share menu (e.g. the address line). */
   shareLabel?: string;
-  /** Checkout: the "locate me" button sits ON the map and fills the point straight away (phones too, no fullscreen
-   *  detour); search / paste-a-link fold behind a small chip. */
+  /** Checkout: search / paste-a-link fold behind a small chip on the map ("locate me" is on the map here on every
+   *  screen; elsewhere only on phones). */
   compact?: boolean;
 }
 
@@ -221,10 +222,7 @@ export default function LocationPicker({
 
   function handleLocate() {
     setHelp(null);
-    if (touch && !compact) {
-      setFullscreen({ autoLocate: true }); // see it, correct it, confirm it -- all on the big map
-      return;
-    }
+    // the point is filled in place (phones included) -- "Aniqlashtirish" on the map opens the big map to correct it
     firstFixRef.current = true;
     void gpsLocate.start();
   }
@@ -256,10 +254,12 @@ export default function LocationPicker({
   const def = MAP_LAYERS[layer];
   const overlay = "border border-border bg-surface/95 backdrop-blur-sm";
   const chip = `${overlay} flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold text-ink shadow-lg transition-colors hover:text-primary disabled:opacity-60`;
+  // phones and the checkout: "locate me" sits ON the map, under the thumb -- no separate bar above it
+  const locateOnMap = compact || touch;
 
   return (
     <div className="space-y-2">
-      {!compact && <button
+      {!locateOnMap && <button
         type="button" onClick={handleLocate} aria-live="polite" title={locateLabel}
         className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-primary/30 bg-primary-soft px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white active:scale-[0.99]"
       >
@@ -334,7 +334,7 @@ export default function LocationPicker({
           )}
         </MapContainer>
 
-        {compact && (
+        {locateOnMap && (
           <>
             <button
               type="button" onClick={(e) => { e.stopPropagation(); if (locating) gpsLocate.stop(); else handleLocate(); }} aria-live="polite" title={locateLabel}
@@ -343,7 +343,7 @@ export default function LocationPicker({
               {locating ? <LoaderCircle className="h-4.5 w-4.5 animate-spin" aria-hidden="true" /> : <LocateFixed className="h-4.5 w-4.5" aria-hidden="true" />}
               <span className="truncate">{locating ? (accuracy != null ? t("improving", { meters: Math.round(accuracy) }) : locatingLabel) : hasLocation ? t("locateAgain") : t("locateCta")}</span>
             </button>
-            {tools && (
+            {compact && tools && (
               <button type="button" onClick={(e) => { e.stopPropagation(); setToolsOpen((v) => !v); }} className={`${chip} absolute left-3 top-3 z-[1100]`} aria-expanded={toolsOpen} aria-label={t("searchPlaceholder")}>
                 <Search className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>{t("searchShort")}</span>
@@ -352,19 +352,14 @@ export default function LocationPicker({
           </>
         )}
         {touch ? (
-          compact ? (
+          <>
+            {/* the small map doesn't pan on phones (it would swallow the page scroll): a tap opens the big map */}
+            <button type="button" onClick={() => setFullscreen({ autoLocate: false })} className="absolute inset-0 z-[900] bg-transparent" aria-label={t("openFullscreen")} tabIndex={-1} />
             <button type="button" onClick={() => setFullscreen({ autoLocate: false })} className={`${chip} absolute right-3 top-3 z-[1100]`} aria-label={t("openFullscreen")}>
               <Expand className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{hasLocation ? t("adjustShort") : t("mapShort")}</span>
             </button>
-          ) : (
-          <button type="button" onClick={() => setFullscreen({ autoLocate: false })} className="absolute inset-0 z-[900] flex items-end justify-center bg-transparent pb-3" aria-label={t("openFullscreen")}>
-            <span className={`${chip} px-4 py-2.5 text-sm`}>
-              <Expand className="h-4 w-4" aria-hidden="true" />
-              {hasLocation ? t("adjustOnMap") : t("openFullscreen")}
-            </span>
-          </button>
-          )
+          </>
         ) : (
           <>
             {!hasLocation && (

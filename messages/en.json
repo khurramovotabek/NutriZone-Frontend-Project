@@ -1083,8 +1083,6 @@
       "phoneInvalid": "Enter the full number, e.g. 94 205 20 40",
       "addressIncomplete": "Complete the address: mark the spot on the map and enter the street and house.",
       "placeOrder": "Place order",
-      "guestBanner": "Sign in before ordering and every purchase earns coin cashback.",
-      "signIn": "Sign in",
       "legal": "By placing the order you agree to the privacy policy and terms of use.",
       "editCart": "Edit cart"
     },
@@ -1094,11 +1092,29 @@
       "call": "Our operator will call {phone} shortly to confirm the order.",
       "total": "Total",
       "payCash": "Payment: cash or card on delivery",
-      "coinsTitle": "Earn coins on your next purchases",
-      "coinsBody": "Sign in with Telegram in one tap — cashback on every order and order tracking.",
-      "signIn": "Sign in with Telegram",
       "continue": "Continue shopping",
       "myOrder": "View order"
+    },
+    "signup": {
+      "title": "Sign up — earn on every order",
+      "titleSuccess": "Create an account — your next order pays back",
+      "titleGift": "Sign up and get {coins} coins as a gift",
+      "subtitle": "1 minute · one tap via Telegram, no password",
+      "subtitleGift": "Credited once your first order is confirmed",
+      "benefitCashback": "Coins cashback on every order — a discount next time",
+      "benefitTrack": "Track your order in Telegram and on the site",
+      "benefitFaster": "Address and phone saved — one tap next time",
+      "slots": "{count} gifts left",
+      "cta": "Sign up",
+      "ctaHint": "Sign in with this number — the order joins your account",
+      "dismiss": "Close",
+      "slim": "Sign in to earn coins cashback on every order",
+      "slimGift": "Sign up — {coins} coins gift",
+      "slimCta": "Sign in",
+      "chipCashback": "Coins cashback",
+      "chipTrack": "Order tracking",
+      "chipFaster": "One tap next time",
+      "continueGuestShort": "As a guest"
     }
   },
   "auth": {

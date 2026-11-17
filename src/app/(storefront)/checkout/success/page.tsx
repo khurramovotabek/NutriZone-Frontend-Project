@@ -3,15 +3,16 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, Gift, PhoneCall, Send } from "lucide-react";
+import { CheckCircle2, PhoneCall } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { formatPrice } from "@/components/PriceTag";
 import { formatLocal, localDigits } from "@/lib/phone";
 import { Button, Card } from "@/components/ui";
+import SignupNudge from "@/components/checkout/SignupNudge";
 
 type Saved = { order_number: string; total?: string; shipping_amount?: string; name?: string; phone?: string; signed_in?: boolean };
 
-/** After a guest order: the number, what happens next, and the one-tap Telegram sign-in that unlocks cashback. */
+/** After a guest order: the number, what happens next, and the sign-up recommendation (gift / cashback / tracking). */
 function SuccessInner() {
   const t = useTranslations("checkout.success");
   const n = useSearchParams().get("n") ?? "";
@@ -57,17 +58,7 @@ function SuccessInner() {
         <p className="text-xs text-ink-soft">{t("payCash")}</p>
       </Card>
 
-      <Card className="mt-4 border-amber-400/30 bg-gradient-to-br from-amber-400/15 to-transparent">
-        <p className="flex items-center gap-2 text-sm font-bold text-ink">
-          <Gift className="h-4.5 w-4.5 text-amber-500" strokeWidth={2} aria-hidden="true" />
-          {t("coinsTitle")}
-        </p>
-        <p className="mt-1.5 text-[13px] leading-snug text-ink-muted">{t("coinsBody")}</p>
-        <Link href={saved?.signed_in ? "/login?next=/account/orders&claim=1" : "/login?next=/account/orders"} className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#229ED9] px-4 py-2 text-sm font-bold text-white">
-          <Send className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
-          {t("signIn")}
-        </Link>
-      </Card>
+      <SignupNudge variant="success" className="mt-4" href={saved?.signed_in ? "/login?next=/account/orders&claim=1" : "/login?next=/account/orders"} />
 
       <div className="mt-6 flex flex-col gap-2 sm:flex-row">
         {saved?.signed_in && n && (

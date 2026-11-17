@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Gift, LoaderCircle, LogIn, MessageSquarePlus, ShieldCheck, ShoppingCart, TriangleAlert } from "lucide-react";
+import { ArrowLeft, LoaderCircle, MessageSquarePlus, ShieldCheck, ShoppingCart, TriangleAlert } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { CheckoutPreview } from "@/lib/cart-api";
 import type { Address } from "@/lib/geo-api";
@@ -19,9 +19,12 @@ import { formatPrice } from "@/components/PriceTag";
 import CoinRedeemCard from "@/components/checkout/CoinRedeemCard";
 import FulfilmentPicker, { type PickupOption } from "@/components/checkout/FulfilmentPicker";
 import PhoneField from "@/components/checkout/PhoneField";
+import SignupNudge from "@/components/checkout/SignupNudge";
 
 const COIN_ERROR_CODES = new Set(["INSUFFICIENT_COINS", "REDEEM_ABOVE_LIMIT", "REDEEM_BELOW_MINIMUM", "REDEEM_DISABLED"]);
 const INPUT = "nz-glass-input w-full rounded-xl px-3.5 py-3 text-[16px]";
+/** A guest's name + phone, kept on this device only, so the next order starts filled in. */
+const GUEST_CONTACT_KEY = "nz-guest-contact";
 
 type Profile = { full_name: string; phone_number: string };
 
@@ -76,7 +79,17 @@ export default function CheckoutPage() {
         if (methodsBody?.success && Array.isArray(methodsBody.data)) setPaymentMethods(methodsBody.data);
         const signedIn = !!cartBody?.meta?.authenticated;
         setGuest(!signedIn);
-        if (!signedIn) return; // the guest preview loads below (it follows the map point)
+        if (!signedIn) {
+          // the guest preview loads below (it follows the map point); a returning guest finds their contact filled in
+          try {
+            const saved = JSON.parse(localStorage.getItem(GUEST_CONTACT_KEY) ?? "null");
+            if (typeof saved?.name === "string") setName(saved.name);
+            if (typeof saved?.phone === "string") setPhone(localDigits(saved.phone));
+          } catch {
+            /* nothing saved / storage blocked */
+          }
+          return;
+        }
         const [addressesBody, profileBody] = await Promise.all([
           fetch("/api/addresses").then((r) => r.json()),
           fetch("/api/profile").then((r) => r.json()),
@@ -195,6 +208,11 @@ export default function CheckoutPage() {
       return fail(body?.error?.code === "CART_OUT_OF_STOCK" ? tCart("shortageBlock") : body?.error?.message ?? t("checkoutError"));
     }
     emitCartUpdated();
+    try {
+      localStorage.setItem(GUEST_CONTACT_KEY, JSON.stringify({ name: name.trim(), phone: fullPhone }));
+    } catch {
+      /* the next order just starts empty */
+    }
     try {
       sessionStorage.setItem(`nz-order-${body.data.order_number}`, JSON.stringify({ ...body.data, name: name.trim(), phone: fullPhone, method: effectiveMethod, fulfilment }));
     } catch {
@@ -315,14 +333,7 @@ export default function CheckoutPage() {
       </div>
 
       {(guest || preview?.guest_account) && (
-        <div className="mb-4 flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-gradient-to-r from-amber-400/15 to-amber-300/5 px-3.5 py-3">
-          <Gift className="h-5 w-5 shrink-0 text-amber-500" strokeWidth={2} aria-hidden="true" />
-          <p className="min-w-0 flex-1 text-[13px] leading-snug text-ink">{t("fast.guestBanner")}</p>
-          <Link href={guest ? "/login?next=/checkout" : "/login?next=/checkout&claim=1"} className="flex shrink-0 items-center gap-1 rounded-full bg-amber-500 px-3 py-1.5 text-xs font-bold text-white">
-            <LogIn className="h-3.5 w-3.5" strokeWidth={2.25} aria-hidden="true" />
-            {t("fast.signIn")}
-          </Link>
-        </div>
+        <SignupNudge className="mb-4" href={guest ? "/login?next=/checkout" : "/login?next=/checkout&claim=1"} />
       )}
 
       {blocked && (

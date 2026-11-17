@@ -1083,8 +1083,6 @@
       "phoneInvalid": "Telefon raqamini to'liq kiriting, masalan: 94 205 20 40",
       "addressIncomplete": "Manzilni to'ldiring: xaritada joylashuvni belgilang va ko'cha, uy raqamini yozing.",
       "placeOrder": "Buyurtma berish",
-      "guestBanner": "Tizimga kirib buyurtma bersangiz, har xariddan coins cashback qaytadi.",
-      "signIn": "Kirish",
       "legal": "Buyurtma berish orqali siz maxfiylik siyosati va foydalanish shartlariga rozilik bildirasiz.",
       "editCart": "Savatni o'zgartirish"
     },
@@ -1094,11 +1092,29 @@
       "call": "Operatorimiz tez orada {phone} raqamiga qo'ng'iroq qilib, buyurtmani tasdiqlaydi.",
       "total": "Jami",
       "payCash": "To'lov: qabul qilganda naqd yoki karta orqali",
-      "coinsTitle": "Keyingi xaridlardan coins oling",
-      "coinsBody": "Telegram orqali bir bosishda kiring — har buyurtmadan cashback qaytadi va buyurtmalaringizni kuzatasiz.",
-      "signIn": "Telegram orqali kirish",
       "continue": "Xaridni davom ettirish",
       "myOrder": "Buyurtmani ko'rish"
+    },
+    "signup": {
+      "title": "Ro'yxatdan o'ting — har xariddan foyda oling",
+      "titleSuccess": "Akkaunt oching — keyingi xarid foydaliroq",
+      "titleGift": "Ro'yxatdan o'ting va {coins} coins sovg'a oling",
+      "subtitle": "1 daqiqa · Telegram orqali bir bosishda, parolsiz",
+      "subtitleGift": "Ilk buyurtmangiz tasdiqlanganda hisobingizga tushadi",
+      "benefitCashback": "Har xariddan coins cashback — keyingi xaridda chegirma",
+      "benefitTrack": "Buyurtma holatini Telegram va saytda kuzatasiz",
+      "benefitFaster": "Manzil va raqam saqlanadi — keyingi safar bir bosishda",
+      "slots": "{count} ta sovg'a qoldi",
+      "cta": "Ro'yxatdan o'tish",
+      "ctaHint": "Shu raqam bilan kiring — buyurtmangiz akkauntga bog'lanadi",
+      "dismiss": "Yopish",
+      "slim": "Kirsangiz, har xariddan coins cashback olasiz",
+      "slimGift": "Ro'yxatdan o'ting — {coins} coins sovg'a",
+      "slimCta": "Kirish",
+      "chipCashback": "Coins cashback",
+      "chipTrack": "Buyurtmani kuzatish",
+      "chipFaster": "Keyingi safar 1 bosishda",
+      "continueGuestShort": "Mehmon sifatida"
     }
   },
   "auth": {
