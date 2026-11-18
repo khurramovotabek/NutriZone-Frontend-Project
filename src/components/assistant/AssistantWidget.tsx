@@ -4,11 +4,40 @@ import { useEffect, useRef, useState } from "react";
 import { ASSISTANT_OPEN_EVENT } from "@/lib/assistant-events";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUp, Bot, Dumbbell, FlaskConical, Languages, LoaderCircle, MapPin, Mic, MicOff, RotateCcw, Sparkles, Square, ThumbsDown, ThumbsUp, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowUp, Bot, Dumbbell, FlaskConical, Languages, LoaderCircle, MapPin, Mic, MicOff, RotateCcw, Sparkles, Square, ThumbsDown, ThumbsUp, Trash2, Volume2, VolumeX, X } from "lucide-react";
 import ProductMini from "./ProductMini";
 import RichText from "./RichText";
 import { useAssistant } from "./useAssistant";
-import { useDictation, useSpeech } from "./useVoice";
+import { useDictation, useRecorder, useSpeech } from "./useVoice";
+
+/** Live microphone level as moving bars; reads the recorder's level ref on its own animation frame. */
+function Waveform({ level }: { level: { current: number } }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const bars = Array.from(ref.current?.children ?? []) as HTMLElement[];
+    const hist = new Array(bars.length).fill(0.08);
+    let raf = 0;
+    let frame = 0;
+    const tick = () => {
+      if (frame++ % 3 === 0) {
+        hist.shift();
+        hist.push(Math.max(0.08, level.current));
+        bars.forEach((b, i) => (b.style.transform = `scaleY(${hist[i]})`));
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [level]);
+  return (
+    <div ref={ref} className="flex h-7 min-w-0 flex-1 items-center gap-[3px] overflow-hidden" aria-hidden="true">
+      {Array.from({ length: 28 }, (_, i) => <span key={i} className="h-full w-[3px] shrink-0 origin-center rounded-full bg-red-500/80 transition-transform duration-100" style={{ transform: "scaleY(0.08)" }} />)}
+    </div>
+  );
+}
+
+const SURE = 0.55; // mean word confidence from /stt above which a voice question is sent straight away
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
 // pages whose own bottom CTA or composer the floating button would cover on a phone
 const HIDDEN = [/^\/profile\/store/, /^\/checkout/, /^\/cart/, /^\/account\/chat/, /^\/login/, /^\/verify-otp/];
@@ -27,11 +56,14 @@ export default function AssistantWidget() {
   const pathname = usePathname();
   const [enabled, setEnabled] = useState(false);
   const [serverTts, setServerTts] = useState(false);
+  const [serverVoice, setServerVoice] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const ai = useAssistant();
   const locale = useLocale();
   const dictation = useDictation(locale);
+  const recorder = useRecorder();
   const speech = useSpeech(locale, serverTts);
   const spokenRef = useRef(-1);
   const listRef = useRef<HTMLDivElement>(null);
@@ -45,6 +77,7 @@ export default function AssistantWidget() {
         if (!alive) return;
         setEnabled(Boolean(b?.data?.enabled));
         setServerTts(Boolean(b?.data?.tts));
+        setServerVoice(Boolean(b?.data?.voice));
       })
       .catch(() => alive && setEnabled(false));
     return () => {
@@ -60,6 +93,13 @@ export default function AssistantWidget() {
     spokenRef.current = lastIdx;
     if (speech.on) speech.play(`m${lastIdx}`, last.text);
   }, [ai.busy, ai.messages, speech]);
+
+  // a voice error fades after a few seconds
+  useEffect(() => {
+    if (!voiceError) return;
+    const id = window.setTimeout(() => setVoiceError(null), 5000);
+    return () => window.clearTimeout(id);
+  }, [voiceError]);
 
   // keep the newest message in view while it streams
   useEffect(() => {
@@ -114,7 +154,26 @@ export default function AssistantWidget() {
   }
 
   const stageText = ai.stage ? t(`stage.${ai.stage}`) : null;
+  // Voice: recorded and written down on our server (knows Uzbek; works on iOS / Telegram too); the browser's own
+  // dictation only where the server has no speech models.
+  const useServer = serverVoice && recorder.supported;
+  const micAvailable = useServer || dictation.supported;
+  const recErrors: Record<string, string> = { denied: t("recDenied"), short: t("recShort"), failed: t("recFailed"), network: t("recNetwork"), limited: t("recLimited") };
   function toggleMic() {
+    setVoiceError(null);
+    if (useServer) {
+      speech.stop();
+      recorder.start((r) => {
+        if (r.text && (r.confidence ?? 1) >= SURE) submit(r.text);
+        else if (r.text) {
+          // not sure what was said: let the shopper check / fix it before sending
+          setDraft(r.text);
+          setVoiceError(t("recCheck"));
+          window.setTimeout(() => inputRef.current?.focus(), 30);
+        } else if (r.error) setVoiceError(recErrors[r.error] ?? r.error);
+      });
+      return;
+    }
     if (dictation.listening) return dictation.stop();
     dictation.start((text) => setDraft(text), (text) => submit(text));
   }
@@ -141,7 +200,7 @@ export default function AssistantWidget() {
           role="dialog"
           aria-modal="false"
           aria-label={t("title")}
-          className="fixed inset-0 z-[60] flex flex-col bg-surface sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[min(720px,calc(100vh-3rem))] sm:w-[420px] sm:overflow-hidden sm:rounded-3xl sm:border sm:border-border sm:shadow-2xl"
+          className="fixed inset-x-0 top-0 z-[60] flex h-[100dvh] flex-col overscroll-contain bg-surface sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[min(720px,calc(100vh-3rem))] sm:w-[420px] sm:overflow-hidden sm:rounded-3xl sm:border sm:border-border sm:shadow-2xl"
         >
           <header className="relative flex items-center gap-3 overflow-hidden border-b border-white/10 bg-[linear-gradient(135deg,#0b1220_0%,#13213f_55%,#1d4ed8_130%)] px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] text-white sm:pt-3">
             <span aria-hidden="true" className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-blue-500/30 blur-3xl" />
@@ -168,7 +227,7 @@ export default function AssistantWidget() {
             </button>
           </header>
 
-          <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-4" aria-live="polite">
+          <div ref={listRef} className="flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-4" aria-live="polite">
             {ai.messages.length === 0 ? (
               <div className="grid gap-4">
                 <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary-soft via-surface to-surface p-4">
@@ -249,6 +308,25 @@ export default function AssistantWidget() {
                 <p>{ai.limit}</p>
                 <button type="button" onClick={ai.reset} className="mx-auto rounded-xl border border-border px-3 py-1.5 text-sm font-semibold text-ink hover:border-primary">{t("newChat")}</button>
               </div>
+            ) : recorder.state !== "idle" ? (
+              <div className="flex items-center gap-2 rounded-2xl border border-red-400/40 bg-red-500/[0.06] p-1.5" role="status" aria-live="polite">
+                {recorder.state === "recording" ? (
+                  <>
+                    <button type="button" onClick={recorder.cancel} aria-label={t("recCancel")} title={t("recCancel")} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-ink-muted hover:bg-surface hover:text-red-500 sm:h-10 sm:w-10">
+                      <Trash2 className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                    <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden="true"><span className="absolute inset-0 animate-ping rounded-full bg-red-500/70" /><span className="relative h-2.5 w-2.5 rounded-full bg-red-500" /></span>
+                    <span className="w-10 shrink-0 text-sm font-semibold tabular-nums text-ink">{clock(recorder.seconds)}</span>
+                    <Waveform level={recorder.level} />
+                    <span className="sr-only">{t("recording")}</span>
+                    <button type="button" onClick={recorder.finish} aria-label={t("recSend")} title={t("recSend")} className="nz-cta flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white sm:h-10 sm:w-10">
+                      <ArrowUp className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                  </>
+                ) : (
+                  <p className="flex min-h-11 flex-1 items-center justify-center gap-2 text-sm font-medium text-ink-muted sm:min-h-10"><LoaderCircle className="h-4 w-4 animate-spin text-primary" aria-hidden="true" />{t("recSending")}</p>
+                )}
+              </div>
             ) : (
               <form onSubmit={(e) => { e.preventDefault(); submit(draft); }} className="flex items-end gap-2 rounded-2xl border border-border bg-surface-2 p-1.5 focus-within:border-primary">
                 <textarea
@@ -265,22 +343,27 @@ export default function AssistantWidget() {
                   }}
                   placeholder={dictation.listening ? t("listening") : t("placeholder")}
                   aria-label={t("placeholder")}
-                  className="max-h-32 min-h-10 flex-1 resize-none bg-transparent px-2.5 py-2 text-sm text-ink outline-none placeholder:text-ink-soft"
+                  enterKeyHint="send"
+                  className="max-h-32 min-h-11 flex-1 resize-none bg-transparent px-2.5 py-2.5 text-base text-ink outline-none placeholder:text-ink-soft sm:min-h-10 sm:py-2 sm:text-sm"
                 />
-                {dictation.supported && !ai.busy && (
-                  <button type="button" onClick={toggleMic} aria-pressed={dictation.listening} aria-label={dictation.listening ? t("voiceStop") : t("voiceStart")} title={dictation.listening ? t("voiceStop") : t("voiceStart")}
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${dictation.listening ? "animate-pulse bg-red-500 text-white" : "text-ink-muted hover:bg-surface hover:text-primary"}`}>
+                {micAvailable && !ai.busy && !draft.trim() && (
+                  <button type="button" onClick={toggleMic} aria-pressed={dictation.listening} aria-label={dictation.listening ? t("voiceStop") : t("voiceStart")} title={useServer ? t("recHint") : dictation.listening ? t("voiceStop") : t("voiceStart")}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10 ${dictation.listening ? "animate-pulse bg-red-500 text-white" : "bg-primary-soft/60 text-primary hover:bg-primary hover:text-white"}`}>
                     {dictation.listening ? <MicOff className="h-5 w-5" aria-hidden="true" /> : <Mic className="h-5 w-5" aria-hidden="true" />}
                   </button>
                 )}
                 {ai.busy ? (
                   <button type="button" onClick={ai.stop} aria-label={t("stop")} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink/10 text-ink"><Square className="h-4 w-4" aria-hidden="true" /></button>
-                ) : (
-                  <button type="submit" disabled={!draft.trim()} aria-label={t("send")} className="nz-cta flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white disabled:opacity-40"><ArrowUp className="h-5 w-5" aria-hidden="true" /></button>
+                ) : (draft.trim() || !micAvailable) && (
+                  <button type="submit" disabled={!draft.trim()} aria-label={t("send")} className="nz-cta flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white disabled:opacity-40 sm:h-10 sm:w-10"><ArrowUp className="h-5 w-5" aria-hidden="true" /></button>
                 )}
               </form>
             )}
-            <p className="mt-2 text-center text-[11px] leading-snug text-ink-soft">{t("disclaimer")}</p>
+            {voiceError ? (
+              <p role="alert" className={`mt-2 text-center text-xs font-medium leading-snug ${voiceError === t("recCheck") ? "text-primary" : "text-red-600 dark:text-red-400"}`}>{voiceError}</p>
+            ) : (
+              <p className="mt-2 text-center text-[11px] leading-snug text-ink-soft">{t("disclaimer")}</p>
+            )}
           </footer>
         </section>
       )}

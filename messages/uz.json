@@ -3623,7 +3623,19 @@
       "stores": "Filiallar va mavjudlik",
       "voice": "O'zbek, rus, ingliz tillarida ovoz bilan"
     },
-    "capsTitle": "Nimalarda yordam beraman"
+    "capsTitle": "Nimalarda yordam beraman",
+    "recording": "Yozilmoqda… gapiring",
+    "recCancel": "Bekor qilish",
+    "recSend": "Yuborish",
+    "recSending": "Ovozli xabar o'qilmoqda…",
+    "recHint": "Ovozli savol — 1 daqiqagacha",
+    "recDenied": "Mikrofonga ruxsat berilmadi. Brauzer sozlamalarida mikrofonni yoqing.",
+    "recShort": "Juda qisqa — tugmani bosib, savolingizni ayting.",
+    "recFailed": "Ovozni o'qib bo'lmadi — qayta urinib ko'ring yoki yozing.",
+    "recNetwork": "Internet aloqasi yo'q — qayta urinib ko'ring.",
+    "recLimited": "Ovozli xabarlar ko'p bo'ldi — biroz kutib turing yoki yozing.",
+    "heardVoice": "Ovozli xabar",
+    "recCheck": "Shunday tushundim — tekshirib, kerak bo'lsa tuzating va yuboring."
   },
   "seo": {
     "homeTitle": "{brand} — sport ozuqalari Toshkentda: protein, gainer, kreatin",

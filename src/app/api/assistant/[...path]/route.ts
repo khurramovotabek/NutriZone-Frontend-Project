@@ -13,10 +13,12 @@ import { EMBED_COOKIE, cookieAttrs } from "@/lib/cookie-policy";
  *   only stores its hash. A signed-in shopper's token is forwarded too, so the conversation is linked to the account.
  * - `chat` answers with a text/event-stream that is passed through chunk by chunk (no buffering).
  * - `tts` answers with audio/mpeg (an answer read aloud by a natural voice), passed through as is.
+ * - `stt` takes a voice recording (raw audio body, up to 3 MB) and answers {text, lang}: written down on our server.
  */
-const ALLOWED = /^(status|chat|tts|conversations\/[0-9a-f-]{36}(\/feedback)?)$/;
+const ALLOWED = /^(status|chat|tts|stt|conversations\/[0-9a-f-]{36}(\/feedback)?)$/;
 const CLIENT_COOKIE = "nz_ai";
 const YEAR = 60 * 60 * 24 * 365;
+const MAX_AUDIO = 3 * 1024 * 1024;
 
 async function forward(req: NextRequest, path: string[], method: "GET" | "POST") {
   const joined = path.join("/");
@@ -30,8 +32,18 @@ async function forward(req: NextRequest, path: string[], method: "GET" | "POST")
   const headers: Record<string, string> = { "X-Assistant-Client": clientId, ...(await forwardedForHeader()) };
   const token = await getAccessToken();
   if (token) headers.Authorization = `Bearer ${token}`;
-  let body: string | undefined;
-  if (method === "POST") {
+  let body: string | ArrayBuffer | undefined;
+  let query = "";
+  if (method === "POST" && joined === "stt") {
+    const audio = await req.arrayBuffer().catch(() => new ArrayBuffer(0));
+    if (audio.byteLength > MAX_AUDIO) {
+      return NextResponse.json({ success: false, error: { code: "TOO_BIG", message: "Recording is too long." } }, { status: 413 });
+    }
+    headers["Content-Type"] = req.headers.get("content-type") ?? "application/octet-stream";
+    body = audio;
+    const loc = jar.get(LOCALE_COOKIE)?.value ?? req.nextUrl.searchParams.get("locale") ?? "uz";
+    query = `?locale=${encodeURIComponent(loc)}`;
+  } else if (method === "POST") {
     headers["Content-Type"] = "application/json";
     const payload = await req.json().catch(() => ({}));
     if (joined === "chat") payload.locale = jar.get(LOCALE_COOKIE)?.value ?? payload.locale ?? "uz";
@@ -40,7 +52,7 @@ async function forward(req: NextRequest, path: string[], method: "GET" | "POST")
 
   let res: Response;
   try {
-    res = await fetch(`${API_BASE_URL}/api/v1/assistant/${joined}`, { method, headers, body, cache: "no-store" });
+    res = await fetch(`${API_BASE_URL}/api/v1/assistant/${joined}${query}`, { method, headers, body, cache: "no-store" });
   } catch {
     return NextResponse.json({ success: false, error: { code: "NETWORK", message: "The assistant is unreachable." } }, { status: 502 });
   }

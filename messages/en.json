@@ -3623,7 +3623,19 @@
       "stores": "Stores and availability",
       "voice": "Voice in Uzbek, Russian and English"
     },
-    "capsTitle": "How I can help"
+    "capsTitle": "How I can help",
+    "recording": "Recording… speak now",
+    "recCancel": "Cancel",
+    "recSend": "Send",
+    "recSending": "Reading your voice message…",
+    "recHint": "Voice question — up to 1 minute",
+    "recDenied": "No microphone access. Allow it in your browser settings.",
+    "recShort": "Too short — tap and say your question.",
+    "recFailed": "Couldn't make that out — try again or type.",
+    "recNetwork": "No connection — please try again.",
+    "recLimited": "Too many voice messages — wait a little or type.",
+    "heardVoice": "Voice message",
+    "recCheck": "Here's what I heard — check it, fix if needed, and send."
   },
   "seo": {
     "homeTitle": "{brand} — Sports Nutrition in Tashkent: Protein, Gainers, Creatine",
