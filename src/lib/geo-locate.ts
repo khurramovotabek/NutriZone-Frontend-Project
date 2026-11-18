@@ -28,14 +28,30 @@ export interface LocateResult {
   house: string;
   label: string;
   postcode: string;
+  /** only with ?delivery=1 (checkout map): what delivery to this exact spot costs and the nearest pickup branch */
+  delivery?: PointDelivery | null;
 }
+
+export interface PointDelivery {
+  zone?: "tashkent" | "regions";
+  /** so'm for an average parcel; `is_from` -- regions, the final price depends on the parcel's weight */
+  fee?: number;
+  is_from?: boolean;
+  eta?: string;
+  carrier?: string;
+  free_from?: number | null;
+  nearest_branch: { name: string; km: number } | null;
+}
+
+/** metro / stop / building / street / area / place -- one vocabulary for both search providers (icon per kind) */
+export type PlaceKind = "metro" | "stop" | "building" | "street" | "area" | "place";
 
 export interface GeocodeResult {
   title: string;
   subtitle: string;
   lat: number;
   lng: number;
-  kind: string;
+  kind: PlaceKind | string;
 }
 
 /** Server-side: one call to the backend's public geo endpoint, forwarding the shopper's IP (per-IP rate limit). */

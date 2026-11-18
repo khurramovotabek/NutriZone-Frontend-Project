@@ -7,7 +7,11 @@ import type { LocateResult } from "@/lib/geo-locate";
  */
 export function streetLineFrom(r: LocateResult): string {
   const street = (r.street || "").trim();
-  if (street) return [street, (r.house || "").trim()].filter(Boolean).join(" ");
+  if (street) {
+    // the backend's street already carries the house ("Navoiy ko'chasi 30") -- adding it again gave "… 30 30"
+    const house = (r.house || "").trim();
+    return house && !new RegExp(`(^|\\s)${house.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")}$`).test(street) ? `${street} ${house}` : street;
+  }
   const skip = [r.district?.name, r.city?.name, r.region?.name, r.country?.name].filter(Boolean).map((n) => n!.toLowerCase());
   const norm = (v: string) => v.toLowerCase().replace(/[ʻ'`’]/g, "");
   const part = (r.label || "").split(",").map((x) => x.trim()).find((x) => {

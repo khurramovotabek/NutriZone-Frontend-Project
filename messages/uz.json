@@ -3454,7 +3454,14 @@
     "route": "Yo'nalish",
     "locateAgain": "Qayta aniqlash",
     "adjustShort": "Aniqlashtirish",
-    "mapShort": "Xarita"
+    "mapShort": "Xarita",
+    "searchHint": "Ko'cha, uy, mavze yoki metro…",
+    "clear": "Tozalash",
+    "recent": "Oxirgi manzillar",
+    "roughPick": "Bu ko'cha yoki hudud markazi — xaritani surib, pinni aynan eshigingizga qo'ying",
+    "deliveryFee": "Yetkazish {fee} so'm",
+    "deliveryFrom": "Yetkazish {fee} so'mdan",
+    "pickupNear": "Yaqin filial: {name} — {km} km · olib ketish bepul"
   },
   "storeAmenity": {
     "card_payment": "Karta orqali to'lov",

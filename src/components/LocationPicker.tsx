@@ -14,6 +14,7 @@ import type { GeocodeResult } from "@/lib/geo-locate";
 import MapSizeFixer from "@/components/MapSizeFixer";
 import MapLinks from "@/components/MapLinks";
 import LocateHelpPanel from "@/components/LocateHelpPanel";
+import PlaceKindIcon from "@/components/PlaceKindIcon";
 import { useGpsLocate, type LocateHelp } from "@/lib/use-gps-locate";
 
 const LocationPickerFullscreen = dynamic(() => import("@/components/LocationPickerFullscreen"), { ssr: false });
@@ -141,6 +142,7 @@ export default function LocationPicker({
   const [layersOpen, setLayersOpen] = useState(false);
   const [help, setHelp] = useState<LocateHelp | null>(null);
   const [query, setQuery] = useState("");
+  const pickedLabel = useRef(""); // the result just chosen is written into the box -- not a new search
   const [results, setResults] = useState<GeocodeResult[] | null>(null);
   const [searching, setSearching] = useState(false);
   const [linkOpen, setLinkOpen] = useState(false);
@@ -181,7 +183,7 @@ export default function LocationPicker({
   // search as you type (debounced); results come closest to what's on screen first
   useEffect(() => {
     const q = query.trim();
-    if (q.length < 3) return;
+    if (q.length < 3 || query === pickedLabel.current) return;
     // a slower answer for an older query must never replace the newer one (typing "mirobod 6" -> "mirobod 66")
     const ctrl = new AbortController();
     const timer = window.setTimeout(() => {
@@ -252,7 +254,7 @@ export default function LocationPicker({
   const quality = accuracy == null ? null : accuracy <= 30 ? "good" : accuracy <= 150 ? "fair" : "poor";
   const qualityClass = { good: "text-emerald-600 dark:text-emerald-400", fair: "text-amber-600 dark:text-amber-400", poor: "text-red-600 dark:text-red-400" };
   const def = MAP_LAYERS[layer];
-  const overlay = "border border-border bg-surface/95 backdrop-blur-sm";
+  const overlay = "nz-glass-strong";
   const chip = `${overlay} flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold text-ink shadow-lg transition-colors hover:text-primary disabled:opacity-60`;
   // phones and the checkout: "locate me" sits ON the map, under the thumb -- no separate bar above it
   const locateOnMap = compact || touch;
@@ -282,13 +284,13 @@ export default function LocationPicker({
             <span className="hidden sm:inline">{t("pasteLink")}</span>
           </button>
           {results && query.trim().length >= 3 && (
-            <div className="absolute left-0 right-0 top-full z-[1200] mt-1 max-h-72 overflow-auto rounded-2xl border border-border bg-surface p-1.5 shadow-xl">
+            <div className="nz-glass-strong absolute left-0 right-0 top-full z-[1200] mt-1 max-h-80 overflow-auto rounded-2xl p-1.5">
               {results.length === 0 && !searching && <p className="px-3 py-2 text-sm text-ink-soft">{t("noResults")}</p>}
               {results.map((r, i) => (
-                <button key={`${r.lat},${r.lng},${i}`} type="button" className="block w-full rounded-xl px-3 py-2 text-left hover:bg-surface-2"
-                  onClick={() => { pick(r.lat, r.lng, { source: "search" }, true); setResults(null); setQuery(r.title); }}>
-                  <span className="block text-sm font-semibold text-ink">{r.title}</span>
-                  {r.subtitle && <span className="block truncate text-xs text-ink-soft">{r.subtitle}</span>}
+                <button key={`${r.lat},${r.lng},${i}`} type="button" className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left hover:bg-surface-2"
+                  onClick={() => { pick(r.lat, r.lng, { source: "search" }, true); setResults(null); pickedLabel.current = r.title; setQuery(r.title); }}>
+                  <PlaceKindIcon kind={r.kind} />
+                  <span className="min-w-0"><span className="block truncate text-sm font-semibold text-ink">{r.title}</span>{r.subtitle && <span className="block truncate text-xs text-ink-soft">{r.subtitle}</span>}</span>
                 </button>
               ))}
             </div>

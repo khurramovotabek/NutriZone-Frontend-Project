@@ -3454,7 +3454,14 @@
     "route": "Route",
     "locateAgain": "Locate again",
     "adjustShort": "Adjust",
-    "mapShort": "Map"
+    "mapShort": "Map",
+    "searchHint": "Street, house, quarter or metro…",
+    "clear": "Clear",
+    "recent": "Recent places",
+    "roughPick": "That's the middle of a street or area — move the map so the pin sits right at your door",
+    "deliveryFee": "Delivery {fee} so'm",
+    "deliveryFrom": "Delivery from {fee} so'm",
+    "pickupNear": "Nearby branch: {name} — {km} km · free pickup"
   },
   "storeAmenity": {
     "card_payment": "Card payment",
