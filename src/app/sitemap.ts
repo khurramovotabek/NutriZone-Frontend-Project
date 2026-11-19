@@ -2,7 +2,8 @@ import type { MetadataRoute } from "next";
 import { getBlogPosts, getBrands, getCategories, searchProducts } from "@/lib/api";
 import { getStores } from "@/lib/store-api";
 import { getGuides } from "@/lib/guides-api";
-import { productPaths, sitemapAlternates, sitemapUrl, type LocalePaths } from "@/lib/seo";
+import { productPaths, sitemapAlternates, sitemapUrl, UZ_CYRILLIC_PATH, type LocalePaths } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/site-url";
 import { SUPPORTED_LOCALES } from "@/i18n/config";
 import { brandPath, categoryPath, entityPaths } from "@/lib/entity-paths";
 
@@ -58,6 +59,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...localized("/contact", { changeFrequency: "monthly", priority: 0.4 }),
     ...localized("/privacy", { changeFrequency: "yearly", priority: 0.2 }),
     ...localized("/terms", { changeFrequency: "yearly", priority: 0.2 }),
+    // Uzbek Cyrillic: one page, alternates shared with the home page
+    { url: absoluteUrl(UZ_CYRILLIC_PATH), alternates: sitemapAlternates("/"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
   ];
 
   const [products, categories, brands, stores, posts, guides] = await Promise.all([

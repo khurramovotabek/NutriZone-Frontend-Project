@@ -31,11 +31,15 @@ export function productPaths(product: { slug: string; slugs?: Partial<Record<str
   return out;
 }
 
+/** The shop in Uzbek Cyrillic (src/app/(storefront)/oz) -- hreflang `uz-Cyrl` of the home page. */
+export const UZ_CYRILLIC_PATH = "/oz";
+
 /** canonical = this page in the current language; alternates = the same page in every language (+ x-default = Uzbek). */
 export function languageAlternates(paths: LocalePaths, locale: Locale): NonNullable<Metadata["alternates"]> {
   const languages: Record<string, string> = {};
   for (const l of SUPPORTED_LOCALES) languages[l] = localizedPath(pathFor(paths, l), l);
   languages["x-default"] = localizedPath(pathFor(paths, DEFAULT_LOCALE), DEFAULT_LOCALE);
+  if (pathFor(paths, DEFAULT_LOCALE) === "/") languages["uz-Cyrl"] = UZ_CYRILLIC_PATH; // the home page's Cyrillic twin
   return { canonical: localizedPath(pathFor(paths, locale), locale), languages };
 }
 
@@ -44,6 +48,7 @@ export function sitemapAlternates(paths: LocalePaths): { languages: Record<strin
   const languages: Record<string, string> = {};
   for (const l of SUPPORTED_LOCALES) languages[l] = absoluteUrl(localizedPath(pathFor(paths, l), l));
   languages["x-default"] = absoluteUrl(localizedPath(pathFor(paths, DEFAULT_LOCALE), DEFAULT_LOCALE));
+  if (pathFor(paths, DEFAULT_LOCALE) === "/") languages["uz-Cyrl"] = absoluteUrl(UZ_CYRILLIC_PATH);
   return { languages };
 }
 

@@ -96,6 +96,7 @@ export default async function Footer() {
               <li><Link href="/contact" className={link}>{tNav("contact")}</Link></li>
               <li><Link href="/terms" className={link}>{t("terms")}</Link></li>
               <li><Link href="/privacy" className={link}>{t("privacy")}</Link></li>
+              <li><Link href="/oz" className={link} lang="uz-Cyrl">Ўзбекча (кирилл)</Link></li>
             </ul>
           </div>
 
