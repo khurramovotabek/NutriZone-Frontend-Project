@@ -47,6 +47,8 @@ export interface Cart {
   coupon_ids: string[];
   is_locked: boolean;
   expires_at: string | null;
+  /** "Birga arzonroq" pairs among the priced lines; null when there's none (older backends omit it). */
+  bundle_discount?: { amount: string; pairs: { product_id: string; companion_product_id: string; percent: string; units: number; amount: string }[] } | null;
 }
 
 export interface BackendErrorBody {

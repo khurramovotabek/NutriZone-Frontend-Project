@@ -960,7 +960,8 @@
     },
     "signInForCoins": "Sign in to order — earn coin cashback",
     "freeDeliveryLeft": "{amount} more for free delivery",
-    "freeDeliveryReached": "✓ Delivery is free"
+    "freeDeliveryReached": "✓ Delivery is free",
+    "bundleDiscount": "Better-together discount"
   },
   "checkout": {
     "title": "Checkout",

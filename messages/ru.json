@@ -960,7 +960,8 @@
     },
     "signInForCoins": "Войти и заказать — кэшбэк монетами",
     "freeDeliveryLeft": "До бесплатной доставки осталось {amount}",
-    "freeDeliveryReached": "✓ Доставка бесплатно"
+    "freeDeliveryReached": "✓ Доставка бесплатно",
+    "bundleDiscount": "Скидка «Вместе дешевле»"
   },
   "checkout": {
     "title": "Оформление заказа",

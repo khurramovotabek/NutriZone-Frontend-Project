@@ -960,7 +960,8 @@
     },
     "signInForCoins": "Kirib buyurtma berish — coins cashback",
     "freeDeliveryLeft": "Bepul yetkazib berishgacha yana {amount}",
-    "freeDeliveryReached": "✓ Yetkazib berish bepul"
+    "freeDeliveryReached": "✓ Yetkazib berish bepul",
+    "bundleDiscount": "Birga arzonroq chegirmasi"
   },
   "checkout": {
     "title": "Buyurtma rasmiylashtirish",

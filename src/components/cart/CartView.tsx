@@ -196,7 +196,10 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
   const pricedItems = activeItems.filter((i) => i.price_reference !== null);
   const currency = pricedItems[0]?.price_reference?.currency;
   const allSameCurrency = pricedItems.length > 0 && pricedItems.every((i) => i.price_reference!.currency === currency);
-  const total = allSameCurrency ? pricedItems.reduce((acc, i) => acc + Number(i.price_reference!.unit_amount) * i.quantity, 0) : null;
+  const goodsTotal = allSameCurrency ? pricedItems.reduce((acc, i) => acc + Number(i.price_reference!.unit_amount) * i.quantity, 0) : null;
+  // "Birga arzonroq": the server's own pair discount (the same amount checkout takes off)
+  const bundleOff = goodsTotal !== null && cart?.bundle_discount ? Math.min(goodsTotal, Number(cart.bundle_discount.amount)) : 0;
+  const total = goodsTotal !== null ? goodsTotal - bundleOff : null;
 
   // Guest estimate: the catalog price the shopper saw (display cache) for
   // lines the server hasn't priced yet. Clearly labelled as an estimate;
@@ -370,9 +373,15 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
                 <div className="flex justify-between border-b border-border pb-3 text-sm text-ink-muted">
                   <span>{t("subtotalLabel", { priced: pricedItems.length, total: activeItems.reduce((n, i) => n + i.quantity, 0) })}</span>
                   <span className="tabular-nums text-ink">
-                    {formatAmount(total)} {currency}
+                    {formatAmount(goodsTotal ?? 0)} {currency}
                   </span>
                 </div>
+                {bundleOff > 0 && (
+                  <div className="flex justify-between border-b border-border py-3 text-sm">
+                    <span className="font-medium text-emerald-700 dark:text-emerald-300">{t("bundleDiscount")}</span>
+                    <span className="tabular-nums font-semibold text-emerald-700 dark:text-emerald-300">−{formatAmount(bundleOff)} {currency}</span>
+                  </div>
+                )}
                 <div className="mt-3 flex items-baseline justify-between">
                   <span className="text-base font-semibold text-ink">{t("totalLabel")}</span>
                   <span className="text-xl font-bold text-primary">
