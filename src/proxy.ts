@@ -13,6 +13,8 @@ import { EMBED_COOKIE, cookieAttrs } from "@/lib/cookie-policy";
  *    every API call after 15 minutes answered 401 and customers saw "please log in" mid-checkout.
  *    The backend rotates refresh tokens and treats re-use as theft (revoking the session), so concurrent
  *    requests carrying the same refresh token share ONE exchange (in-flight + short-lived result cache).
+ *    That cache is per process; with several pm2 cluster workers the backend's 30 s refresh grace window
+ *    (apps/identity/infrastructure/refresh_grace.py) hands the same new pair to a second worker instead.
  * 2. Redirects: protected pages → /login?next=… without a session; /login → `next` with one.
  * 3. Language addresses: /ru/… and /en/… are served by the same pages as the plain (Uzbek) path -- the
  *    language is passed on in LOCALE_HEADER (src/i18n/config.ts) and next.config.ts strips the prefix, so
