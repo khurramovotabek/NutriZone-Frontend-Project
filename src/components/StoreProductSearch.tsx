@@ -12,6 +12,10 @@ import type { StoreProductItem } from "@/lib/store-api";
 
 type SortOption = "name" | "stock" | "price" | "-price" | "-discount";
 
+/** Cards rendered at first and per "show more": a branch carries ~700 products, and rendering them all made the
+ * store page 3.6 MB of HTML (0.6-1.2 s on the server, measured 2026-11-20). Filtering still covers the whole list. */
+const PAGE = 48;
+
 /**
  * Real, product-required capability: lets a visitor search AND filter
  * a single store's own product catalog on its detail page. This is
@@ -32,6 +36,10 @@ export default function StoreProductSearch({ products }: { products: StoreProduc
   const [onSaleOnly, setOnSaleOnly] = useState(false);
   const onSaleCount = useMemo(() => products.filter((p) => (p.discount_percent ?? 0) > 0).length, [products]);
   const [sortBy, setSortBy] = useState<SortOption>("name");
+  // how many cards are shown, remembered per filter combination: a new search / filter / sort starts from one page again
+  const filterKey = `${query}|${inStockOnly}|${onSaleOnly}|${sortBy}`;
+  const [shown, setShown] = useState({ key: filterKey, count: PAGE });
+  const visible = shown.key === filterKey ? shown.count : PAGE;
 
   const filtered = useMemo(() => {
     const trimmed = query.trim().toLowerCase();
@@ -133,17 +141,29 @@ export default function StoreProductSearch({ products }: { products: StoreProduc
       {filtered.length === 0 ? (
         <p className="text-ink-muted">{t("noProductsMatchSearch")}</p>
       ) : (
-        <ProductGrid dense>
-          {filtered.map((product) => (
-            <ProductCard
-              key={product.product_variant_id}
-              product={toProductCardData(product)}
-              variant="compact"
-              // Published products link to their own page (with this variant preselected); anything else falls back to a name search.
-              href={product.product_slug ? `/products/${product.product_slug}?variant=${product.product_variant_id}` : `/products?q=${encodeURIComponent(product.name)}`}
-            />
-          ))}
-        </ProductGrid>
+        <>
+          <ProductGrid dense>
+            {filtered.slice(0, visible).map((product) => (
+              <ProductCard
+                key={product.product_variant_id}
+                product={toProductCardData(product)}
+                variant="compact"
+                // Published products link to their own page (with this variant preselected); anything else falls back to a name search.
+                href={product.product_slug ? `/products/${product.product_slug}?variant=${product.product_variant_id}` : `/products?q=${encodeURIComponent(product.name)}`}
+              />
+            ))}
+          </ProductGrid>
+          {filtered.length > visible && (
+            <button
+              type="button"
+              onClick={() => setShown({ key: filterKey, count: visible + PAGE })}
+              className="mt-5 w-full rounded-2xl border border-border py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary-soft"
+            >
+              {tCatalog("showMore", { count: Math.min(PAGE, filtered.length - visible) })}
+              <span className="ml-1.5 font-normal text-ink-soft">· {visible}/{filtered.length}</span>
+            </button>
+          )}
+        </>
       )}
     </div>
   );
