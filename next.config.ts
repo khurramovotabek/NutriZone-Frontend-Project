@@ -135,6 +135,13 @@ const nextConfig: NextConfig = {
     // change: the optimized variants can be cached for a long time
     // instead of being re-encoded every few hours.
     minimumCacheTTL: 60 * 60 * 24 * 30,
+    // No Next.js disk cache for optimised images -- host nginx caches every /_next/image answer instead (3 GB,
+    // 30 days, survives deploys: backend docker/nginx/host-assets-cache.conf). Next 16's disk cache builds an LRU
+    // on the first image request after each start by reading EVERY cached file one after another, and every image
+    // request waits for it: 28 321 entries / 317 MB took 64 s on the server, so after each deploy or restart new
+    // photos hung past nginx's 60 s timeout -- and with max_fails=1 that took the whole storefront to 502
+    // (2026-11-20). 0 switches that cache off; a photo nginx hasn't cached yet is encoded once (0.1-1 s).
+    maximumDiskCacheSize: 0,
   },
 };
 
