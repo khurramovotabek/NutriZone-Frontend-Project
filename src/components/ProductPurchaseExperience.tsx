@@ -20,6 +20,11 @@ import WishlistButton from "@/components/WishlistButton";
 import PriceTag, { formatPrice } from "@/components/PriceTag";
 import { loadDeliveryOptions, lowerFirst, type DeliveryOptions } from "@/components/checkout/DeliveryRatesNote";
 import ProductCoinReward from "@/components/loyalty/ProductCoinReward";
+import BundleOfferCard from "@/components/pdp/BundleOfferCard";
+import PriceInsight from "@/components/pdp/PriceInsight";
+import ServingCalculator from "@/components/pdp/ServingCalculator";
+import TrustFacts from "@/components/pdp/TrustFacts";
+import type { ProductExtras } from "@/lib/pdp-api";
 
 type Variant = NonNullable<ProductCard["variants"]>[number];
 
@@ -31,6 +36,9 @@ interface Props {
   isWishlisted: boolean;
   /** Rendered under the gallery on desktop (after the info on phones) -- e.g. the trust badges. */
   extras?: ReactNode;
+  /** Bundle offer, trust facts, price history and watched variants (GET products/<slug>/extras). */
+  pdp?: ProductExtras;
+  signedIn?: boolean;
 }
 
 /**
@@ -47,7 +55,7 @@ interface Props {
  * server round-trip/refetch -- the data for every sibling variant is
  * already here from the one initial page load.
  */
-export default function ProductPurchaseExperience({ product, categoryName, brandName, isWishlisted, extras }: Props) {
+export default function ProductPurchaseExperience({ product, categoryName, brandName, isWishlisted, extras, pdp, signedIn = false }: Props) {
   const t = useTranslations("product");
   const tReviews = useTranslations("reviews");
   const searchParams = useSearchParams();
@@ -122,11 +130,17 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
   // Price per serving for the chosen size -- how protein buyers actually compare tubs. A single-size product uses the
   // label's own servings count (the tub's real number: 2.29 kg / 31 g would floor to 73, the label says 74); a
   // multi-size family has one label count for one size, so there servings = the size in grams / one serving's grams.
-  const servingGrams = product.nutrition?.serving_size_grams ?? null;
+  const servingGrams = product.nutrition?.serving_size_grams ?? product.card_facts?.serving_g ?? null;
   const grams = selected?.weight_value ? (selected.weight_unit === "kg" ? selected.weight_value * 1000 : selected.weight_unit === "g" ? selected.weight_value : null) : null;
-  const labelServings = sizeCountSafe(product) === 1 ? (product.nutrition?.servings_per_container ?? null) : null;
+  // The label count also holds in a family for the one size it was written for -- the backend's card_facts names that
+  // size ("2.27 kg"): flooring 2 270 g / 31 g there said 73 servings while the facts box under it said the label's 74.
+  const factsGrams = parseSizeGrams(product.card_facts?.size);
+  const labelForSize = factsGrams !== null && grams !== null && Math.abs(factsGrams - grams) < 1 ? (product.card_facts?.servings ?? null) : null;
+  const labelServings = sizeCountSafe(product) === 1 ? (product.nutrition?.servings_per_container ?? product.card_facts?.servings ?? null) : labelForSize;
   const servings = labelServings ?? (grams && servingGrams ? Math.floor(grams / servingGrams) : null);
   const perServing = servings && price ? Math.round(Number(price) / servings) : null;
+  const showCalc = servings !== null && servings > 1;
+  const priceHistory = selected ? pdp?.price_history[selected.id] : undefined;
 
   const buyBoxRef = useRef<HTMLDivElement>(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
@@ -221,7 +235,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
         </div>
 
         {/* Buy box: price, stock, variants, quantity, CTAs and wishlist/share all live in one cohesive card -- the single decision surface a shopper needs, not several disconnected blocks. */}
-        <div ref={buyBoxRef} className="nz-glass-strong mt-5 rounded-2xl p-5">
+        <div ref={buyBoxRef} className="nz-liquid mt-5 rounded-3xl p-5 sm:p-6">
           <div className="flex items-start justify-between gap-3">
             {formattedPrice ? (
               <PriceTag price={price} compareAt={compareAt} discountPercent={discountPercent} currency={currency} size="xl" showSavings />
@@ -248,6 +262,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
               {t("skuLabel")}: {selected.sku}
             </p>
           )}
+          <TrustFacts brandName={brandName} official={Boolean(pdp?.trust.official_distributor)} expiry={(selected && pdp?.trust.expiry[selected.id]) || null} />
 
           {variantFlavourCount === 0 && product.flavours && product.flavours.length > 0 && (
             <div className="mt-4">
@@ -259,7 +274,7 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
 
           {/* Delivery, payment and rewards at the point of decision -- facts true for every order on this storefront. */}
           <ul className="mt-4 divide-y divide-border/60 rounded-xl border border-border/70 bg-surface/40 px-3 text-xs [&>li]:py-2.5">
-            <BuyFact icon={Truck} title={t("deliveryTitle")} text={deliveryOptions ? (deliveryOptions.zones.tashkent.eta && deliveryOptions.zones.regions.eta ? t("deliveryRatesEtaText", { tashkent: formatPrice(deliveryOptions.zones.tashkent.fee, deliveryOptions.currency) ?? "", regions: formatPrice(deliveryOptions.zones.regions.fee, deliveryOptions.currency) ?? "", tashkentEta: lowerFirst(deliveryOptions.zones.tashkent.eta), regionsEta: lowerFirst(deliveryOptions.zones.regions.eta) }) : t("deliveryRatesText", { tashkent: formatPrice(deliveryOptions.zones.tashkent.fee, deliveryOptions.currency) ?? "", regions: formatPrice(deliveryOptions.zones.regions.fee, deliveryOptions.currency) ?? "" })) : t("deliveryText")} />
+            <BuyFact icon={Truck} title={t("deliveryTitle")} text={deliveryOptions ? (deliveryOptions.zones.tashkent.eta && deliveryOptions.zones.regions.eta ? t("deliveryRatesEtaText", { tashkent: formatPrice(deliveryOptions.zones.tashkent.fee, deliveryOptions.currency) ?? "", regions: formatPrice(deliveryOptions.zones.regions.fee, deliveryOptions.currency) ?? "", tashkentEta: lowerFirst(deliveryOptions.zones.tashkent.eta), regionsEta: lowerFirst(deliveryOptions.zones.regions.eta) }) : t("deliveryRatesText", { tashkent: formatPrice(deliveryOptions.zones.tashkent.fee, deliveryOptions.currency) ?? "", regions: formatPrice(deliveryOptions.zones.regions.fee, deliveryOptions.currency) ?? "" })) + (deliveryOptions.free_from && Number(deliveryOptions.free_from) > 0 ? ` ${t("deliveryFreeFrom", { amount: formatPrice(deliveryOptions.free_from, deliveryOptions.currency) ?? "" })}` : "") : t("deliveryText")} />
             <BuyFact icon={Banknote} title={t("paymentTitle")} text={t("paymentText")} />
             <ProductCoinReward price={price} currency={currency} fallback={<BuyFact icon={Coins} title="NutriZone Coins" text={t("coinsEarn")} href="/loyalty" />} />
           </ul>
@@ -272,8 +287,27 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
         </div>
 
 
+        {/* "Birga arzonroq": this + one companion at a discount, both into the cart with one tap. */}
+        {pdp?.bundle && (
+          <BundleOfferCard
+            offer={pdp.bundle}
+            main={{ variantId: selected?.id ?? null, name: product.name, image: gallery[0] ?? product.primary_image_path, price, currency,
+              outOfStock: selected?.stock_status === "out_of_stock" || selected?.stock_quantity === 0 }}
+          />
+        )}
+
         {/* Which stores (branches) have the selected variant right now, and how many units each. */}
         {selected && <StoreAvailability stores={selected.store_availability} onlineInStock={selected.stock_status === "in_stock" || selected.stock_status === "low_stock"} />}
+
+        {/* How long the tub lasts at the shopper's dose + the variant's price over time with "tell me when it's cheaper". */}
+        {showCalc || priceHistory ? (
+          <div className={`mt-4 grid gap-4 ${showCalc && priceHistory ? "sm:grid-cols-2" : ""}`}>
+            {showCalc && servings !== null && <ServingCalculator servings={servings} price={price} currency={currency} />}
+            {selected && priceHistory && (
+              <PriceInsight key={selected.id} history={priceHistory} variantId={selected.id} currency={currency} watching={Boolean(pdp?.watching.includes(selected.id))} signedIn={signedIn} />
+            )}
+          </div>
+        ) : null}
 
         {/* Reference layout's compact stat strip -- e.g. "250 g / 50 servings / 5 g" -- real specification entries, not a fabricated serving size. */}
         {statFacts.length > 0 && (
@@ -334,6 +368,14 @@ function BuyFact({ icon: Icon, title, text, href }: { icon: typeof Truck; title:
       )}
     </li>
   );
+}
+
+/** "2.27 kg" / "908 g" -> grams; anything else -> null. */
+function parseSizeGrams(size: string | null | undefined): number | null {
+  const m = /^\s*(\d+(?:[.,]\d+)?)\s*(kg|g)\b/i.exec(size ?? "");
+  if (!m) return null;
+  const v = Number(m[1].replace(",", "."));
+  return m[2].toLowerCase() === "kg" ? v * 1000 : v;
 }
 
 /** Distinct sizes among the purchasable variants (a single-size product can use the label's servings count). */

@@ -52,6 +52,7 @@ export default function ProductCard({
   layout = "grid",
   href,
   priority = false,
+  showNew = false,
 }: {
   product: ProductCardData;
   /** Resolved separately by the caller via `getBrandNameMap()` -- the card API itself only ever carries `brand_id`. */
@@ -63,6 +64,9 @@ export default function ProductCard({
   href?: string;
   /** Eager-loads the image for above-the-fold cards (first grid row); every other card stays lazy. */
   priority?: boolean;
+  /** "New" corner badge -- only where newness is the point (the "new arrivals" shelf): in a catalogue imported within
+   *  one month every card said "New", which told the shopper nothing and covered the packshot. */
+  showNew?: boolean;
 }) {
   // A Client Component -- deliberately, unlike most of this codebase's
   // page-level components: this card must be renderable from BOTH a
@@ -81,7 +85,7 @@ export default function ProductCard({
   const discounted = isDiscounted(product.price, product.compare_at_price);
   // a family whose default variant is full price but another size/flavour is marked down: "-17% gacha"
   const upTo = !discounted && product.price_from && product.max_discount_percent ? product.max_discount_percent : null;
-  const isNew = isNewProduct(product.created_at);
+  const isNew = showNew && isNewProduct(product.created_at);
   const topRated = hasRating && product.rating_average! >= TOP_RATED_MIN_AVERAGE && product.rating_count >= TOP_RATED_MIN_COUNT;
   // At most two corner badges (discount + one more) so they never cover the packshot; "Top rated" outranks "New".
 
@@ -134,7 +138,7 @@ export default function ProductCard({
           <div className="min-w-0 flex-1">
             {brandName && <p className="truncate text-xs font-medium uppercase tracking-wide text-ink-soft">{brandName}</p>}
             <p className="line-clamp-1 text-sm font-medium text-ink transition-colors group-hover:text-primary">{product.name}</p>
-            <RatingRow hasRating={hasRating} average={product.rating_average} count={product.rating_count} noReviewsLabel={t("noReviewsShort")} reviewsLabel={tReviews("ratingCount", { count: product.rating_count })} size="sm" />
+            <RatingRow hasRating={hasRating} average={product.rating_average} count={product.rating_count} reviewsLabel={tReviews("ratingCount", { count: product.rating_count })} size="sm" />
             <StockLine status={product.stock_status} quantity={product.stock_quantity} size="xs" />
             {formattedPrice && <PriceTag price={product.price} compareAt={product.compare_at_price} discountPercent={product.discount_percent} currency={product.currency} size="sm" className="mt-1" />}
           </div>
@@ -210,7 +214,7 @@ export default function ProductCard({
         <div className={`flex flex-1 flex-col ${isCompact ? "p-2.5" : isFeatured ? "p-3 sm:p-4" : "p-3 sm:p-3.5"}`}>
           {brandName && !isCompact && <p className="truncate text-xs font-medium uppercase tracking-wide text-ink-soft">{brandName}</p>}
           <p
-            className={`mt-0.5 line-clamp-2 font-medium text-ink transition-colors group-hover:text-primary ${isFeatured ? "text-sm sm:text-base" : isCompact ? "text-xs" : "text-sm"}`}
+            className={`mt-0.5 line-clamp-2 font-medium leading-snug text-ink ${isCompact ? "min-h-[2.0625rem]" : isFeatured ? "min-h-[2.375rem] sm:min-h-[2.75rem]" : "min-h-[2.375rem]"} transition-colors group-hover:text-primary ${isFeatured ? "text-sm sm:text-base" : isCompact ? "text-xs" : "text-sm"}`}
           >
             {product.name}
           </p>
@@ -219,7 +223,7 @@ export default function ProductCard({
             hasRating={hasRating}
             average={product.rating_average}
             count={product.rating_count}
-            noReviewsLabel={t("noReviewsShort")}
+           
             reviewsLabel={tReviews("ratingCount", { count: product.rating_count })}
             size={isCompact ? "xs" : "sm"}
           />
@@ -287,20 +291,18 @@ function RatingRow({
   hasRating,
   average,
   count,
-  noReviewsLabel,
   reviewsLabel,
   size,
 }: {
   hasRating: boolean;
   average: number | null;
   count: number;
-  noReviewsLabel: string;
   reviewsLabel: string;
   size: "xs" | "sm";
 }) {
   const textSize = size === "xs" ? "text-[11px]" : "text-xs";
-  // "No reviews yet" is noise on a phone's half-width card -- the space goes to the name and price there.
-  if (!hasRating) return <p className={`mt-1 hidden sm:block ${textSize} text-ink-soft`}>{noReviewsLabel}</p>;
+  // "No reviews yet" on nearly every card was noise -- the space goes to the name, the options and the price.
+  if (!hasRating) return null;
   return (
     <div className="mt-1 flex items-center gap-1">
       <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400" strokeWidth={0} aria-hidden="true" />

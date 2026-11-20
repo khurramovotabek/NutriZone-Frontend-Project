@@ -36,8 +36,8 @@ export default async function BrandsPage() {
   const logoStrip = brands.filter((b) => b.logo_url).slice(0, 6);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex items-center gap-1.5 text-sm text-ink-soft">
+    <div className="mx-auto max-w-7xl px-4 pb-16 pt-5 sm:py-10">
+      <nav aria-label={t("breadcrumbLabel")} className="mb-4 flex sm:mb-6 items-center gap-1.5 text-sm text-ink-soft">
         <Link href="/" className="transition-colors hover:text-primary">
           {tNav("home")}
         </Link>
@@ -51,7 +51,7 @@ export default async function BrandsPage() {
           <div className="nz-orb -right-16 -top-24 h-64 w-64 bg-[rgba(var(--nz-primary-rgb),0.2)]" />
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(var(--nz-primary-rgb),0.5)] to-transparent" />
         </div>
-        <div className="relative grid gap-8 px-6 py-10 sm:px-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+        <div className="relative grid gap-8 px-5 py-7 sm:px-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
           <div>
             <p className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
               <BadgeCheck className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
@@ -60,7 +60,7 @@ export default async function BrandsPage() {
             <h1 className="mt-4 max-w-2xl text-3xl font-extrabold tracking-tight text-ink sm:text-5xl">{t("title")}</h1>
             <p className="mt-3 max-w-xl text-sm text-ink-muted sm:text-base">{t("subtitle")}</p>
             {!loadError && brands.length > 0 && (
-              <dl className="mt-7 flex flex-wrap gap-3">
+              <dl className="mt-5 flex flex-wrap gap-3 sm:mt-7">
                 <div className="rounded-2xl border border-border/70 bg-surface/55 px-5 py-3 backdrop-blur-sm">
                   <dt className="flex items-center gap-1.5 text-xs font-medium text-ink-soft">
                     <Tag className="h-3.5 w-3.5" strokeWidth={1.9} aria-hidden="true" />
@@ -81,7 +81,7 @@ export default async function BrandsPage() {
             )}
           </div>
           {logoStrip.length > 0 && (
-            <div className="grid grid-cols-3 gap-3 lg:w-80" aria-hidden="true">
+            <div className="hidden grid-cols-3 gap-3 sm:grid lg:w-80" aria-hidden="true">
               {logoStrip.map((b, i) => (
                 <span key={b.id} className={`nz-rise block aspect-square overflow-hidden rounded-2xl border border-border/60 shadow-sm ${i % 2 ? "translate-y-3" : ""}`} style={{ animationDelay: `${i * 70}ms` }}>
                   <BrandLogo name={b.name} logoUrl={b.logo_url} padding="p-3" textSize="text-lg" sizes="96px" />

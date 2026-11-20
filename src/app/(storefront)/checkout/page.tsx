@@ -456,7 +456,7 @@ export default function CheckoutPage() {
         <div className="mx-auto flex max-w-5xl items-center gap-3">
           {payableAmount !== null && preview.total && (
             <div className="shrink-0 leading-tight">
-              <p className="text-[11px] font-medium text-ink-soft">{t("total")}</p>
+              <p className="text-[11px] font-medium text-ink-soft">{fulfilment === "delivery" && preview.delivery?.method !== "delivery" ? t("totalShortNoDelivery") : t("total")}</p>
               <p className="whitespace-nowrap text-base font-extrabold tabular-nums text-ink">{formatPrice(String(payableAmount), preview.total.currency)}</p>
             </div>
           )}

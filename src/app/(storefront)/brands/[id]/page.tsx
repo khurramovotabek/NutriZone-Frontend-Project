@@ -23,7 +23,7 @@ interface Props {
   searchParams: Promise<{ page?: string; sort?: string; sale?: string }>;
 }
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 24;
 const SORTS: CatalogSort[] = ["-created_at", "-popularity", "-discount", "price", "-price", "-rating"];
 
 /** `GET /brands` (there is no per-brand endpoint) is the single source of a brand's name, logo, description and count. */

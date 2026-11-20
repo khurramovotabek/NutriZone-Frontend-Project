@@ -618,7 +618,9 @@
     "showResults": "Показать {count} товаров",
     "showResultsNone": "Показать результаты",
     "understood": "Понял запрос:",
-    "priceUpTo": "до {amount} сум"
+    "priceUpTo": "до {amount} сум",
+    "priceMin": "Цена от (сум)",
+    "priceMax": "до (сум)"
   },
   "brands": {
     "title": "Бренды",
@@ -643,7 +645,9 @@
     "onSale": "Со скидкой",
     "viewInCatalog": "Открыть в каталоге",
     "officialBadge": "Официальный бренд",
-    "sortLabel": "Сортировка"
+    "sortLabel": "Сортировка",
+    "topTitle": "Бренды с самым большим выбором",
+    "jumpLabel": "Перейти к букве"
   },
   "product": {
     "status": "Статус",
@@ -778,7 +782,69 @@
         "sleep": "Сон"
       }
     },
-    "deliveryRatesEtaText": "Ташкент — до {tashkent}, {tashkentEta}. Регионы — от {regions}, {regionsEta}. Самовывоз бесплатно."
+    "deliveryRatesEtaText": "Ташкент — до {tashkent}, {tashkentEta}. Регионы — от {regions}, {regionsEta}. Самовывоз бесплатно.",
+    "deliveryFreeFrom": "Заказы от {amount} — бесплатно.",
+    "storeSummary": "Всего {total} шт · в {stores} магазинах",
+    "storeTotalLabel": "всего шт",
+    "storeOnlineToo": "Есть и онлайн-заказ",
+    "relatedProductsHint": "Часто покупают вместе и похожие варианты",
+    "sameBrandTitle": "{brand} — другие товары",
+    "sameBrandHint": "Полный ассортимент надёжного бренда",
+    "sameBrandAll": "Страница бренда",
+    "railPrev": "Назад",
+    "railNext": "Вперёд",
+    "breadcrumbHome": "Главная",
+    "bundleTitle": "Вместе дешевле",
+    "bundleHintCurated": "Совет магазина: вместе — скидка на второй товар.",
+    "bundleHintAuto": "Часто покупают вместе — вместе дешевле.",
+    "bundleThis": "Этот товар",
+    "bundleTogether": "Вместе",
+    "bundleSaving": "Экономия {amount}",
+    "bundleAddBoth": "Оба в корзину",
+    "bundleAdded": "Добавлено в корзину",
+    "bundleAddedHint": "Скидка посчитается в корзине автоматически.",
+    "bundleGoCart": "Перейти в корзину",
+    "bundleError": "Не удалось добавить в корзину. Попробуйте ещё раз.",
+    "priceHistoryTitle": "История цены",
+    "priceHistoryStable": "Цена не менялась последние 6 месяцев",
+    "priceHistoryRange": "За 6 месяцев: {min} – {max}",
+    "priceHistoryAria": "Цена за 6 месяцев: минимум {min}, максимум {max}",
+    "priceLowest90": "Минимум за 90 дней",
+    "priceHistoryFrom": "6 мес. назад",
+    "priceHistoryToday": "Сегодня",
+    "priceWatchOff": "Сообщить о снижении цены",
+    "priceWatchOn": "Цена отслеживается",
+    "priceWatchHint": "Сообщим на сайте и в Telegram, когда подешевеет.",
+    "priceWatchOnHint": "Сообщим, как только цена снизится. Нажмите ещё раз, чтобы отменить.",
+    "priceWatchError": "Не удалось сохранить. Попробуйте ещё раз.",
+    "calcTitle": "На сколько хватит?",
+    "calcPerDay": "Порций в день",
+    "calcLess": "Меньше",
+    "calcMore": "Больше",
+    "calcResult": "Этой банки хватит на <b>{days}</b> дн.",
+    "calcFacts": "{servings} порций · примерно {weeks} нед.",
+    "calcPerDayCost": "{price} в день",
+    "trustOfficial": "Официальный дистрибьютор",
+    "trustOfficialBrand": "Официальный дистрибьютор {brand}",
+    "trustExpiry": "Годен до: {date}",
+    "trustExpiryHint": "Срок годности партии, которая сейчас в продаже",
+    "questionsTab": "Вопросы",
+    "qaAskTitle": "Задайте вопрос магазину",
+    "qaAskHint": "Спросите о составе, приёме, вкусе или размере — ответит наш специалист.",
+    "qaPlaceholder": "Например: этот протеин без лактозы?",
+    "qaSend": "Отправить",
+    "qaSent": "Вопрос отправлен. Мы сообщим, когда ответим.",
+    "qaError": "Не удалось отправить вопрос.",
+    "qaLoginHint": "Войдите, чтобы задать вопрос.",
+    "qaLogin": "Войти",
+    "qaPending": "Ожидает ответа",
+    "qaEmpty": "Вопросов пока нет. Спросите первым!",
+    "qaCustomer": "Покупатель",
+    "qaStoreAnswer": "Ответ магазина",
+    "qaShowAll": "Показать все вопросы ({count})",
+    "recentTitle": "Вы смотрели",
+    "recentHint": "Недавно просмотренные — хранятся только на этом устройстве",
+    "recentClear": "Очистить список"
   },
   "wishlist": {
     "title": "Избранное",
@@ -892,7 +958,9 @@
       "checkout": "Оформить",
       "close": "Закрыть"
     },
-    "signInForCoins": "Войти и заказать — кэшбэк монетами"
+    "signInForCoins": "Войти и заказать — кэшбэк монетами",
+    "freeDeliveryLeft": "До бесплатной доставки осталось {amount}",
+    "freeDeliveryReached": "✓ Доставка бесплатно"
   },
   "checkout": {
     "title": "Оформление заказа",
@@ -1116,7 +1184,9 @@
       "chipTrack": "Отслеживание заказа",
       "chipFaster": "Дальше в 1 клик",
       "continueGuestShort": "Как гость"
-    }
+    },
+    "totalWithoutDelivery": "без доставки — добавится после выбора адреса",
+    "totalShortNoDelivery": "Итого · без доставки"
   },
   "auth": {
     "title": "Вход или регистрация",
@@ -3725,7 +3795,12 @@
     "last": "Последняя страница",
     "goTo": "Перейти на страницу {page}",
     "showing": "Показано {from}–{to} из {total}",
-    "pageOf": "Страница {page} из {total}"
+    "pageOf": "Страница {page} из {total}",
+    "products": "товаров",
+    "moreCount": "Показать ещё {count}",
+    "endOfList": "Конец списка",
+    "remaining": "Осталось товаров: {count}",
+    "toTop": "Наверх"
   },
   "guides": {
     "title": "Центр советов",

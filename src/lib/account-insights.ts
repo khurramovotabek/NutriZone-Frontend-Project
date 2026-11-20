@@ -94,7 +94,7 @@ export function orderItemCount(order: Order): number {
 
 export function formatMoney(amount: number, currency: string | null): string {
   const rounded = Math.round(amount);
-  const formatted = rounded.toLocaleString();
+  const formatted = rounded.toLocaleString("en-US").replace(/,/g, "\u00a0");
   return currency ? `${formatted} ${currency}` : formatted;
 }
 

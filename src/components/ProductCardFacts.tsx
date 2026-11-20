@@ -12,9 +12,9 @@ export default function ProductCardFacts({ facts }: { facts: ProductCard["card_f
   const t = useTranslations("product.cardFacts");
   if (!facts) return null;
   const numbers: string[] = [];
-  if (facts.servings) numbers.push(t("servings", { n: facts.servings }));
+  // servings and price per serving are stated at the price, for the size the shopper has chosen (ProductPurchaseExperience);
+  // repeated here for the default size only they read as a second, different count
   if (facts.protein) numbers.push(t("protein", { g: facts.protein }));
-  if (facts.per_serving) numbers.push(t("perServing", { price: money(facts.per_serving) }));
   const suits = (facts.suits ?? []).filter((s) => t.has(`suits.${s}`));
   if (!numbers.length && !facts.per_25g_protein && !suits.length) return null;
 

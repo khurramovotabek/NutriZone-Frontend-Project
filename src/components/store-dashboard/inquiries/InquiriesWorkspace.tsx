@@ -645,7 +645,7 @@ export default function InquiriesWorkspace({
                             <span>{order.placed_at ? new Date(order.placed_at).toLocaleDateString() : ""}</span>
                             {order.total_amount && (
                               <span className="font-medium text-ink">
-                                {Number(order.total_amount).toLocaleString()} {order.currency}
+                                {Math.round(Number(order.total_amount)).toLocaleString("en-US").replace(/,/g, "\u00a0")} {order.currency}
                               </span>
                             )}
                           </div>

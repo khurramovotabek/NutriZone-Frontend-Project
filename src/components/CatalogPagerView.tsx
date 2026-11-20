@@ -24,6 +24,7 @@ export default function CatalogPagerView({
   hrefs,
   label,
   className = "mt-12",
+  bare = false,
 }: {
   page: number;
   lastPage?: number;
@@ -33,6 +34,8 @@ export default function CatalogPagerView({
   hrefs: string[];
   label: string;
   className?: string;
+  /** Inside the catalogue feed footer: no own glass pill, summary or progress line (the footer shows them once). */
+  bare?: boolean;
 }) {
   const t = useTranslations("pagination");
   if (totalPages <= 1) return null;
@@ -56,9 +59,10 @@ export default function CatalogPagerView({
       </Link>
     );
 
+  const Root = bare ? "div" : "nav";
   return (
-    <nav aria-label={label} className={`${className} flex flex-col items-center gap-4`}>
-      <div className="nz-glass flex items-center gap-1 rounded-2xl p-1.5 shadow-lg shadow-black/5">
+    <Root {...(bare ? {} : { "aria-label": label })} className={`${className} flex flex-col items-center gap-4`}>
+      <div className={bare ? "flex items-center gap-1" : "nz-glass flex items-center gap-1 rounded-2xl p-1.5 shadow-lg shadow-black/5"}>
         {edge(1, first === 1, t("first"), <ChevronsLeft className="h-4 w-4" aria-hidden="true" />, "max-sm:hidden")}
         {first > 1 ? (
           <Link href={hrefFor(first - 1)} rel="prev" className={`${SQUARE} ${IDLE} gap-1.5`}>
@@ -135,14 +139,14 @@ export default function CatalogPagerView({
         {edge(totalPages, current === totalPages, t("last"), <ChevronsRight className="h-4 w-4" aria-hidden="true" />, "max-sm:hidden")}
       </div>
 
-      <div className="flex w-full max-w-xs flex-col items-center gap-2">
+      {!bare && <div className="flex w-full max-w-xs flex-col items-center gap-2">
         <div className="h-1 w-full overflow-hidden rounded-full bg-surface-2" aria-hidden="true">
           <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${percent}%` }} />
         </div>
         <p className="text-xs text-ink-muted">
           {from && to && totalCount ? t("showing", { from, to, total: totalCount }) : t("pageOf", { page: current, total: totalPages })}
         </p>
-      </div>
-    </nav>
+      </div>}
+    </Root>
   );
 }

@@ -618,7 +618,9 @@
     "showResults": "Show {count} products",
     "showResultsNone": "Show results",
     "understood": "Understood:",
-    "priceUpTo": "up to {amount} UZS"
+    "priceUpTo": "up to {amount} UZS",
+    "priceMin": "Price from (UZS)",
+    "priceMax": "to (UZS)"
   },
   "brands": {
     "title": "Brands",
@@ -643,7 +645,9 @@
     "onSale": "On sale",
     "viewInCatalog": "Open in catalog",
     "officialBadge": "Official brand",
-    "sortLabel": "Sort"
+    "sortLabel": "Sort",
+    "topTitle": "Brands with the widest range",
+    "jumpLabel": "Jump to letter"
   },
   "product": {
     "status": "Status",
@@ -778,7 +782,69 @@
         "sleep": "Sleep"
       }
     },
-    "deliveryRatesEtaText": "Tashkent city up to {tashkent}, {tashkentEta}. Regions from {regions}, {regionsEta}. Pickup is free."
+    "deliveryRatesEtaText": "Tashkent city up to {tashkent}, {tashkentEta}. Regions from {regions}, {regionsEta}. Pickup is free.",
+    "deliveryFreeFrom": "Free on orders over {amount}.",
+    "storeSummary": "{total} units in total · in {stores} stores",
+    "storeTotalLabel": "units total",
+    "storeOnlineToo": "Online order available too",
+    "relatedProductsHint": "Often bought together and similar picks",
+    "sameBrandTitle": "More from {brand}",
+    "sameBrandHint": "The brand's full range",
+    "sameBrandAll": "Brand page",
+    "railPrev": "Previous",
+    "railNext": "Next",
+    "breadcrumbHome": "Home",
+    "bundleTitle": "Better together",
+    "bundleHintCurated": "Store pick: buy both and save on the second.",
+    "bundleHintAuto": "Often bought together — save when you buy both.",
+    "bundleThis": "This item",
+    "bundleTogether": "Both together",
+    "bundleSaving": "You save {amount}",
+    "bundleAddBoth": "Add both to cart",
+    "bundleAdded": "Added to cart",
+    "bundleAddedHint": "The discount is applied in the cart automatically.",
+    "bundleGoCart": "Go to cart",
+    "bundleError": "Could not add to cart. Please try again.",
+    "priceHistoryTitle": "Price history",
+    "priceHistoryStable": "The price hasn't changed in 6 months",
+    "priceHistoryRange": "Last 6 months: {min} – {max}",
+    "priceHistoryAria": "Price over 6 months: lowest {min}, highest {max}",
+    "priceLowest90": "Lowest in 90 days",
+    "priceHistoryFrom": "6 months ago",
+    "priceHistoryToday": "Today",
+    "priceWatchOff": "Tell me when it's cheaper",
+    "priceWatchOn": "Watching the price",
+    "priceWatchHint": "We'll notify you on the site and in Telegram when it drops.",
+    "priceWatchOnHint": "We'll let you know as soon as it drops. Tap again to stop.",
+    "priceWatchError": "Could not save. Please try again.",
+    "calcTitle": "How long will it last?",
+    "calcPerDay": "Servings a day",
+    "calcLess": "Fewer",
+    "calcMore": "More",
+    "calcResult": "This tub lasts <b>{days}</b> days",
+    "calcFacts": "{servings} servings · about {weeks} weeks",
+    "calcPerDayCost": "{price} a day",
+    "trustOfficial": "Official distributor",
+    "trustOfficialBrand": "Official {brand} distributor",
+    "trustExpiry": "Best before: {date}",
+    "trustExpiryHint": "Expiry of the batch on sale now",
+    "questionsTab": "Q&A",
+    "qaAskTitle": "Ask the store",
+    "qaAskHint": "Ask about ingredients, use, flavour or size — our specialist will answer.",
+    "qaPlaceholder": "E.g. is this protein lactose-free?",
+    "qaSend": "Send",
+    "qaSent": "Question sent. We'll notify you when it's answered.",
+    "qaError": "Could not send your question.",
+    "qaLoginHint": "Sign in to ask a question.",
+    "qaLogin": "Sign in",
+    "qaPending": "Awaiting an answer",
+    "qaEmpty": "No questions yet. Be the first to ask!",
+    "qaCustomer": "Customer",
+    "qaStoreAnswer": "Store answer",
+    "qaShowAll": "Show all {count} questions",
+    "recentTitle": "Recently viewed",
+    "recentHint": "Products you looked at — kept on this device only",
+    "recentClear": "Clear list"
   },
   "wishlist": {
     "title": "My Wishlist",
@@ -892,7 +958,9 @@
       "checkout": "Checkout",
       "close": "Close"
     },
-    "signInForCoins": "Sign in to order — earn coin cashback"
+    "signInForCoins": "Sign in to order — earn coin cashback",
+    "freeDeliveryLeft": "{amount} more for free delivery",
+    "freeDeliveryReached": "✓ Delivery is free"
   },
   "checkout": {
     "title": "Checkout",
@@ -1116,7 +1184,9 @@
       "chipTrack": "Order tracking",
       "chipFaster": "One tap next time",
       "continueGuestShort": "As a guest"
-    }
+    },
+    "totalWithoutDelivery": "without delivery — added once you pick the address",
+    "totalShortNoDelivery": "Total · excl. delivery"
   },
   "auth": {
     "title": "Log in or sign up",
@@ -3725,7 +3795,12 @@
     "last": "Last page",
     "goTo": "Go to page {page}",
     "showing": "Showing {from}–{to} of {total}",
-    "pageOf": "Page {page} of {total}"
+    "pageOf": "Page {page} of {total}",
+    "products": "products",
+    "moreCount": "Show {count} more",
+    "endOfList": "End of list",
+    "remaining": "{count} more products",
+    "toTop": "Back to top"
   },
   "guides": {
     "title": "Advice centre",

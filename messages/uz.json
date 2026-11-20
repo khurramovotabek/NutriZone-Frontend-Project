@@ -618,7 +618,9 @@
     "showResults": "{count} ta mahsulotni ko'rsatish",
     "showResultsNone": "Natijalarni ko'rsatish",
     "understood": "Tushundim:",
-    "priceUpTo": "{amount} so'mgacha"
+    "priceUpTo": "{amount} so'mgacha",
+    "priceMin": "Narx, dan (so'm)",
+    "priceMax": "gacha (so'm)"
   },
   "brands": {
     "title": "Brendlar",
@@ -643,7 +645,9 @@
     "onSale": "Chegirmadagilar",
     "viewInCatalog": "Katalogda ochish",
     "officialBadge": "Rasmiy brend",
-    "sortLabel": "Saralash"
+    "sortLabel": "Saralash",
+    "topTitle": "Eng ko'p mahsulotli brendlar",
+    "jumpLabel": "Harf bo'yicha o'tish"
   },
   "product": {
     "status": "Holati",
@@ -778,7 +782,69 @@
         "sleep": "Uyqu"
       }
     },
-    "deliveryRatesEtaText": "Toshkent shahri — {tashkent} gacha, {tashkentEta}. Viloyatlar — {regions} dan, {regionsEta}. Olib ketish bepul."
+    "deliveryRatesEtaText": "Toshkent shahri — {tashkent} gacha, {tashkentEta}. Viloyatlar — {regions} dan, {regionsEta}. Olib ketish bepul.",
+    "deliveryFreeFrom": "{amount} dan qimmat buyurtmalar — bepul.",
+    "storeSummary": "Jami {total} dona · {stores} ta do'konda",
+    "storeTotalLabel": "jami dona",
+    "storeOnlineToo": "Onlayn buyurtma ham bor",
+    "relatedProductsHint": "Shu mahsulot bilan ko'p olinadigan va o'xshash tanlovlar",
+    "sameBrandTitle": "{brand} — boshqa mahsulotlar",
+    "sameBrandHint": "Ishonchli brendning to'liq assortimenti",
+    "sameBrandAll": "Brend sahifasi",
+    "railPrev": "Oldingilar",
+    "railNext": "Keyingilar",
+    "breadcrumbHome": "Bosh sahifa",
+    "bundleTitle": "Birga arzonroq",
+    "bundleHintCurated": "Do'kon tavsiyasi: birga olsangiz ikkinchisiga chegirma.",
+    "bundleHintAuto": "Bu mahsulot bilan ko'pincha birga olinadi — birga olsangiz chegirma.",
+    "bundleThis": "Shu mahsulot",
+    "bundleTogether": "Ikkalasi birga",
+    "bundleSaving": "{amount} tejaysiz",
+    "bundleAddBoth": "Ikkalasini savatga",
+    "bundleAdded": "Savatga qo'shildi",
+    "bundleAddedHint": "Chegirma savatda avtomatik hisoblanadi.",
+    "bundleGoCart": "Savatga o'tish",
+    "bundleError": "Savatga qo'shib bo'lmadi. Qaytadan urinib ko'ring.",
+    "priceHistoryTitle": "Narx tarixi",
+    "priceHistoryStable": "So'nggi 6 oyda narx o'zgarmagan",
+    "priceHistoryRange": "6 oyda: {min} – {max}",
+    "priceHistoryAria": "So'nggi 6 oylik narx: eng past {min}, eng yuqori {max}",
+    "priceLowest90": "90 kundagi eng past",
+    "priceHistoryFrom": "6 oy oldin",
+    "priceHistoryToday": "Bugun",
+    "priceWatchOff": "Narx tushsa xabar bering",
+    "priceWatchOn": "Narx kuzatilmoqda",
+    "priceWatchHint": "Arzonlashsa saytda va Telegram'da xabar olasiz.",
+    "priceWatchOnHint": "Narx tushishi bilan xabar beramiz. Bekor qilish uchun yana bosing.",
+    "priceWatchError": "Saqlab bo'lmadi. Qaytadan urinib ko'ring.",
+    "calcTitle": "Qancha muddatga yetadi?",
+    "calcPerDay": "Kuniga porsiya",
+    "calcLess": "Kamaytirish",
+    "calcMore": "Ko'paytirish",
+    "calcResult": "Bu idish <b>{days}</b> kunga yetadi",
+    "calcFacts": "{servings} porsiya · taxminan {weeks} hafta",
+    "calcPerDayCost": "kuniga {price}",
+    "trustOfficial": "Rasmiy distribyutor",
+    "trustOfficialBrand": "{brand} rasmiy distribyutori",
+    "trustExpiry": "Yaroqli: {date} gacha",
+    "trustExpiryHint": "Hozir sotuvdagi partiyaning yaroqlilik muddati",
+    "questionsTab": "Savol-javob",
+    "qaAskTitle": "Do'konga savol bering",
+    "qaAskHint": "Tarkib, qabul qilish, ta'm yoki o'lcham haqida so'rang — mutaxassisimiz javob beradi.",
+    "qaPlaceholder": "Masalan: bu protein laktozasizmi?",
+    "qaSend": "Yuborish",
+    "qaSent": "Savolingiz yuborildi. Javob berilganda xabar olasiz.",
+    "qaError": "Savolni yuborib bo'lmadi.",
+    "qaLoginHint": "Savol berish uchun hisobingizga kiring.",
+    "qaLogin": "Kirish",
+    "qaPending": "Javob kutilmoqda",
+    "qaEmpty": "Hali savol yo'q. Birinchi bo'lib so'rang!",
+    "qaCustomer": "Mijoz",
+    "qaStoreAnswer": "Do'kon javobi",
+    "qaShowAll": "Barcha {count} ta savolni ko'rish",
+    "recentTitle": "Siz ko'rgan mahsulotlar",
+    "recentHint": "Yaqinda ko'rib chiqqanlaringiz — faqat shu qurilmada saqlanadi",
+    "recentClear": "Ro'yxatni tozalash"
   },
   "wishlist": {
     "title": "Sevimlilar",
@@ -892,7 +958,9 @@
       "checkout": "Rasmiylashtirish",
       "close": "Yopish"
     },
-    "signInForCoins": "Kirib buyurtma berish — coins cashback"
+    "signInForCoins": "Kirib buyurtma berish — coins cashback",
+    "freeDeliveryLeft": "Bepul yetkazib berishgacha yana {amount}",
+    "freeDeliveryReached": "✓ Yetkazib berish bepul"
   },
   "checkout": {
     "title": "Buyurtma rasmiylashtirish",
@@ -1116,7 +1184,9 @@
       "chipTrack": "Buyurtmani kuzatish",
       "chipFaster": "Keyingi safar 1 bosishda",
       "continueGuestShort": "Mehmon sifatida"
-    }
+    },
+    "totalWithoutDelivery": "yetkazib berish narxisiz — manzil tanlangach qo'shiladi",
+    "totalShortNoDelivery": "Jami · yetkazishsiz"
   },
   "auth": {
     "title": "Kirish yoki ro'yxatdan o'tish",
@@ -3725,7 +3795,12 @@
     "last": "Oxirgi sahifa",
     "goTo": "{page}-sahifaga o'tish",
     "showing": "{total} ta mahsulotdan {from}–{to} ko'rsatilmoqda",
-    "pageOf": "{page}-sahifa, jami {total}"
+    "pageOf": "{page}-sahifa, jami {total}",
+    "products": "mahsulot",
+    "moreCount": "Yana {count} ta ko'rsatish",
+    "endOfList": "Ro'yxat oxiri",
+    "remaining": "Yana {count} ta mahsulot bor",
+    "toTop": "Tepaga"
   },
   "guides": {
     "title": "Maslahatlar markazi",

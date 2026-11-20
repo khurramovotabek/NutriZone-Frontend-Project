@@ -1,3 +1,4 @@
+import { Package } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getBrandNameMap, getCategories, searchProducts, type Category, type ProductCard as ProductCardData } from "@/lib/api";
 import { categoryPath } from "@/lib/entity-paths";
@@ -50,7 +51,7 @@ export default async function CategoryRail({ slug, tKey }: { slug: string; tKey:
         icon={
           category.image_url ? (
             <span className="relative inline-flex h-8 w-8 shrink-0 overflow-hidden rounded-xl bg-surface-2 ring-1 ring-ink/10">
-              <FullBleedImage src={category.image_url} alt="" sizes="32px" fallbackIcon={null} />
+              <FullBleedImage src={category.image_url} alt="" sizes="32px" fallbackIcon={<Package className="h-4 w-4 text-ink-soft" strokeWidth={1.75} aria-hidden="true" />} />
             </span>
           ) : undefined
         }

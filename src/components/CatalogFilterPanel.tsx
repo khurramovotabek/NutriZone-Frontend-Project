@@ -404,15 +404,15 @@ function PriceRange({ state, facets, onApply }: { state: CatalogState; facets: C
         onApply(digits(min) || undefined, digits(max) || undefined);
       }}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-end gap-2">
         <label className="min-w-0 flex-1">
-          <span className="sr-only">{t("priceFrom")}</span>
-          <input inputMode="numeric" value={min ? fmt(Number(digits(min))) : ""} onChange={(e) => setMin(digits(e.target.value))} placeholder={floor !== undefined ? `${t("priceFrom")} ${fmt(floor)}` : t("priceFrom")} className="nz-glass-input w-full rounded-lg px-2.5 py-1.5 text-sm tabular-nums" />
+          <span className="mb-1 block text-[11px] font-medium text-ink-soft">{t("priceMin")}</span>
+          <input inputMode="numeric" value={min ? fmt(Number(digits(min))) : ""} onChange={(e) => setMin(digits(e.target.value))} placeholder={floor !== undefined ? fmt(floor) : "0"} className="nz-glass-input w-full rounded-xl px-3 py-2 text-sm tabular-nums" />
         </label>
-        <span className="text-ink-soft" aria-hidden="true">–</span>
+        <span className="pb-2 text-ink-soft" aria-hidden="true">–</span>
         <label className="min-w-0 flex-1">
-          <span className="sr-only">{t("priceTo")}</span>
-          <input inputMode="numeric" value={max ? fmt(Number(digits(max))) : ""} onChange={(e) => setMax(digits(e.target.value))} placeholder={ceil !== undefined ? `${t("priceTo")} ${fmt(ceil)}` : t("priceTo")} className="nz-glass-input w-full rounded-lg px-2.5 py-1.5 text-sm tabular-nums" />
+          <span className="mb-1 block text-[11px] font-medium text-ink-soft">{t("priceMax")}</span>
+          <input inputMode="numeric" value={max ? fmt(Number(digits(max))) : ""} onChange={(e) => setMax(digits(e.target.value))} placeholder={ceil !== undefined ? fmt(ceil) : "∞"} className="nz-glass-input w-full rounded-xl px-3 py-2 text-sm tabular-nums" />
         </label>
       </div>
       {floor !== undefined && ceil !== undefined && <p className="mt-1.5 text-[11px] text-ink-soft">{t("priceRangeHint", { min: fmt(floor), max: fmt(ceil) })}</p>}

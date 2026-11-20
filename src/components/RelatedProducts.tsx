@@ -1,37 +1,65 @@
+import { Layers, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getBrandNameMap } from "@/lib/api";
-import ProductCard from "@/components/ProductCard";
-import ProductGrid from "@/components/ProductGrid";
-import SectionHeader from "@/components/SectionHeader";
+import ProductRail from "@/components/ProductRail";
 import type { ProductCard as ProductCardData } from "@/lib/api";
 
 /**
- * "You may also like" -- backed by the real recommendations endpoint
- * (staff-curated; else what customers buy together with it, then the
- * category's in-stock best sellers -- see `RecommendationSelector.for_product`
- * and co_purchase.py). Uses the
- * `compact` card variant -- this is a secondary rail below the main
- * product, not the page's primary content. Renders nothing if there
- * simply are no other published products to recommend -- never a
- * fabricated "similar products" list.
+ * The product page's recommendation blocks, as premium liquid-glass rails:
+ * 1. "Sizga tavsiya etamiz" -- the real recommendations endpoint (staff-curated; else what customers buy together
+ *    with it, then the category's in-stock best sellers -- see `RecommendationSelector.for_product`, co_purchase.py).
+ * 2. "<Brand>ning boshqa mahsulotlari" -- the same brand's other published products, minus this one and anything
+ *    rail 1 already shows, with a link to the brand page.
+ * Each rail renders nothing when it has no real products -- never a fabricated "similar products" list.
  */
-export default async function RelatedProducts({ products }: { products: ProductCardData[] }) {
+export default async function RelatedProducts({
+  products,
+  brandProducts = [],
+  currentId,
+  brandName,
+  brandHref,
+}: {
+  products: ProductCardData[];
+  brandProducts?: ProductCardData[];
+  currentId?: string;
+  brandName?: string | null;
+  brandHref?: string | null;
+}) {
   const t = await getTranslations("product");
 
-  if (products.length === 0) return null;
+  const recommended = products.filter((p) => p.id !== currentId).slice(0, 12);
+  const shown = new Set(recommended.map((p) => p.id));
+  const sameBrand = brandProducts.filter((p) => p.id !== currentId && !shown.has(p.id)).slice(0, 12);
+  if (recommended.length === 0 && sameBrand.length === 0) return null;
 
   const brandNames = await getBrandNameMap();
+  const nav = { prevLabel: t("railPrev"), nextLabel: t("railNext") };
 
   return (
-    <section className="mt-12">
-      <SectionHeader title={t("relatedProducts")} />
-      <div className="mt-4">
-        <ProductGrid dense>
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} brandName={brandNames[product.brand_id ?? ""] ?? null} variant="compact" />
-          ))}
-        </ProductGrid>
-      </div>
-    </section>
+    <div className="mt-10 space-y-6 sm:mt-12">
+      <ProductRail
+        id="recommended"
+        icon={<Sparkles className="h-5 w-5" strokeWidth={1.9} />}
+        title={t("relatedProducts")}
+        subtitle={t("relatedProductsHint")}
+        products={recommended}
+        brandNames={brandNames}
+        {...nav}
+      />
+      {brandName && (
+        <ProductRail
+          id="same-brand"
+          icon={<Layers className="h-5 w-5" strokeWidth={1.9} />}
+          tone="emerald"
+          title={t("sameBrandTitle", { brand: brandName })}
+          subtitle={t("sameBrandHint")}
+          products={sameBrand}
+          brandNames={brandNames}
+          viewAllHref={brandHref ?? undefined}
+          viewAllLabel={brandHref ? t("sameBrandAll") : undefined}
+          {...nav}
+        />
+      )}
+    </div>
   );
 }

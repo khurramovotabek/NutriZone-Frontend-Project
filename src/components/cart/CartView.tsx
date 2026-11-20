@@ -385,7 +385,7 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
             )}
             {authenticated && total !== null && <OrderCoinEarn amount={total} currency={currency} />}
             {!authenticated && estimatedTotal !== null && <OrderCoinEarn amount={estimatedTotal} currency={estimateCurrency} />}
-            <DeliveryRatesNote className="mt-3" />
+            <DeliveryRatesNote className="mt-3" goodsTotal={authenticated ? total : estimatedTotal} />
 
             {hasShortage ? (
               <p role="alert" className="mt-5 rounded-xl border border-red-300 bg-red-50 p-3 text-sm font-medium text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">
@@ -442,5 +442,5 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
 }
 
 function formatAmount(amount: number): string {
-  return Math.round(amount).toLocaleString("en-US");
+  return Math.round(amount).toLocaleString("en-US").replace(/,/g, "\u00a0");
 }

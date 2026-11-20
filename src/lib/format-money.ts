@@ -3,5 +3,5 @@ export function formatMoney(amount: string | number | null | undefined, currency
   if (amount === null || amount === undefined || !currency) return null;
   const rounded = Math.round(Number(amount));
   if (Number.isNaN(rounded)) return null;
-  return `${rounded.toLocaleString("en-US")} ${currency}`;
+  return `${rounded.toLocaleString("en-US").replace(/,/g, "\u00a0")}\u00a0${currency}`;
 }

@@ -7,7 +7,9 @@ export function formatPrice(price: string | number | null | undefined, currency:
   if (price === null || price === undefined || price === "" || !currency) return null;
   const amount = Math.round(Number(price));
   if (Number.isNaN(amount)) return null;
-  return `${amount.toLocaleString("en-US")} ${currency}`;
+  // "180 000 UZS" -- grouped with spaces the way prices are written in Uzbekistan (and like every count on the site),
+  // non-breaking so a price never wraps between its digits and its currency.
+  return `${amount.toLocaleString("en-US").replace(/,/g, "\u00a0")}\u00a0${currency}`;
 }
 
 /** True when there's a real markdown to show: an old price above the current one. */

@@ -37,7 +37,7 @@ export function lowerFirst(text: string): string {
 }
 
 /** "Delivery: Tashkent city up to 30 000 so'm, regions from 30 000 so'm. Pickup is free." (+ free threshold when set). */
-export default function DeliveryRatesNote({ className = "" }: { className?: string }) {
+export default function DeliveryRatesNote({ className = "", goodsTotal = null }: { className?: string; /** The cart's goods total: a "N left to free delivery" bar when the dashboard sets a free-delivery threshold. */ goodsTotal?: number | null }) {
   const t = useTranslations("cart");
   const tq = useTranslations("checkout.deliveryQuote");
   const [options, setOptions] = useState<DeliveryOptions | null>(null);
@@ -69,8 +69,27 @@ export default function DeliveryRatesNote({ className = "" }: { className?: stri
         <Link href="/delivery" className="ml-1 font-semibold text-primary hover:underline">
           {t("deliveryMore")} →
         </Link>
-        {options.free_from && <span className="mt-0.5 block font-medium text-success">{tq("freeFrom", { amount: formatPrice(options.free_from, cur) ?? "" })}</span>}
+        {options.free_from && goodsTotal === null && <span className="mt-0.5 block font-medium text-success">{tq("freeFrom", { amount: formatPrice(options.free_from, cur) ?? "" })}</span>}
+        {options.free_from && goodsTotal !== null && <FreeDeliveryBar goods={goodsTotal} threshold={Number(options.free_from)} currency={cur} />}
       </p>
     </div>
+  );
+}
+
+/** How far the cart is from free delivery (the backend makes delivery free from the same threshold, delivery_pricing.py). */
+function FreeDeliveryBar({ goods, threshold, currency }: { goods: number; threshold: number; currency: string }) {
+  const t = useTranslations("cart");
+  if (!threshold) return null;
+  const left = Math.max(0, threshold - goods);
+  const pct = Math.min(100, Math.round((goods / threshold) * 100));
+  return (
+    <span className="mt-2 block">
+      <span className={`block font-semibold ${left ? "text-ink" : "text-success"}`}>
+        {left ? t("freeDeliveryLeft", { amount: formatPrice(left, currency) ?? "" }) : t("freeDeliveryReached")}
+      </span>
+      <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-surface-3" aria-hidden="true">
+        <span className={`block h-full rounded-full transition-[width] duration-700 ${left ? "bg-gradient-to-r from-primary to-sky-400" : "bg-success"}`} style={{ width: `${pct}%` }} />
+      </span>
+    </span>
   );
 }

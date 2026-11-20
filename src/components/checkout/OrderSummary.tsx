@@ -200,13 +200,17 @@ export default function OrderSummary({
               <span className="text-base font-semibold text-ink">
                 {t("total")}
               </span>
-              <span className="text-xl font-bold text-ink">
+              <span className="text-xl font-bold tabular-nums text-ink">
                 {formatPrice(
                   payableAfterCoins(preview.total.amount, coins, deliveryFeeOf(preview, pickup)),
                   preview.total.currency,
                 )}
               </span>
             </div>
+            {/* delivery not priced yet (no address): the total is the goods only -- say so instead of a total that grows later */}
+            {!pickup && preview.delivery?.method !== "delivery" && (
+              <p className="-mt-2 text-right text-[11px] text-ink-soft">{t("totalWithoutDelivery")}</p>
+            )}
             {!guest && !noCoins && (
               <OrderCoinEarn
                 amount={Number(payableAfterCoins(preview.total.amount, coins))}

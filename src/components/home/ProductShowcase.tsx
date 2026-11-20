@@ -73,7 +73,7 @@ export default function ProductShowcase({ tabs, brandNames }: { tabs: ShowcaseTa
       <div role="tabpanel" className={`mt-5 sm:mt-6 ${fillers ? "grid grid-cols-2" : "nz-snap-row -mx-4 flex snap-x snap-mandatory overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:overflow-visible sm:px-0"} gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4`}>
         {products.map((product, idx) => (
           <div key={`${current.key}-${product.id}`} className={fillers ? "" : "w-[46%] shrink-0 snap-start sm:w-auto"}>
-            <ProductCard product={product} brandName={brandNames[product.brand_id ?? ""] ?? null} variant="featured" priority={idx < 4} />
+            <ProductCard product={product} brandName={brandNames[product.brand_id ?? ""] ?? null} variant="featured" priority={idx < 4} showNew={current.key === "featured"} />
           </div>
         ))}
         {fillers > 0 && (

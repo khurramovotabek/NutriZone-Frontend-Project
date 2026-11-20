@@ -45,7 +45,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   return pageMetadata({ path: paged(entityPaths(categoryPath, category), page), title: `${t("categoryTitle", { name: category.name })}${page > 1 ? ` — ${t("pageSuffix", { page })}` : ""}`, description, image: category.image_url });
 }
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 24;
 
 export default async function CategoryDetailPage({ params, searchParams }: Props) {
   const { id: param } = await params;

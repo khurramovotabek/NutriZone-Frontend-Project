@@ -1,13 +1,14 @@
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
-import { AlertTriangle, ChevronRight } from "lucide-react";
+import { AlertTriangle, ChevronRight, Home, ListChecks } from "lucide-react";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/config";
-import { ApiError, getBrands, getCategories, getProductBySlug, getProductRecommendations } from "@/lib/api";
+import { ApiError, getBrands, getCategories, getProductBySlug, getProductRecommendations, getProducts } from "@/lib/api";
 import { getPublicProductReviews } from "@/lib/reviews-api";
 import { getWishlist } from "@/lib/wishlist-api";
+import { getProductExtras, getProductQuestions } from "@/lib/pdp-api";
 import { getAccessToken } from "@/lib/session";
 import CompositionTable from "@/components/CompositionTable";
 import ProductPurchaseExperience from "@/components/ProductPurchaseExperience";
@@ -18,8 +19,11 @@ import SupplementFactsSection from "@/components/SupplementFactsSection";
 import TrustBar from "@/components/TrustBar";
 import ProductJsonLd from "@/components/ProductJsonLd";
 import ProductCardFacts from "@/components/ProductCardFacts";
+import ProductDescription from "@/components/ProductDescription";
+import ProductQuestions from "@/components/pdp/ProductQuestions";
+import RecentlyViewed from "@/components/pdp/RecentlyViewed";
 import { clip, pageMetadata, productPaths } from "@/lib/seo";
-import { categoryPath } from "@/lib/entity-paths";
+import { brandPath, categoryPath } from "@/lib/entity-paths";
 import { ErrorState, Skeleton } from "@/components/ui";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -93,10 +97,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   // established pattern as categoryName above -- the product detail
   // response itself only carries brand_id, never a resolved name.
   let brandName: string | null = null;
+  let brandHref: string | null = null;
   if (product.brand_id) {
     try {
       const { data: brands } = await getBrands();
-      brandName = brands.find((b) => b.id === product.brand_id)?.name ?? null;
+      const brand = brands.find((b) => b.id === product.brand_id);
+      brandName = brand?.name ?? null;
+      brandHref = brand ? brandPath(brand) : null;
     } catch {
       // Bonus identity line, never a critical-path dependency.
     }
@@ -104,32 +111,31 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   const accessToken = await getAccessToken();
 
-  let isWishlisted = false;
-  if (accessToken) {
-    try {
-      const wishlist = await getWishlist(accessToken);
-      isWishlisted = wishlist.some((item) => item.id === product.id);
-    } catch {
-      // A logged-in visitor's wishlist membership is a nice-to-have pre-fill, never a page-breaking dependency.
-    }
-  }
-
-  let relatedProducts: Awaited<ReturnType<typeof getProductRecommendations>>["data"] = [];
-  try {
-    relatedProducts = (await getProductRecommendations(slug, await getLocale())).data;
-  } catch {
-    // "You may also like" is a bonus section -- the product page still renders fully without it.
-  }
-
-  let reviews: Awaited<ReturnType<typeof getPublicProductReviews>>["items"] = [];
-  let reviewsTotal = 0;
-  try {
-    const result = await getPublicProductReviews(product.id, 1, 10);
-    reviews = result.items;
-    reviewsTotal = result.totalCount;
-  } catch {
+  // Everything below the buy box is a bonus: loaded in parallel, and each one failing on its own never breaks the page.
+  const locale = await getLocale();
+  const [isWishlisted, relatedProducts, brandProducts, reviewsResult, pdpExtras, questions] = await Promise.all([
+    accessToken
+      ? getWishlist(accessToken).then((list) => list.some((item) => item.id === product.id)).catch(() => false)
+      : Promise.resolve(false),
+    // "You may also like": staff picks, else bought-together, else the category's in-stock best sellers.
+    getProductRecommendations(slug, locale).then((r) => r.data).catch(() => []),
+    // "More from this brand" rail.
+    product.brand_id ? getProducts({ brandId: product.brand_id, pageSize: 16, locale }).then((r) => r.data).catch(() => []) : Promise.resolve([]),
     // Reviews tab shows its own empty/error state below -- never blocks the rest of the page.
-  }
+    getPublicProductReviews(product.id, 1, 10).catch(() => null),
+    // "Birga arzonroq", trust facts, price history (+ the shopper's watched variants) -- one call, never throws.
+    getProductExtras(slug, locale, accessToken),
+    // Savol-javob: answered questions (+ the shopper's own pending ones).
+    getProductQuestions(slug, accessToken),
+  ]);
+  // Only the card-level fields go to the browser's "recently viewed" list -- never the variants / long texts again.
+  const recentCard = Object.fromEntries(
+    (["id", "slug", "slugs", "name", "status", "brand_id", "category_id", "primary_image_path", "default_variant_id", "stock_quantity", "stock_status",
+      "default_variant_stock", "created_at", "price", "currency", "compare_at_price", "discount_percent", "rating_average", "rating_count", "size_count",
+      "flavour_count", "price_from", "max_discount_percent"] as const).filter((k) => k in product).map((k) => [k, product[k]]),
+  ) as unknown as typeof product;
+  const reviews = reviewsResult?.items ?? [];
+  const reviewsTotal = reviewsResult?.totalCount ?? 0;
 
   // Xususiyatlar: admin kiritgan qatorlar + mahsulotning tuzilgan ma'lumotlari (brend, hajm, ta'm, porsiya...) --
   // tab hech qachon bo'sh qolmasin; admin qatori bir xil nomdagi avtomatik qatordan ustun.
@@ -156,21 +162,22 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
-      <ProductJsonLd product={product} brandName={brandName} description={product.description} categoryName={categoryName} categoryHref={categoryHref} locale={(await getLocale()) as Locale} catalogName={tCatalog("title")} />
-      <nav aria-label={t("breadcrumbLabel")} className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-ink-soft">
-        <Link href="/products" className="transition-colors hover:text-primary">
-          {tCatalog("title")}
-        </Link>
-        {categoryName && (
-          <>
-            <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
-            <Link href={categoryHref ?? `/products?category=${product.category_id}`} className="transition-colors hover:text-primary">
-              {categoryName}
+      <ProductJsonLd product={product} brandName={brandName} description={product.description} categoryName={categoryName} categoryHref={categoryHref} locale={locale as Locale} catalogName={tCatalog("title")} />
+      <nav aria-label={t("breadcrumbLabel")} className="nz-snap-row -mx-4 mb-5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <ol className="nz-glass inline-flex min-w-max items-center gap-1 rounded-full px-2 py-1.5 text-[13px] text-ink-soft">
+          <li>
+            <Link href="/" aria-label={t("breadcrumbHome")} className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-primary-soft hover:text-primary">
+              <Home className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
             </Link>
-          </>
-        )}
-        <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
-        <span className="truncate text-ink-muted">{product.name}</span>
+          </li>
+          <Crumb href="/products">{tCatalog("title")}</Crumb>
+          {categoryName && <Crumb href={categoryHref ?? `/products?category=${product.category_id}`}>{categoryName}</Crumb>}
+          {brandName && brandHref && <Crumb href={brandHref}>{brandName}</Crumb>}
+          <li className="flex items-center gap-1">
+            <ChevronRight className="h-3.5 w-3.5 opacity-60" strokeWidth={2} aria-hidden="true" />
+            <span aria-current="page" className="max-w-[16rem] truncate px-1.5 font-medium text-ink sm:max-w-md">{product.name}</span>
+          </li>
+        </ol>
       </nav>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)] lg:gap-x-10 xl:grid-cols-[500px_minmax(0,1fr)]">
@@ -202,18 +209,18 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </>
           }
         >
-          <ProductPurchaseExperience product={product} categoryName={categoryName} brandName={brandName} isWishlisted={isWishlisted} extras={<><ProductCardFacts facts={product.card_facts} /><TrustBar compact /></>} />
+          <ProductPurchaseExperience product={product} categoryName={categoryName} brandName={brandName} isWishlisted={isWishlisted} pdp={pdpExtras} signedIn={Boolean(accessToken)} extras={<><ProductCardFacts facts={product.card_facts} /><TrustBar compact /></>} />
         </Suspense>
       </div>
 
-      <div className="mt-10">
+      <div className="mt-8 sm:mt-10">
         <ProductTabs
           tabs={[
             {
               id: "descriptionTab",
               label: t("descriptionTab"),
               content: product.description ? (
-                <p className="whitespace-pre-line text-sm leading-relaxed text-ink-muted">{product.description}</p>
+                <ProductDescription text={product.description} />
               ) : (
                 <p className="text-sm text-ink-muted">{t("noDescription")}</p>
               ),
@@ -248,7 +255,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 }]
               : []),
             ...(product.directions
-              ? [{ id: "directionsTab", label: t("directionsTab"), content: <p className="whitespace-pre-line text-sm leading-relaxed text-ink-muted">{product.directions}</p> }]
+              ? [{ id: "directionsTab", label: t("directionsTab"), content: (
+                  <div className="flex items-start gap-3 rounded-2xl border border-primary/20 bg-primary-soft/60 p-4 sm:p-5">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-white">
+                      <ListChecks className="h-4.5 w-4.5" strokeWidth={2} aria-hidden="true" />
+                    </span>
+                    <p className="whitespace-pre-line text-[15px] leading-relaxed text-ink">{product.directions}</p>
+                  </div>
+                ) }]
               : []),
             {
               id: "reviewsTab",
@@ -266,11 +280,36 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 />
               ),
             },
+            {
+              id: "questionsTab",
+              label: t("questionsTab"),
+              badge: questions.total > 0 ? `(${questions.total})` : undefined,
+              content: (
+                <ProductQuestions
+                  slug={slug}
+                  initial={questions}
+                  signedIn={Boolean(accessToken)}
+                  loginHref={`/login?next=${encodeURIComponent(`/products/${slug}#questions`)}`}
+                />
+              ),
+            },
           ]}
         />
       </div>
 
-      <RelatedProducts products={relatedProducts} />
+      <RelatedProducts products={relatedProducts} brandProducts={brandProducts} currentId={product.id} brandName={brandName} brandHref={brandHref} />
+      <RecentlyViewed product={recentCard} brandName={brandName} />
     </div>
+  );
+}
+
+function Crumb({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <li className="flex items-center gap-1">
+      <ChevronRight className="h-3.5 w-3.5 opacity-60" strokeWidth={2} aria-hidden="true" />
+      <Link href={href} className="max-w-[12rem] truncate rounded-full px-1.5 py-0.5 transition-colors hover:text-primary">
+        {children}
+      </Link>
+    </li>
   );
 }
