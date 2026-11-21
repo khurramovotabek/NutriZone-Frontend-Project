@@ -20,7 +20,7 @@ import ReviewsWall from "@/components/home/ReviewsWall";
 import TelegramSubscribe from "@/components/home/TelegramSubscribe";
 import SocialFollow from "@/components/home/SocialFollow";
 import LoyaltyBanner from "@/components/home/LoyaltyBanner";
-import SignupGiftBanner from "@/components/loyalty/SignupGiftBanner";
+import SignupGiftBannerServer from "@/components/loyalty/SignupGiftBannerServer";
 import ProductShowcase, { type ShowcaseTab } from "@/components/home/ProductShowcase";
 import SaleSection from "@/components/home/SaleSection";
 import QuickNav from "@/components/home/QuickNav";
@@ -120,7 +120,7 @@ export default async function HomePage() {
         <QuickNav />
       </Suspense>
 
-      <SignupGiftBanner className="mt-6" />
+      <SignupGiftBannerServer className="mt-6" />
 
       <section className="mt-8">
         <TrustBar />

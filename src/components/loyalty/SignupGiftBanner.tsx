@@ -6,7 +6,7 @@ import { ArrowRight, Gift, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import CoinIcon from "@/components/loyalty/CoinIcon";
 
-interface Campaign {
+export interface Campaign {
   enabled: boolean;
   open: boolean;
   coins: number;
@@ -26,11 +26,14 @@ const nf = (n: number) => n.toLocaleString("en-US").replace(/,/g, " ");
  * - shoppers who got it: a thank-you line with their slot number (home only);
  * - nothing at all once the campaign is closed or off.
  */
-export default function SignupGiftBanner({ variant = "home", className = "" }: { variant?: "home" | "compact"; className?: string }) {
+export default function SignupGiftBanner({ variant = "home", className = "", initial }: { variant?: "home" | "compact"; className?: string; initial?: Campaign | null }) {
   const t = useTranslations("signupGift");
-  const [c, setC] = useState<Campaign | null>(null);
+  // `initial` = fetched on the server (home page): the banner is in the first HTML, so nothing below it jumps down
+  // when it would otherwise appear after hydration (it was the page's whole layout shift, CLS 0.135).
+  const [c, setC] = useState<Campaign | null>(initial ?? null);
 
   useEffect(() => {
+    if (initial !== undefined) return;
     let alive = true;
     fetch("/api/loyalty/signup-bonus")
       .then((r) => r.json())
@@ -41,7 +44,7 @@ export default function SignupGiftBanner({ variant = "home", className = "" }: {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [initial]);
 
   if (!c) return null;
 

@@ -233,6 +233,8 @@ export default function HeroSlider({ banners }: { banners: Banner[] }) {
               alt=""
               fit="cover"
               loading={isNeighbor ? "eager" : "lazy"}
+              // only the first slide is the LCP image: preloading the neighbours too made three hero photos race
+              preload={i === 0}
               sizes="(max-width: 1280px) 100vw, 1280px"
               fallbackIcon={<ImageOff className="h-10 w-10 text-white/30" strokeWidth={1.25} aria-hidden="true" />}
             />

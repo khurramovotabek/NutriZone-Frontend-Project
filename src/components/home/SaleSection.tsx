@@ -40,9 +40,9 @@ export default async function SaleSection() {
         viewAllLabel={t("viewAll")}
       />
       <div className="nz-snap-row -mx-4 mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 md:grid-cols-4">
-        {products.map((product, idx) => (
+        {products.map((product) => (
           <div key={product.id} className="w-[46%] shrink-0 snap-start sm:w-auto">
-            <ProductCard product={product} brandName={brandNames[product.brand_id ?? ""] ?? null} priority={idx < 2} />
+            <ProductCard product={product} brandName={brandNames[product.brand_id ?? ""] ?? null} />
           </div>
         ))}
       </div>

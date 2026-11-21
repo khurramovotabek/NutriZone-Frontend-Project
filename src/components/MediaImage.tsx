@@ -20,6 +20,9 @@ interface MediaImageProps {
   /** Tailwind padding class applied to the image itself -- lets "contain" images breathe inside their container without the caller repeating the same p-* on every callsite. */
   padding?: string;
   loading?: "lazy" | "eager";
+  /** Preload in <head> at high priority (the page's LCP image only). Defaults to `loading === "eager"`; pass false for
+   * images that should load now but must not compete with the real LCP image (e.g. the hero's next slide). */
+  preload?: boolean;
   /** Extra classes merged onto the image (hover/scale transitions, etc). */
   className?: string;
   /** How wide this image actually renders at each breakpoint -- see `DEFAULT_SIZES`. */
@@ -62,7 +65,7 @@ interface MediaImageProps {
  * cover photo, and a square logo alike, with zero layout shift: the
  * container's size never depends on whether the image has loaded yet.
  */
-export default function MediaImage({ src, alt, fit = "contain", fallbackIcon, fallbackLabel, padding = "", loading = "lazy", className = "", sizes = DEFAULT_SIZES, onLoadError }: MediaImageProps) {
+export default function MediaImage({ src, alt, fit = "contain", fallbackIcon, fallbackLabel, padding = "", loading = "lazy", preload, className = "", sizes = DEFAULT_SIZES, onLoadError }: MediaImageProps) {
   const resolved = resolveImageUrl(src);
   const [status, setStatus] = useState<"loading" | "loaded" | "error">(resolved ? "loading" : "error");
 
@@ -90,8 +93,8 @@ export default function MediaImage({ src, alt, fit = "contain", fallbackIcon, fa
           fill
           sizes={sizes}
           quality={90}
-          priority={isPriority}
-          loading={isPriority ? undefined : "lazy"}
+          preload={preload ?? isPriority}
+          loading={(preload ?? isPriority) ? undefined : loading}
           unoptimized={resolved.startsWith("data:")}
           onLoad={() => setStatus("loaded")}
           onError={() => {

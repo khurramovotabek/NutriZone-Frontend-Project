@@ -101,6 +101,7 @@ export default function CatalogButton({ categories }: { categories: Category[] }
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls="nz-catalog-panel"
+        aria-label={t("katalogButton")}
         className={`nz-shimmer-btn flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
           open ? "nz-cta" : "nz-glass text-ink hover:-translate-y-px hover:border-primary hover:text-primary"
         }`}
