@@ -1769,7 +1769,8 @@
     "rights": "All rights reserved.",
     "telegramChannel": "Telegram channel",
     "terms": "Public Offer",
-    "delivery": "Delivery and payment"
+    "delivery": "Delivery and payment",
+    "developedBy": "Founder & developer:"
   },
   "about": {
     "metaTitle": "About us",
@@ -1855,6 +1856,13 @@
       "subtitle": "Explore the catalog, or reach out with questions — we'll help you pick the right product.",
       "button": "Start shopping",
       "contact": "Contact us"
+    },
+    "founder": {
+      "eyebrow": "Founder",
+      "title": "The person behind NutriZone",
+      "role": "Founder & CEO of NutriZone · Python backend developer",
+      "body": "NutriZone was founded by Otabek Xurramov, who also built the whole platform himself: the website, the order and warehouse system, the Telegram bot and the AI advisor. The goal: genuine sports nutrition in Uzbekistan — trustworthy, convenient and fairly priced.",
+      "cta": "Visit welicodev.uz"
     }
   },
   "contact": {

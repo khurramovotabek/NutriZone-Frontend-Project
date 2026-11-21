@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { BrandProvider } from "@/components/BrandContext";
 import { getBrand, getSearchVerification } from "@/lib/brand";
 import { SITE_URL } from "@/lib/site-url";
+import { FOUNDER } from "@/lib/founder";
 import { DEFAULT_OG_IMAGE, OG_LOCALE } from "@/lib/seo";
 import type { Locale } from "@/i18n/config";
 import TopLoader from "@/components/TopLoader";
@@ -20,8 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     keywords: t("keywords", { brand: name }).split(",").map((k) => k.trim()).filter(Boolean),
     applicationName: name,
-    authors: [{ name, url: SITE_URL }],
-    creator: name,
+    authors: [{ name, url: SITE_URL }, { name: FOUNDER.name, url: FOUNDER.url }],
+    creator: `${FOUNDER.name} (${FOUNDER.site})`,
     publisher: name,
     category: "shopping",
     // Shared links (Telegram, Instagram, Facebook) render a proper preview card; pages add their own title/image.

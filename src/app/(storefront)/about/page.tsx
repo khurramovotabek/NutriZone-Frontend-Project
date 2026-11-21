@@ -24,6 +24,8 @@ import ContactSpotlight from "@/components/contact/ContactSpotlight";
 import { getBrand } from "@/lib/brand";
 import { pageMetadata } from "@/lib/seo";
 import { brandPath } from "@/lib/entity-paths";
+import { FOUNDER, founderJsonLd } from "@/lib/founder";
+import { SITE_URL } from "@/lib/site-url";
 
 const STATS_MIN_PRODUCTS = 20;
 
@@ -240,6 +242,35 @@ export default async function AboutPage() {
             </ul>
           </section>
         )}
+
+        {/* FOUNDER -- a named, verifiable person behind the store (AboutPage → Organization → founder) */}
+        <section aria-labelledby="about-founder" className="nz-liquid mt-20 overflow-hidden rounded-3xl p-6 sm:p-10">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "AboutPage",
+                url: `${SITE_URL}/about`,
+                mainEntity: { "@type": "Organization", "@id": `${SITE_URL}/#organization`, founder: founderJsonLd() },
+              }).replace(/</g, "\\u003c"),
+            }}
+          />
+          <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:text-left">
+            {/* eslint-disable-next-line @next/next/no-img-element -- one small portrait from his own site */}
+            <img src={FOUNDER.image} alt={FOUNDER.name} width={112} height={112} loading="lazy" className="h-28 w-28 shrink-0 rounded-3xl object-cover ring-2 ring-primary/40 shadow-lg" />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-wider text-primary">{t("founder.eyebrow")}</p>
+              <h2 id="about-founder" className="mt-1 text-2xl font-bold tracking-tight text-ink sm:text-3xl">{FOUNDER.name}</h2>
+              <p className="mt-1 text-sm font-medium text-ink-soft">{t("founder.role")}</p>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-muted sm:text-base">{t("founder.body")}</p>
+              <a href={FOUNDER.url} target="_blank" rel="author noopener" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+                {t("founder.cta")}
+                <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+        </section>
 
         {/* CTA */}
         <section className="nz-liquid relative mt-20 overflow-hidden rounded-3xl px-6 py-14 text-center sm:px-12">

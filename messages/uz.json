@@ -1769,7 +1769,8 @@
     "rights": "Barcha huquqlar himoyalangan.",
     "telegramChannel": "Telegram kanal",
     "terms": "Ommaviy oferta",
-    "delivery": "Yetkazib berish va to'lov"
+    "delivery": "Yetkazib berish va to'lov",
+    "developedBy": "Asoschi va dasturchi:"
   },
   "about": {
     "metaTitle": "Biz haqimizda",
@@ -1855,6 +1856,13 @@
       "subtitle": "Katalogni ko'ring yoki savolingiz bo'lsa — biz bilan bog'laning. To'g'ri mahsulotni tanlashda yordam beramiz.",
       "button": "Xaridni boshlash",
       "contact": "Biz bilan bog'lanish"
+    },
+    "founder": {
+      "eyebrow": "Asoschi",
+      "title": "NutriZone ortidagi inson",
+      "role": "NutriZone asoschisi va CEO · Python backend dasturchi",
+      "body": "NutriZone'ni Otabek Xurramov asos solgan va platformani o'zi ishlab chiqqan: sayt, buyurtma va ombor tizimi, Telegram bot va AI maslahatchi. Maqsad — O'zbekistonda original sport ozuqalarini ishonchli, qulay va halol narxda yetkazish.",
+      "cta": "welicodev.uz saytiga o'tish"
     }
   },
   "contact": {

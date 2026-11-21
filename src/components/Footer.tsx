@@ -5,6 +5,7 @@ import BrandMark from "@/components/BrandMark";
 import { getBrand } from "@/lib/brand";
 import { getAccessToken, getRefreshToken } from "@/lib/session";
 import { getPublicSiteSettings, type PublicSiteSettings } from "@/lib/settings-api";
+import { FOUNDER } from "@/lib/founder";
 
 const PAYMENT_LOGOS = ["payme", "click", "uzum", "uzcard", "humo", "cash"] as const;
 
@@ -162,6 +163,15 @@ export default async function Footer() {
             </div>
             <span>
               © {year} {brand.name}. {t("rights")}
+            </span>
+            {/* the founder / developer credit: a real, followable link (rel=author) to his own site */}
+            <span className="text-xs">
+              {t("developedBy")}{" "}
+              <a href={FOUNDER.url} target="_blank" rel="author noopener" className="font-semibold text-ink-muted underline-offset-2 transition-colors hover:text-primary hover:underline" title={`${FOUNDER.name} — ${FOUNDER.site}`}>
+                {FOUNDER.name}
+              </a>
+              {" · "}
+              <a href={FOUNDER.url} target="_blank" rel="noopener" className="transition-colors hover:text-primary">{FOUNDER.site}</a>
             </span>
           </div>
         </div>

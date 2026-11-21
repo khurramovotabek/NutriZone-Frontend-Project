@@ -2,6 +2,7 @@ import type { PublicSiteSettings } from "@/lib/settings-api";
 import { SITE_URL, absoluteUrl } from "@/lib/site-url";
 import { localizedPath, type Locale } from "@/i18n/config";
 import { RETURN_POLICY } from "@/components/ProductJsonLd";
+import { FOUNDER, founderJsonLd } from "@/lib/founder";
 
 /**
  * schema.org for the home page: the store as an Organization/OnlineStore (one @id that product offers and
@@ -36,6 +37,9 @@ export default function SiteJsonLd({
       currenciesAccepted: "UZS",
       hasMerchantReturnPolicy: RETURN_POLICY,
       knowsLanguage: ["uz", "ru", "en"],
+      // a named founder the store can be traced to (E-E-A-T); same @id as on his own site, so both join up
+      founder: founderJsonLd(),
+      foundingLocation: { "@type": "Place", name: "Tashkent, Uzbekistan" },
       ...(site?.support_phone ? { contactPoint: { "@type": "ContactPoint", telephone: site.support_phone, contactType: "customer service", areaServed: "UZ", availableLanguage: ["Uzbek", "Russian", "English"], ...(site?.telegram_username ? { url: `https://t.me/${site.telegram_username.replace(/^@/, "")}` } : {}) } } : {}),
     },
     {
@@ -47,6 +51,7 @@ export default function SiteJsonLd({
       url: SITE_URL,
       inLanguage: locale,
       publisher: { "@id": orgId },
+      creator: { "@id": FOUNDER.id },
       potentialAction: { "@type": "SearchAction", target: { "@type": "EntryPoint", urlTemplate: absoluteUrl(`${localizedPath("/products", locale)}?q={search_term_string}`) }, "query-input": "required name=search_term_string" },
     },
     ...(faq.length
