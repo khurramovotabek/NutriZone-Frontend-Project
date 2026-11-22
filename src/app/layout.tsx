@@ -9,6 +9,7 @@ import { FOUNDER } from "@/lib/founder";
 import { DEFAULT_OG_IMAGE, OG_LOCALE } from "@/lib/seo";
 import type { Locale } from "@/i18n/config";
 import TopLoader from "@/components/TopLoader";
+import VisitBeacon from "@/components/VisitBeacon";
 import { PublicMessages } from "@/i18n/ClientMessages";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -56,6 +57,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full flex flex-col text-ink">
         <TopLoader />
+        <VisitBeacon />
         <PublicMessages>
           <BrandProvider brand={brand}>
             <ThemeProvider>{children}</ThemeProvider>
