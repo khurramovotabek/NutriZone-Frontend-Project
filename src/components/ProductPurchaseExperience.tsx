@@ -108,11 +108,11 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
 
   const familyGallery = product.gallery && product.gallery.length > 0 ? product.gallery : product.primary_image_path ? [product.primary_image_path] : [];
   const gallery = selected && selected.gallery.length > 0 ? selected.gallery : familyGallery;
-  // The selected variant's own real `video_url` (a genuine, existing
-  // field -- see ProductCard's own type) appended last, after every
-  // photo, so the primary packshot always stays the first thing shown.
+  // The selected variant's own `video_url` goes right after the main
+  // packshot: the packshot stays first (cards, SEO, first paint), and
+  // the video is one tap/swipe away instead of hidden behind every photo.
   const galleryMedia = gallery.map((url) => ({ url, isVideo: false }));
-  if (selected?.video_url) galleryMedia.push({ url: selected.video_url, isVideo: true });
+  if (selected?.video_url) galleryMedia.splice(Math.min(1, galleryMedia.length), 0, { url: selected.video_url, isVideo: true });
 
   const price = selected?.price ?? product.price;
   const currency = selected?.currency ?? product.currency;
