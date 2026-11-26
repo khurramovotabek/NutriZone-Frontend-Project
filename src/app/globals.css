@@ -1149,3 +1149,30 @@ html[data-tg="1"] .nz-filter-pill { bottom: calc(74px + env(safe-area-inset-bott
 @keyframes nz-cart-added-in { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 .nz-cart-added-in { animation: nz-cart-added-in .32s cubic-bezier(.2,.9,.3,1.2); }
 @media (prefers-reduced-motion: reduce) { .nz-cart-added-in { animation: none; } }
+
+/* ---------------------------------------------------------------------------
+ * Installed app (PWA). <html data-standalone="1|ios"> is set before the first
+ * paint by PWA_BOOT_SCRIPT (src/lib/pwa.ts) when the site runs from the home
+ * screen icon.
+ * ------------------------------------------------------------------------- */
+.nz-standalone-only { display: none; }
+html[data-standalone] .nz-standalone-only { display: flex; }
+/* computers: the app window has its own back arrow in the title bar */
+@media (hover: hover) and (pointer: fine) { html[data-standalone] .nz-standalone-only { display: none; } }
+/* "Install the app" entries: not inside the installed app, nor the Telegram Mini App */
+html[data-standalone] .nz-pwa-entry,
+html[data-tg="1"] .nz-pwa-entry { display: none !important; }
+/* no browser pull-to-refresh / bounce fighting our own (PwaRuntime); no long-press callouts on UI chrome */
+html[data-standalone] { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
+html[data-standalone] header a, html[data-standalone] header button, html[data-standalone] nav a { -webkit-touch-callout: none; }
+/* iPhone home-screen app: the status bar is translucent ("black-translucent") and its clock is white --
+   a solid brand strip under it keeps the clock readable over the light header too. */
+html[data-standalone="ios"] body::before {
+  content: ""; position: fixed; inset: 0 0 auto 0; height: env(safe-area-inset-top); z-index: 90;
+  background: #0b1220; pointer-events: none;
+}
+html[data-standalone="ios"].dark body::before { background: #060907; }
+/* phone turned sideways: keep content clear of the notch now that the page draws edge to edge (viewport-fit=cover) */
+@media (orientation: landscape) and (max-width: 1024px) {
+  body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+}

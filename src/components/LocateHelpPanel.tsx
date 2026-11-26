@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Navigation, ShieldAlert, X } from "lucide-react";
 import { openTelegramLocationSettings } from "@/lib/telegram-webapp";
 import type { LocateHelp } from "@/lib/use-gps-locate";
+import { isStandalone } from "@/lib/pwa";
 
 /** How to fix "my location" not working (permission refused, GPS off, no signal, http, Telegram refused). */
 export default function LocateHelpPanel({ help, onRetry, onClose }: { help: LocateHelp; onRetry: () => void; onClose: () => void }) {
@@ -15,9 +16,11 @@ export default function LocateHelpPanel({ help, onRetry, onClose }: { help: Loca
         <p className="font-semibold">{t(`${help}Title`)}</p>
         {help === "denied" ? (
           <ul className="list-disc space-y-0.5 pl-4 text-ink-muted">
+            {/* the installed app keeps its own permission (iPhone: Safari Websites; Android: the app's info page) */}
+            {isStandalone() && <li className="font-medium text-ink">{t("deniedInstalled")}</li>}
             <li>{t("deniedChrome")}</li>
             <li>{t("deniedIphone")}</li>
-            <li>{t("deniedTelegram")}</li>
+            {!isStandalone() && <li>{t("deniedTelegram")}</li>}
           </ul>
         ) : (
           <p className="text-ink-muted">{t(`${help}Text`)}</p>

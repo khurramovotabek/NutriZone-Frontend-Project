@@ -106,7 +106,12 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   async headers() {
-    return [{ source: "/(.*)", headers: SECURITY_HEADERS }];
+    return [
+      { source: "/(.*)", headers: SECURITY_HEADERS },
+      // the installed app's service worker: always re-checked, so a deploy reaches installed phones on next open
+      { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }, { key: "Content-Type", value: "application/javascript; charset=utf-8" }] },
+      { source: "/pwa/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" }] },
+    ];
   },
   // A stray, empty ~/package-lock.json makes Next.js guess the home
   // directory as the workspace root (and warn on every start). Pin both

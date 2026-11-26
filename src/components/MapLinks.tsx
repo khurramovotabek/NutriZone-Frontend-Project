@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy, Crosshair, Map as MapIcon, Navigation, Send, Share2 } from "lucide-react";
+import { AppWindow, Check, Copy, Crosshair, Map as MapIcon, Navigation, Send, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { appleMapsUrl, coordinatesText, googleMapsUrl, shareText, telegramShareUrl, twoGisUrl, yandexPointUrl, yandexRouteUrl } from "@/lib/maps";
+import { appleMapsUrl, coordinatesText, geoUri, googleMapsUrl, shareText, telegramShareUrl, twoGisUrl, yandexPointUrl, yandexRouteUrl } from "@/lib/maps";
+import { insideTelegram, isAndroid } from "@/lib/pwa";
+import { useIsClient } from "@/hooks/useIsClient";
 
 /** The Yandex Maps "Я" mark, drawn inline (no external asset). */
 function YandexMark({ className = "h-4 w-4" }: { className?: string }) {
@@ -50,6 +52,10 @@ export default function MapLinks({ latitude, longitude, label, className = "", c
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState<"link" | "coords" | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  // Android: one more button -- the phone's own "open with" list (any installed map, taxi or navigator app).
+  // Decided after mount so the server HTML and the first client render match.
+  const isClient = useIsClient();
+  const android = isClient && isAndroid() && !insideTelegram();
   // the menu only renders after a click (client side), so reading navigator here never differs from the server HTML
   const canNativeShare = open && typeof navigator !== "undefined" && typeof navigator.share === "function";
   useEffect(() => {
@@ -95,13 +101,14 @@ export default function MapLinks({ latitude, longitude, label, className = "", c
     { href: listings?.google || googleMapsUrl(latitude, longitude), label: "Google", title: t("openGoogle"), icon: <MapIcon className="h-4 w-4 text-sky-500" strokeWidth={2.25} aria-hidden="true" /> },
     { href: appleMapsUrl(latitude, longitude, label), label: "Apple", title: t("openApple"), icon: <AppleMark className="h-4 w-4 text-ink" /> },
     { href: listings?.twoGis || twoGisUrl(latitude, longitude), label: "2GIS", title: t("open2gis"), icon: <TwoGisMark /> },
+    ...(android ? [{ href: geoUri(latitude, longitude, label), label: t("otherApp"), title: t("otherAppTitle"), icon: <AppWindow className="h-4 w-4 text-emerald-500" strokeWidth={2.25} aria-hidden="true" /> }] : []),
   ];
   const item = "flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm text-ink transition-colors hover:bg-surface-2";
 
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
       {apps.map((a) => (
-        <a key={a.label} href={a.href} target="_blank" rel="noopener noreferrer" className={`${btn} ${pad}`} title={a.title} aria-label={a.title}>
+        <a key={a.label} href={a.href} {...(a.href.startsWith("geo:") ? {} : { target: "_blank", rel: "noopener noreferrer" })} className={`${btn} ${pad}`} title={a.title} aria-label={a.title}>
           {a.icon}
           {!compact && a.label}
         </a>

@@ -28,6 +28,9 @@ import TelegramMiniAppBridge from "@/components/TelegramMiniAppBridge";
 import MiniAppTabBar from "@/components/MiniAppTabBar";
 import AssistantWidget from "@/components/assistant/AssistantWidget";
 import SignupNudge from "@/components/SignupNudge";
+import InstallAppSheet from "@/components/pwa/InstallAppSheet";
+import StandaloneBackButton from "@/components/pwa/StandaloneBackButton";
+import DesktopInstallButton from "@/components/pwa/DesktopInstallButton";
 
 /**
  * Storefront layout -- the main ecommerce navbar/footer, applied ONLY
@@ -74,6 +77,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
       <header className="nz-glass sticky top-0 z-40" style={{ paddingTop: "env(safe-area-inset-top)" }}>
         <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:py-4 xl:gap-4">
           <div className="flex items-center gap-2 sm:gap-3">
+            <StandaloneBackButton />
             <Link href="/" className="group flex items-center gap-2 text-lg font-bold tracking-tight text-ink">
               <BrandMark className="h-8 w-8 rounded-xl text-sm" />
               {/* Real overflow fix, live-verified: at 375px the full wordmark
@@ -110,6 +114,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
             <SearchBar />
             <CartBadge />
             <NotificationBell />
+            <DesktopInstallButton />
             <LanguageSwitcher compact />
             <ThemeToggle />
             <Link href="/account" aria-label={t("login")} className="flex items-center rounded-full ring-offset-2 transition-all hover:-translate-y-0.5 hover:ring-2 hover:ring-primary/40">
@@ -145,6 +150,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
       </HideOnFocusRoutes>
       <CartAddedBar />
       <MiniAppTabBar />
+      <InstallAppSheet />
     </SearchOverlayProvider>
     </WishlistProvider>
   );

@@ -6,6 +6,7 @@ import { getBrand } from "@/lib/brand";
 import { getAccessToken, getRefreshToken } from "@/lib/session";
 import { getPublicSiteSettings, type PublicSiteSettings } from "@/lib/settings-api";
 import { FOUNDER } from "@/lib/founder";
+import InstallAppButton from "@/components/pwa/InstallAppButton";
 
 const PAYMENT_LOGOS = ["payme", "click", "uzum", "uzcard", "humo", "cash"] as const;
 
@@ -54,6 +55,7 @@ export default async function Footer() {
               {brand.name}
             </p>
             <p className="mt-3 max-w-xs text-sm text-ink-muted">{t("tagline")}</p>
+            <InstallAppButton variant="footer" />
             <div className="mt-5 flex gap-2">
               {site?.telegram_channel_url && (
                 <a href={site.telegram_channel_url} target="_blank" rel="noopener noreferrer" aria-label={t("telegramChannel")} className={social}>

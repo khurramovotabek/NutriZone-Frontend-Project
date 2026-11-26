@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
+import InstallAppButton from "@/components/pwa/InstallAppButton";
 
 /**
  * Full-height off-canvas drawer (not the small anchored dropdown this
@@ -126,6 +127,7 @@ export default function MobileNav({ signedIn = false }: { signedIn?: boolean }) 
               </div>
 
               <nav className="flex flex-1 flex-col overflow-y-auto overscroll-contain p-3 text-sm">
+                <InstallAppButton variant="menu" onOpen={() => setOpen(false)} />
                 {!signedIn && (
                   <div className="mb-3 rounded-2xl border border-sky-400/25 bg-gradient-to-br from-sky-500/15 to-primary/10 p-4">
                     <p className="text-sm font-bold text-ink">{t("signInTitle")}</p>

@@ -79,3 +79,36 @@ export function shareText(lat: number, lng: number, label?: string): string {
 export function coordinatesText(lat: number, lng: number): string {
   return `${fx(lat)}, ${fx(lng)}`;
 }
+
+/** Android's own "open with" chooser: every installed map / taxi / navigator app that understands a point. */
+export function geoUri(lat: number, lng: number, label?: string): string {
+  const q = `${fx(lat)},${fx(lng)}${label ? `(${encodeURIComponent(label)})` : ""}`;
+  return `geo:${fx(lat)},${fx(lng)}?q=${q}`;
+}
+
+/**
+ * Android: the same Yandex Maps / 2GIS link as an intent that opens the app itself (straight to the pin or the
+ * route), falling back to the website when the app is not installed -- Chrome, Samsung Internet, Yandex Browser and
+ * the installed web app all honour `S.browser_fallback_url`. Returns null for links it does not recognise (a
+ * place's own card URL, other hosts), which then open as plain web links.
+ */
+export function androidMapIntent(href: string): string | null {
+  let url: URL;
+  try {
+    url = new URL(href);
+  } catch {
+    return null;
+  }
+  const fallback = `S.browser_fallback_url=${encodeURIComponent(href)}`;
+  if (/(^|\.)yandex\.(uz|ru|com|kz)$/.test(url.hostname) && url.pathname.replace(/\/+$/, "") === "/maps") {
+    const pt = url.searchParams.get("pt");
+    const rtext = url.searchParams.get("rtext");
+    if (!pt && !rtext) return null;
+    return `intent://maps.yandex.ru/${url.search}#Intent;scheme=yandexmaps;package=ru.yandex.yandexmaps;${fallback};end`;
+  }
+  const gis = /^\/geo\/(-?[\d.]+),(-?[\d.]+)\/?$/.exec(url.pathname);
+  if (/(^|\.)2gis\.(uz|ru|kz|com)$/.test(url.hostname) && gis) {
+    return `intent://2gis.ru/geo/${gis[1]},${gis[2]}#Intent;scheme=dgis;package=ru.dublgis.dgismobile;${fallback};end`;
+  }
+  return null;
+}
