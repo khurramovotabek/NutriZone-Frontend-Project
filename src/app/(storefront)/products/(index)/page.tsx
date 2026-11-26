@@ -12,7 +12,10 @@ import CatalogFilterPanel from "@/components/CatalogFilterPanel";
 import CatalogViewToggle from "@/components/CatalogViewToggle";
 import ScrollSideNav from "@/components/ScrollSideNav";
 import { EmptyState, ErrorState } from "@/components/ui";
-import { pageMetadata, paged } from "@/lib/seo";
+import { breadcrumbJsonLd, pageMetadata, paged } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
+import { localizedPath, type Locale } from "@/i18n/config";
+import { absoluteUrl } from "@/lib/site-url";
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }): Promise<Metadata> {
   const [t, params] = await Promise.all([getTranslations("meta"), searchParams]);
@@ -31,6 +34,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const { q, page } = state;
   const view = state.view === "list" ? "list" : "grid";
   const t = await getTranslations("catalog");
+  const tNav = await getTranslations("navigation");
   const tGoals = await getTranslations("home.goals");
   const locale = await getLocale();
 
@@ -111,6 +115,31 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-24 pt-5 sm:py-10 lg:pb-10">
+      {/* The plain catalogue (no search / filters) is an indexable collection: breadcrumb + the products on this page as an ItemList */}
+      {!q && chips.length === 0 && data && data.data.length > 0 && (
+        <JsonLd
+          data={[
+            breadcrumbJsonLd([{ name: tNav("home"), path: "/" }, { name: t("title"), path: "/products" }], locale as Locale),
+            {
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              name: t("title"),
+              url: absoluteUrl(localizedPath(page > 1 ? `/products?page=${page}` : "/products", locale as Locale)),
+              isPartOf: { "@id": absoluteUrl("/#website") },
+              mainEntity: {
+                "@type": "ItemList",
+                numberOfItems: data.pagination?.total_count ?? data.data.length,
+                itemListElement: data.data.map((p, i) => ({
+                  "@type": "ListItem",
+                  position: (page - 1) * 24 + i + 1,
+                  url: absoluteUrl(localizedPath(`/products/${p.slug}`, locale as Locale)),
+                  name: p.name,
+                })),
+              },
+            },
+          ]}
+        />
+      )}
       <ScrollSideNav />
       <div className="flex flex-col gap-8 lg:flex-row">
         <Suspense fallback={null}>

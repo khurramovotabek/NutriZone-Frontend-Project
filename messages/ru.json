@@ -1776,7 +1776,8 @@
     "telegramChannel": "Telegram-канал",
     "terms": "Публичная оферта",
     "delivery": "Доставка и оплата",
-    "developedBy": "Основатель и разработчик:"
+    "developedBy": "Основатель и разработчик:",
+    "appPage": "Мобильное приложение"
   },
   "about": {
     "metaTitle": "О нас",

@@ -1776,7 +1776,8 @@
     "telegramChannel": "Telegram channel",
     "terms": "Public Offer",
     "delivery": "Delivery and payment",
-    "developedBy": "Founder & developer:"
+    "developedBy": "Founder & developer:",
+    "appPage": "Mobile app"
   },
   "about": {
     "metaTitle": "About us",

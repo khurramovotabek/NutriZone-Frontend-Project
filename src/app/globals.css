@@ -1176,3 +1176,7 @@ html[data-standalone="ios"].dark body::before { background: #060907; }
 @media (orientation: landscape) and (max-width: 1024px) {
   body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
 }
+
+/* /app page: "installed" badge only inside the installed app */
+.nz-installed-only { display: none; }
+html[data-standalone] .nz-installed-only { display: inline-flex; }

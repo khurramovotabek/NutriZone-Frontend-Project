@@ -32,6 +32,7 @@ export default function CatalogFilterPanel({ state, facets, categories, resultCo
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [footerInView, setFooterInView] = useState(false);
   const activeCount = activeFilterCount(state);
 
   useEffect(() => {
@@ -200,6 +201,7 @@ export default function CatalogFilterPanel({ state, facets, categories, resultCo
 
   return (
     <>
+      <FooterWatcher onChange={setFooterInView} />
       {/* Desktop: sticky sidebar */}
       <aside className="hidden lg:block lg:w-72 lg:shrink-0">
         <div className="nz-glass sticky top-[90px] max-h-[calc(100vh-110px)] overflow-y-auto rounded-2xl p-5 [scrollbar-width:thin]">{body}</div>
@@ -209,7 +211,9 @@ export default function CatalogFilterPanel({ state, facets, categories, resultCo
       <button
         type="button"
         onClick={() => setMobileOpen(true)}
-        className="nz-filter-pill fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-surface shadow-[0_12px_32px_-8px_rgba(0,0,0,0.55)] ring-1 ring-white/10 transition-transform active:scale-95 lg:hidden"
+        className={`nz-filter-pill fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-surface shadow-[0_12px_32px_-8px_rgba(0,0,0,0.55)] ring-1 ring-white/10 transition-[transform,opacity] duration-300 active:scale-95 lg:hidden ${footerInView ? "pointer-events-none translate-y-6 opacity-0" : ""}`}
+        aria-hidden={footerInView || undefined}
+        tabIndex={footerInView ? -1 : undefined}
       >
         <SlidersHorizontal className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
         {t("filters")}
@@ -423,4 +427,16 @@ function PriceRange({ state, facets, onApply }: { state: CatalogState; facets: C
       )}
     </form>
   );
+}
+
+/** Tells the filter pill when the site footer is on screen -- the pill then slides away instead of covering the footer links. */
+function FooterWatcher({ onChange }: { onChange: (v: boolean) => void }) {
+  useEffect(() => {
+    const footer = document.querySelector(".nz-site-footer");
+    if (!footer || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => onChange(e.isIntersecting), { rootMargin: "0px 0px -40px 0px" });
+    io.observe(footer);
+    return () => io.disconnect();
+  }, [onChange]);
+  return null;
 }

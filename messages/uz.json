@@ -1776,7 +1776,8 @@
     "telegramChannel": "Telegram kanal",
     "terms": "Ommaviy oferta",
     "delivery": "Yetkazib berish va to'lov",
-    "developedBy": "Asoschi va dasturchi:"
+    "developedBy": "Asoschi va dasturchi:",
+    "appPage": "Mobil ilova"
   },
   "about": {
     "metaTitle": "Biz haqimizda",

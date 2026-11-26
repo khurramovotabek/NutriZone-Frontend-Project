@@ -10,13 +10,26 @@ import { openInstallSheet } from "@/lib/pwa";
  *  - menu: a highlighted row for the mobile drawer
  *  - footer: an app-store-style badge
  */
-export default function InstallAppButton({ variant, onOpen }: { variant: "menu" | "footer"; onOpen?: () => void }) {
+export default function InstallAppButton({ variant, onOpen, label }: { variant: "menu" | "footer" | "hero"; onOpen?: () => void; label?: string }) {
   const t = useTranslations("pwa");
   const open = () => {
     onOpen?.();
     // let a closing drawer release the page scroll first
     window.setTimeout(openInstallSheet, onOpen ? 120 : 0);
   };
+
+  if (variant === "hero") {
+    return (
+      <button
+        type="button"
+        onClick={open}
+        className="nz-pwa-entry group inline-flex items-center gap-2.5 rounded-2xl bg-white px-6 py-3.5 text-[15px] font-extrabold text-[#0b1220] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6)] transition-transform hover:-translate-y-0.5 active:scale-[0.98]"
+      >
+        <Download className="h-5 w-5 text-primary" strokeWidth={2.4} aria-hidden="true" />
+        {label ?? t("installApp")}
+      </button>
+    );
+  }
 
   if (variant === "menu") {
     return (
