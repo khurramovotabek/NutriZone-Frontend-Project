@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Bike, Check, ChevronRight, Clock, LoaderCircle, MessageSquareText, Package, PackageCheck, Phone, RotateCcw, Search, ShoppingBag, Store as StoreIcon, Truck, Undo2 } from "lucide-react";
 import { Card, EmptyState, Skeleton } from "@/components/ui";
 import MapLinks from "@/components/MapLinks";
+import LoadMore, { useSteppedList } from "@/components/LoadMore";
 import MediaImage from "@/components/MediaImage";
 import { useStoreDashboard } from "@/components/store-dashboard/StoreDashboardContext";
 import { useStoreOrders } from "@/components/store-dashboard/useStoreOrders";
@@ -186,6 +187,7 @@ function OrdersInner() {
     if (tab === "ready") return list.filter((o) => o.status === "shipped");
     return list;
   }, [data, tab]);
+  const stepped = useSteppedList(orders, 15, `${tab}|${query}`);
 
   async function step(order: StoreOrder, s: StoreOrderStep, reason = "") {
     setBusy({ number: order.number, action: s.action });
@@ -259,9 +261,10 @@ function OrdersInner() {
         <EmptyState icon={<ShoppingBag className="h-7 w-7" strokeWidth={1.75} aria-hidden="true" />} title={tab === "done" ? t("orders.emptyDone") : t("orders.emptyActive")} description={t("orders.emptyHint")} />
       ) : (
         <div className="space-y-3">
-          {orders.map((o) => (
+          {stepped.shown.map((o) => (
             <OrderCard key={o.number} order={o} highlighted={o.number === focus} busy={busy?.number === o.number ? busy.action : null} onStep={step} />
           ))}
+          <LoadMore className="mt-2" hasMore={stepped.hasMore} loading={false} onMore={stepped.more} shown={stepped.shown.length} total={stepped.total} />
         </div>
       )}
     </div>

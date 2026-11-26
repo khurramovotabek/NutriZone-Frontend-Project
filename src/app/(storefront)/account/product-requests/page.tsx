@@ -5,6 +5,7 @@ import { CheckCircle2, ExternalLink, ImagePlus, Loader2, MessageCircle, PackageS
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import AccountLayout from "@/components/AccountLayout";
+import LoadMore, { useSteppedList } from "@/components/LoadMore";
 import { EmptyState, ErrorState, Skeleton } from "@/components/ui";
 import { formatDate } from "@/lib/dates";
 import { resolveImageUrl } from "@/lib/media";
@@ -51,6 +52,7 @@ export default function ProductRequestsPage() {
   const uid = useId();
   const fileRef = useRef<HTMLInputElement>(null);
   const [rows, setRows] = useState<ProductRequest[] | null>(null);
+  const stepped = useSteppedList(rows ?? [], 10, "all");
   const [error, setError] = useState<"login" | "load" | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [image, setImage] = useState<File | null>(null);
@@ -290,7 +292,7 @@ export default function ProductRequestsPage() {
         <EmptyState title={t("emptyTitle")} description={t("emptyBody")} icon={<PackageSearch className="h-7 w-7" strokeWidth={1.75} aria-hidden="true" />} />
       ) : (
         <ul className="mt-4 space-y-3">
-          {rows.map((r) => {
+          {stepped.shown.map((r) => {
             const style = STATUS_STYLE[r.status];
             const Icon = style.icon;
             const img = resolveImageUrl(r.image_url);
@@ -384,6 +386,7 @@ export default function ProductRequestsPage() {
           })}
         </ul>
       )}
+      {rows && rows.length > 0 && <LoadMore className="mt-4" hasMore={stepped.hasMore} loading={false} onMore={stepped.more} shown={stepped.shown.length} total={stepped.total} />}
     </AccountLayout>
   );
 }

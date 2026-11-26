@@ -5,6 +5,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { getBlogCategories, getBlogPosts } from "@/lib/api";
 import { EmptyState, ErrorState } from "@/components/ui";
 import FullBleedImage from "@/components/FullBleedImage";
+import CatalogPagination from "@/components/CatalogPagination";
 import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -131,18 +132,14 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
           </div>
 
           {data.pagination && data.pagination.total_pages > 1 && (
-            <nav aria-label={t("paginationLabel")} className="mt-10 flex justify-center gap-2">
-              {Array.from({ length: data.pagination.total_pages }, (_, i) => i + 1).map((p) => (
-                <Link
-                  key={p}
-                  href={pageHref(p, activeCategory)}
-                  aria-current={p === page ? "page" : undefined}
-                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all hover:-translate-y-0.5 ${p === page ? "nz-cta" : "nz-glass text-ink-muted"}`}
-                >
-                  {p}
-                </Link>
-              ))}
-            </nav>
+            <CatalogPagination
+              page={page}
+              totalPages={data.pagination.total_pages}
+              totalCount={data.pagination.total_count}
+              pageSize={12}
+              hrefFor={(p) => (p === 1 ? (activeCategory ? `/blog?category=${encodeURIComponent(activeCategory)}` : "/blog") : pageHref(p, activeCategory))}
+              label={t("paginationLabel")}
+            />
           )}
         </>
       )}

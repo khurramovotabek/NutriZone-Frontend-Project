@@ -910,7 +910,12 @@
     "networkError": "Nimadir xato ketdi. Internet aloqangizni tekshiring.",
     "yourReview": "Sizning sharhingiz",
     "ratingCannotBeChanged": "Yuborilgandan keyin reytingni o'zgartirib bo'lmaydi.",
-    "storeReply": "Do'kon javobi"
+    "storeReply": "Do'kon javobi",
+    "rewardEligible": "Sharhingiz uchun +{coins} coin — {stars}★ baho va kamida {chars} belgili fikr yozing.",
+    "rewardInfo": "Mahsulotni qo'lga olgach yozilgan {stars}★ sharh uchun +{coins} coin beriladi.",
+    "rewardDone": "Bu mahsulot sharhi uchun coin allaqachon berilgan — rahmat!",
+    "rewardPaid": "Sharhingiz shartlarga mos kelsa, +{coins} coin bir necha soniyada hisobingizga tushadi.",
+    "rewardChars": "{n}/{min} belgi"
   },
   "cart": {
     "title": "Sizning savatingiz",

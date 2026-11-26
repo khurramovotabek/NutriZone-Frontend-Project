@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Film, Plus, Star, X } from "lucide-react";
+import { Coins, Film, Plus, Star, X } from "lucide-react";
 import { Button } from "@/components/ui";
 
 interface Props {
@@ -12,6 +12,14 @@ interface Props {
 }
 
 type FlowState = "idle" | "submitting" | "success" | "error";
+
+export interface RewardOffer {
+  enabled: boolean;
+  coins: number;
+  min_rating: number;
+  min_chars: number;
+  state: "anonymous" | "eligible" | "rewarded" | "not_received";
+}
 
 interface PendingMedia {
   file: File;
@@ -40,6 +48,9 @@ export default function ReviewForm({ productId, onSubmitted }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [mediaWarning, setMediaWarning] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const offer = useReviewReward(productId);
+  const { coinsText, starsText } = rewardTexts(offer);
+  const bodyLen = body.trim().length;
 
   useEffect(() => {
     return () => {
@@ -134,12 +145,32 @@ export default function ReviewForm({ productId, onSubmitted }: Props) {
     return (
       <div role="status" className="rounded-xl border border-primary/25 bg-primary-soft px-4 py-3 text-sm text-primary">
         {t("submitSuccess")}
+        {offer?.state === "eligible" && rating >= offer.min_rating && bodyLen >= offer.min_chars && (
+          <p className="mt-1 flex items-center gap-1.5 font-semibold text-amber-600 dark:text-amber-400">
+            <Coins className="h-4 w-4" aria-hidden="true" />
+            {t("rewardPaid", { coins: coinsText })}
+          </p>
+        )}
       </div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="nz-glass space-y-4 rounded-2xl p-5">
+      {offer && (
+        <div className="flex items-start gap-3 rounded-xl bg-gradient-to-r from-amber-400/20 to-amber-400/5 px-3.5 py-3 ring-1 ring-amber-400/30">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-400 text-white shadow-sm">
+            <Coins className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <p className="pt-0.5 text-[13px] font-semibold leading-snug text-ink">
+            {offer.state === "rewarded"
+              ? t("rewardDone")
+              : offer.state === "eligible"
+                ? t("rewardEligible", { coins: coinsText, stars: starsText, chars: offer.min_chars })
+                : t("rewardInfo", { coins: coinsText, stars: starsText })}
+          </p>
+        </div>
+      )}
       <div>
         <label className="mb-1.5 block text-sm font-medium text-ink-muted">{t("rating")}</label>
         <div className="flex gap-1" role="radiogroup" aria-label={t("rating")}>
@@ -173,6 +204,11 @@ export default function ReviewForm({ productId, onSubmitted }: Props) {
           {t("reviewBody")}
         </label>
         <textarea id="review-body" value={body} onChange={(e) => setBody(e.target.value)} rows={4} className="nz-glass-input w-full rounded-lg px-3 py-2 text-sm" />
+        {offer?.state === "eligible" && (
+          <p className={`mt-1 text-right text-xs font-medium ${bodyLen >= offer.min_chars ? "text-emerald-600 dark:text-emerald-400" : "text-ink-soft"}`}>
+            {t("rewardChars", { n: bodyLen, min: offer.min_chars })}
+          </p>
+        )}
       </div>
 
       <div>
@@ -217,5 +253,44 @@ export default function ReviewForm({ productId, onSubmitted }: Props) {
         {state === "submitting" ? t("submitting") : t("submit")}
       </Button>
     </form>
+  );
+}
+
+/** The "+N coin for a review" offer (Dashboard → Sharhlar → Sharh so'rovi), personalised when signed in. */
+export function useReviewReward(productId: string): RewardOffer | null {
+  const [offer, setOffer] = useState<RewardOffer | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/reviews/reward?product_id=${encodeURIComponent(productId)}`)
+      .then((r) => r.json())
+      .then((b) => {
+        if (!cancelled && b.success && b.data?.enabled) setOffer(b.data as RewardOffer);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [productId]);
+  return offer;
+}
+
+export function rewardTexts(offer: RewardOffer | null) {
+  return {
+    coinsText: offer ? offer.coins.toLocaleString("ru-RU").replace(/\u00a0/g, " ") : "",
+    starsText: offer ? (offer.min_rating >= 5 ? "5" : offer.min_rating === 4 ? "4–5" : `${offer.min_rating}+`) : "",
+  };
+}
+
+/** Signed-out visitors: the offer next to "sign in to write a review". */
+export function ReviewRewardTeaser({ productId }: { productId: string }) {
+  const t = useTranslations("reviews");
+  const offer = useReviewReward(productId);
+  if (!offer) return null;
+  const { coinsText, starsText } = rewardTexts(offer);
+  return (
+    <p className="mt-2 flex items-center gap-1.5 text-[13px] font-semibold text-amber-700 dark:text-amber-400">
+      <Coins className="h-4 w-4 shrink-0" aria-hidden="true" />
+      {t("rewardInfo", { coins: coinsText, stars: starsText })}
+    </p>
   );
 }

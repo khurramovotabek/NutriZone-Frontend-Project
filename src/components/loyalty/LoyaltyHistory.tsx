@@ -3,20 +3,21 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowDownLeft, ArrowUpRight, ChevronRight, Gift, Hourglass, Loader2, RotateCcw, ShoppingBag, ShoppingCart, Sparkles, Undo2 } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, ChevronRight, Gift, Hourglass, RotateCcw, ShoppingBag, ShoppingCart, Sparkles, Undo2 } from "lucide-react";
 import type { WalletDirection, WalletTransaction } from "@/lib/loyalty-api";
 import CoinIcon from "@/components/loyalty/CoinIcon";
+import LoadMore from "@/components/LoadMore";
 import { formatPercent, formatSom } from "@/components/loyalty/format";
 import { formatDate } from "@/lib/dates";
 
 type Filter = "all" | WalletDirection;
-type Page = { data: WalletTransaction[]; totalPages: number };
+type Page = { data: WalletTransaction[]; totalPages: number; totalCount: number };
 
 async function fetchPage(page: number, filter: Filter): Promise<Page | null> {
   try {
     const res = await fetch(`/api/loyalty/transactions?page=${page}${filter === "all" ? "" : `&direction=${filter}`}`);
     const body = await res.json();
-    return res.ok && body?.success ? { data: body.data, totalPages: body.pagination?.total_pages ?? 0 } : null;
+    return res.ok && body?.success ? { data: body.data, totalPages: body.pagination?.total_pages ?? 0, totalCount: body.pagination?.total_count ?? 0 } : null;
   } catch {
     return null;
   }
@@ -36,6 +37,8 @@ export default function LoyaltyHistory({ compact = false, onSeeAll }: { compact?
   const [rows, setRows] = useState<WalletTransaction[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [failed, setFailed] = useState(false);
   const [loadedFor, setLoadedFor] = useState<Filter | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -46,6 +49,7 @@ export default function LoyaltyHistory({ compact = false, onSeeAll }: { compact?
       setRows(result?.data ?? []);
       setPage(1);
       setTotalPages(result?.totalPages ?? 0);
+      setTotalCount(result?.totalCount ?? 0);
       setLoadedFor(filter);
     });
     return () => {
@@ -54,13 +58,16 @@ export default function LoyaltyHistory({ compact = false, onSeeAll }: { compact?
   }, [filter]);
 
   async function more() {
+    if (busy) return;
     setBusy(true);
     const result = await fetchPage(page + 1, filter);
     if (result) {
-      setRows((prev) => [...prev, ...result.data]);
+      setRows((prev) => [...prev, ...result.data.filter((r) => !prev.some((p) => p.id === r.id))]);
       setPage(page + 1);
       setTotalPages(result.totalPages);
+      setTotalCount(result.totalCount);
     }
+    setFailed(!result);
     setBusy(false);
   }
 
@@ -142,12 +149,9 @@ export default function LoyaltyHistory({ compact = false, onSeeAll }: { compact?
                   <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2} aria-hidden="true" />
                 </button>
               )
-            : page < totalPages && (
-                <div className="border-t border-border/40 p-3 text-center">
-                  <button type="button" onClick={more} disabled={busy} className="nz-liquid-chip inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold disabled:opacity-60">
-                    {busy && <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} aria-hidden="true" />}
-                    {busy ? t("history.loading") : t("history.more")}
-                  </button>
+            : rows.length > 0 && (
+                <div className="border-t border-border/40 p-4">
+                  <LoadMore hasMore={page < totalPages} loading={busy} error={failed} onMore={() => void more()} shown={rows.length} total={totalCount || undefined} />
                 </div>
               )}
         </div>

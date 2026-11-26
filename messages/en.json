@@ -910,7 +910,12 @@
     "networkError": "Something went wrong. Please check your connection.",
     "yourReview": "Your review",
     "ratingCannotBeChanged": "Rating cannot be changed after submitting.",
-    "storeReply": "Store reply"
+    "storeReply": "Store reply",
+    "rewardEligible": "+{coins} coins for your review — rate {stars}★ and write at least {chars} characters.",
+    "rewardInfo": "Reviews ({stars}★) written after you receive the product earn +{coins} coins.",
+    "rewardDone": "You've already earned coins for reviewing this product — thank you!",
+    "rewardPaid": "If your review meets the terms, +{coins} coins will land in your wallet in a few seconds.",
+    "rewardChars": "{n}/{min} characters"
   },
   "cart": {
     "title": "Your Cart",

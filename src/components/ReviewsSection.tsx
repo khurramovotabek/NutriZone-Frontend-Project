@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { getPublicProductReviews, type PublicReviewCard, type ReviewCard } from "@/lib/reviews-api";
 import { Select } from "@/components/ui";
 import ReviewsList from "@/components/ReviewsList";
-import ReviewForm from "@/components/ReviewForm";
+import ReviewForm, { ReviewRewardTeaser } from "@/components/ReviewForm";
 import ReviewEditModal from "@/components/ReviewEditModal";
 import LoadMore from "@/components/LoadMore";
 
@@ -215,6 +215,7 @@ export default function ReviewsSection({ productId, initialReviews, initialTotal
             <Link href={loginHref} className="font-medium text-primary hover:underline">
               {t("loginToReview")}
             </Link>
+            <ReviewRewardTeaser productId={productId} />
           </div>
         )}
       </div>
