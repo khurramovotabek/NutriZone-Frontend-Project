@@ -49,7 +49,7 @@ export default function ReviewForm({ productId, onSubmitted }: Props) {
   const [mediaWarning, setMediaWarning] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const offer = useReviewReward(productId);
-  const { coinsText, starsText } = rewardTexts(offer);
+  const { coinsText } = rewardTexts(offer);
   const bodyLen = body.trim().length;
 
   useEffect(() => {
@@ -166,8 +166,8 @@ export default function ReviewForm({ productId, onSubmitted }: Props) {
             {offer.state === "rewarded"
               ? t("rewardDone")
               : offer.state === "eligible"
-                ? t("rewardEligible", { coins: coinsText, stars: starsText, chars: offer.min_chars })
-                : t("rewardInfo", { coins: coinsText, stars: starsText })}
+                ? t("rewardEligible", { coins: coinsText, chars: offer.min_chars })
+                : t("rewardInfo", { coins: coinsText })}
           </p>
         </div>
       )}
@@ -277,7 +277,6 @@ export function useReviewReward(productId: string): RewardOffer | null {
 export function rewardTexts(offer: RewardOffer | null) {
   return {
     coinsText: offer ? offer.coins.toLocaleString("ru-RU").replace(/\u00a0/g, " ") : "",
-    starsText: offer ? (offer.min_rating >= 5 ? "5" : offer.min_rating === 4 ? "4–5" : `${offer.min_rating}+`) : "",
   };
 }
 
@@ -286,11 +285,11 @@ export function ReviewRewardTeaser({ productId }: { productId: string }) {
   const t = useTranslations("reviews");
   const offer = useReviewReward(productId);
   if (!offer) return null;
-  const { coinsText, starsText } = rewardTexts(offer);
+  const { coinsText } = rewardTexts(offer);
   return (
     <p className="mt-2 flex items-center gap-1.5 text-[13px] font-semibold text-amber-700 dark:text-amber-400">
       <Coins className="h-4 w-4 shrink-0" aria-hidden="true" />
-      {t("rewardInfo", { coins: coinsText, stars: starsText })}
+      {t("rewardInfo", { coins: coinsText })}
     </p>
   );
 }

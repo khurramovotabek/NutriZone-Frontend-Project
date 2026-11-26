@@ -911,9 +911,9 @@
     "yourReview": "Sizning sharhingiz",
     "ratingCannotBeChanged": "Yuborilgandan keyin reytingni o'zgartirib bo'lmaydi.",
     "storeReply": "Do'kon javobi",
-    "rewardEligible": "Sharhingiz uchun +{coins} coin — {stars}★ baho va kamida {chars} belgili fikr yozing.",
-    "rewardInfo": "Mahsulotni qo'lga olgach yozilgan {stars}★ sharh uchun +{coins} coin beriladi.",
-    "rewardDone": "Bu mahsulot sharhi uchun coin allaqachon berilgan — rahmat!",
+    "rewardEligible": "Bu buyurtma uchun sharhingizga +{coins} coin — har qanday baho, kamida {chars} belgi.",
+    "rewardInfo": "Har bir buyurtma uchun bitta sharhga +{coins} coin beriladi — mahsulot yetkazilgandan keyin, har qanday baho bilan.",
+    "rewardDone": "Bu mahsulot buyurtmasi uchun coin allaqachon berilgan — keyingi buyurtmangizda yana olasiz!",
     "rewardPaid": "Sharhingiz shartlarga mos kelsa, +{coins} coin bir necha soniyada hisobingizga tushadi.",
     "rewardChars": "{n}/{min} belgi"
   },

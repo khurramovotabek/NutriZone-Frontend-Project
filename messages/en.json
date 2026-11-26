@@ -911,9 +911,9 @@
     "yourReview": "Your review",
     "ratingCannotBeChanged": "Rating cannot be changed after submitting.",
     "storeReply": "Store reply",
-    "rewardEligible": "+{coins} coins for your review — rate {stars}★ and write at least {chars} characters.",
-    "rewardInfo": "Reviews ({stars}★) written after you receive the product earn +{coins} coins.",
-    "rewardDone": "You've already earned coins for reviewing this product — thank you!",
+    "rewardEligible": "+{coins} coins for reviewing this order — any rating, at least {chars} characters.",
+    "rewardInfo": "One review per order earns +{coins} coins — after delivery, any rating.",
+    "rewardDone": "This order's coins are already paid — your next order earns them again!",
     "rewardPaid": "If your review meets the terms, +{coins} coins will land in your wallet in a few seconds.",
     "rewardChars": "{n}/{min} characters"
   },
