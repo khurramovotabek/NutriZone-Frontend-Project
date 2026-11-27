@@ -14,7 +14,7 @@ export default function SiteJsonLd({
 }: { name: string; logoUrl: string | null; site: PublicSiteSettings | null; telegramUrl: string | null; locale: Locale; description: string; faq: { q: string; a: string }[] }) {
   const maps = [site?.map_listings?.google, site?.map_listings?.yandex, site?.map_listings?.two_gis].filter((u): u is string => Boolean(u));
   // the map cards first: they are what joins this website and the Google/Yandex business profile into one entity
-  const sameAs = [...maps, telegramUrl, site?.instagram_url].filter(Boolean);
+  const sameAs = Array.from(new Set([...maps, telegramUrl, site?.telegram_channel_url, site?.instagram_url].filter((u): u is string => Boolean(u))));
   const host = SITE_URL.replace(/^https?:\/\//, "");
   const alternateName = Array.from(new Set([host, "NutriZone", "Nutri Zone", "Nutrizone.uz", "Nutrizon", "Nutri Zon", "Nutrizon.uz", "Нутризон", "Нутризона", "Нутри Зон", "НутриЗон", "Нутризон уз", "NutriZone Uzbekistan", "NutriZone Toshkent", "LifeSport", "Life Sport", "LifeSport Pit", "Life Sport Pit", "Лайфспорт"].filter((n) => n.toLowerCase() !== name.toLowerCase())));
   const orgId = `${SITE_URL}/#organization`;

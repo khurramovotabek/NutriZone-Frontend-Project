@@ -34,7 +34,13 @@ export default async function ContactPage() {
   const telegram = settings.telegram_username?.trim().replace(/^@/, "") || null;
   const instagram = settings.instagram_url?.trim() || null;
   const telegramChannelUrl = settings.telegram_channel_url || (telegram ? `https://t.me/${telegram}` : null);
-  const mapsUrl = settings.map_listings?.google || settings.map_listings?.yandex || (address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : null);
+  // each map card the shop has, so people open the one app they use; a plain address search only when there is none
+  const mapCards = [
+    settings.map_listings?.google && { href: settings.map_listings.google, label: "Google Maps" },
+    settings.map_listings?.yandex && { href: settings.map_listings.yandex, label: "Yandex Maps" },
+    settings.map_listings?.two_gis && { href: settings.map_listings.two_gis, label: "2GIS" },
+  ].filter(Boolean) as { href: string; label: string }[];
+  const mapLinks = mapCards.length ? mapCards : address ? [{ href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, label: t("openMaps") }] : [];
 
   const quickActions = [
     phone && { href: `tel:${phone.replace(/\s+/g, "")}`, label: t("quickCall"), icon: Phone, external: false },
@@ -156,11 +162,15 @@ export default async function ContactPage() {
                         {t("location")}
                       </div>
                       <p className="mt-2 text-sm font-medium leading-relaxed text-ink">{address}</p>
-                      {mapsUrl && (
-                        <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
-                          {t("openMaps")}
-                          <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
-                        </a>
+                      {mapLinks.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                          {mapLinks.map(({ href, label }) => (
+                            <a key={href} href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+                              {label}
+                              <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+                            </a>
+                          ))}
+                        </div>
                       )}
                     </div>
                   )}
