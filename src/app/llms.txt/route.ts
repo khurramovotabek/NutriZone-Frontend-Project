@@ -120,6 +120,7 @@ export async function GET() {
     "",
     "## Optional",
     `- [Blog](${u("/blog")})`,
+    `- [Full text of every guide for AI assistants](${absoluteUrl("/llms-full.txt")})`,
     `- [Sitemap](${absoluteUrl("/sitemap.xml")})`,
     "",
   ];

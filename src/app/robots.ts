@@ -15,7 +15,7 @@ export default function robots(): MetadataRoute.Robots {
       // AI answer engines (ChatGPT search, Perplexity, Claude, Gemini, Apple, Copilot) are welcome on the public catalog:
       // being crawlable is what lets them cite and recommend the store. A named group replaces "*" for that bot, so it
       // repeats the same private paths.
-      { userAgent: AI_BOTS, allow: ["/", "/llms.txt"], disallow },
+      { userAgent: AI_BOTS, allow: ["/", "/llms.txt", "/llms-full.txt"], disallow },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

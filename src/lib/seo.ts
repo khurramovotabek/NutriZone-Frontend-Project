@@ -125,3 +125,10 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[], locale
     itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, item: absoluteUrl(localizedPath(it.path, locale)) })),
   };
 }
+
+/** A store's own text makes the meta description only when it reads as one: a bare link or a one-liner
+ *  ("LifeSport — Shayxontohur. https://t.me/...") loses to the address + hours template. */
+export function storeMetaDescription(own: string | null | undefined, template: string): string {
+  const text = (own ?? "").replace(/https?:\/\/\S+/g, "").replace(/\s+/g, " ").trim();
+  return text.length >= 80 ? text : template;
+}

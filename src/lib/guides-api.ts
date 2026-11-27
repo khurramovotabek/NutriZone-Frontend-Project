@@ -26,6 +26,12 @@ export async function getGuides(locale: string): Promise<GuideCard[]> {
   return res.data.guides;
 }
 
+/** Every guide with its answer and asked questions in one call (backend `?full=1`), for /llms-full.txt. */
+export async function getGuidesFull(locale: string): Promise<(GuideCard & { answer?: string; questions?: string[] })[]> {
+  const res = await apiFetch<{ guides: (GuideCard & { answer?: string; questions?: string[] })[] }>(`/api/v1/assistant/guides?locale=${encodeURIComponent(locale)}&full=1`);
+  return res.data.guides;
+}
+
 export async function getGuide(slug: string, locale: string): Promise<GuideDetail> {
   const res = await apiFetch<GuideDetail>(`/api/v1/assistant/guides/${encodeURIComponent(slug)}?locale=${encodeURIComponent(locale)}`);
   return res.data;

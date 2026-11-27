@@ -1,3 +1,4 @@
+import { storeMetaDescription } from "@/lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -68,7 +69,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   try {
     const [{ data: store }, t, { name }] = await Promise.all([getStoreBySlug(slug), getTranslations("seo"), getBrand()]);
     const address = [store.address, store.city].filter(Boolean).join(", ");
-    return pageMetadata({ path: `/store/${store.slug}`, title: t("storeTitle", { name: store.name }), description: store.description?.trim() || t("storeDescription", { name: store.name, address, brand: name }) });
+    return pageMetadata({ path: `/store/${store.slug}`, title: t("storeTitle", { name: store.name }), description: storeMetaDescription(store.description, t("storeDescription", { name: store.name, address, brand: name })) });
   } catch {
     return {};
   }
