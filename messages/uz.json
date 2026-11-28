@@ -3939,5 +3939,21 @@
     "previewCaption": "Ilova shunday ko'rinadi",
     "headerInstall": "Kompyuterga o'rnatish",
     "desktopInstalledHint": "{brand} endi ish stoli, Boshlash menyusi yoki Dock'da — alohida oynada ochiladi."
+  },
+  "gift": {
+    "pdpTitle": "Sheyker bilan oling",
+    "pdpWhy": "Proteinni har safar bir tekis, bo'laksiz aralashtiradi.",
+    "pdpFree": "<b>{amount}</b> va undan ortiq xaridda bu sheyker sizga <b>sovg'a</b> — bepul qo'shiladi!",
+    "addShaker": "Sheykerni savatga qo'shish",
+    "added": "Savatga qo'shildi",
+    "goCart": "Savatga o'tish",
+    "addError": "Qo'shib bo'lmadi, qayta urinib ko'ring.",
+    "earnedTitle": "Sizga sovg'a!",
+    "earnedText": "{name} buyurtmangizga bepul qo'shiladi.",
+    "missingText": "Yana <b>{amount}</b> xarid qiling — {name} sovg'a!",
+    "som": "so'm",
+    "badge": "Sovg'a",
+    "lineFree": "Bepul",
+    "orderNote": "Xaridingiz uchun sovg'a — 0 so'm"
   }
 }

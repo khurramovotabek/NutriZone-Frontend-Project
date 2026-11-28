@@ -49,6 +49,8 @@ export interface Cart {
   expires_at: string | null;
   /** "Birga arzonroq" pairs among the priced lines; null when there's none (older backends omit it). */
   bundle_discount?: { amount: string; pairs: { product_id: string; companion_product_id: string; percent: string; units: number; amount: string }[] } | null;
+  /** Sovg'a aksiyasi (free NutriZone shaker): null when no offer runs or the gift is out of stock. */
+  gift?: import("@/lib/pdp-api").GiftStatus | null;
 }
 
 export interface BackendErrorBody {
@@ -185,6 +187,8 @@ export interface CheckoutPreview {
   loyalty?: { enabled: boolean; balance: number; max_redeemable: number; max_percent: number; min_coins: number } | null;
   /** The delivery line for the chosen method/address (null until an address is chosen). Pickup is always free. */
   delivery?: DeliveryQuote | null;
+  /** Sovg'a aksiyasi: the free NutriZone shaker this order earns, or how much is left to earn it. */
+  gift?: import("@/lib/pdp-api").GiftStatus | null;
 }
 
 /** Server-priced delivery: Tashkent city by Yandex (by distance, up to a cap), the regions by BTS (by parcel weight). */

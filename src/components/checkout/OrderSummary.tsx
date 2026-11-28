@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { formatPrice } from "@/components/PriceTag";
 import type { CheckoutPreview } from "@/lib/cart-api";
+import GiftProgress from "@/components/gift/GiftProgress";
 import { Card } from "@/components/ui";
 import OrderItem from "@/components/checkout/OrderItem";
 import CouponInput from "@/components/checkout/CouponInput";
@@ -219,6 +220,7 @@ export default function OrderSummary({
             )}
           </>
         )}
+        <GiftProgress status={preview.gift} currency={preview.total?.currency ?? preview.currency} />
         {children}
 
       </div>

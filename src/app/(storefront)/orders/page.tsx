@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowDownUp, ChevronRight, LoaderCircle, PackageCheck, Package, RotateCcw, Search, ShoppingBag, Truck, Wallet, X } from "lucide-react";
+import { ArrowDownUp, ChevronRight, Gift, LoaderCircle, PackageCheck, Package, RotateCcw, Search, ShoppingBag, Truck, Wallet, X } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import type { Order } from "@/lib/orders-api";
@@ -276,6 +276,7 @@ function OrderCard({
 }) {
   const t = useTranslations("orders");
   const tNav = useTranslations("navigation");
+  const tGift = useTranslations("gift");
   const lines = order.lines.filter((l) => l.status === "active");
   const variantIds = lines.map((l) => l.product_variant_id);
   const firstName = variantIds.map((id) => displays[id]?.productName).find(Boolean);
@@ -304,7 +305,14 @@ function OrderCard({
               {variantIds.length > 1 && <span className="font-normal text-ink-soft"> {t("list.andMore", { count: variantIds.length - 1 })}</span>}
             </p>
           )}
-          <p className="mt-0.5 text-xs text-ink-soft">{t("list.itemsCount", { count: orderItemCount(order) })}</p>
+          <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-soft">
+            {t("list.itemsCount", { count: orderItemCount(order) })}
+            {lines.some((l) => l.is_gift) && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 font-bold text-amber-700 dark:text-amber-300">
+                <Gift className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" /> {tGift("badge")}
+              </span>
+            )}
+          </p>
           <p className="mt-1 text-base font-bold tabular-nums text-ink sm:hidden">{formatMoney(orderTotal(order), order.currency)}</p>
         </div>
         <div className="hidden shrink-0 text-right sm:block">

@@ -21,6 +21,7 @@ import PriceTag, { formatPrice } from "@/components/PriceTag";
 import { loadDeliveryOptions, lowerFirst, type DeliveryOptions } from "@/components/checkout/DeliveryRatesNote";
 import ProductCoinReward from "@/components/loyalty/ProductCoinReward";
 import BundleOfferCard from "@/components/pdp/BundleOfferCard";
+import GiftShakerCard from "@/components/pdp/GiftShakerCard";
 import PriceInsight from "@/components/pdp/PriceInsight";
 import ServingCalculator from "@/components/pdp/ServingCalculator";
 import TrustFacts from "@/components/pdp/TrustFacts";
@@ -295,6 +296,9 @@ export default function ProductPurchaseExperience({ product, categoryName, brand
               outOfStock: selected?.stock_status === "out_of_stock" || selected?.stock_quantity === 0 }}
           />
         )}
+
+        {/* Sovg'a aksiyasi: proteins / gainers recommend the NutriZone shaker -- free on orders over the threshold. */}
+        {pdp?.gift && <GiftShakerCard gift={pdp.gift} currency={currency} />}
 
         {/* Which stores (branches) have the selected variant right now, and how many units each. */}
         {selected && <StoreAvailability stores={selected.store_availability} onlineInStock={selected.stock_status === "in_stock" || selected.stock_status === "low_stock"} />}

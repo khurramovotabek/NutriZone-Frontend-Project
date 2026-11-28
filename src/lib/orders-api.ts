@@ -24,6 +24,8 @@ export interface OrderLine {
   tax_amount: Money;
   line_total: Money;
   status: string;
+  /** A free gift (Sovg'a aksiyasi, e.g. the NutriZone shaker): unit price 0, labelled "Sovg'a". */
+  is_gift?: boolean;
 }
 
 export interface PaymentReference {

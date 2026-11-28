@@ -14,6 +14,27 @@ export interface BundleOffer {
   saving: string;
 }
 
+/** Sovg'a aksiyasi: the NutriZone shaker recommended on proteins / gainers -- free on orders from `threshold`. */
+export interface GiftCard {
+  product_id: string;
+  variant_id: string;
+  name: string;
+  names: Record<string, string>;
+  slug: string;
+  image_path: string | null;
+  value: string | null;
+  threshold?: string;
+}
+
+/** Cart / checkout: is the gift earned, and if not, how much is missing. */
+export interface GiftStatus {
+  earned: boolean;
+  items_qualify: boolean;
+  threshold: string;
+  missing: string;
+  gift: GiftCard;
+}
+
 export interface PriceHistory {
   points: [string, string][];
   min: string;
@@ -25,6 +46,7 @@ export interface PriceHistory {
 
 export interface ProductExtras {
   bundle: BundleOffer | null;
+  gift?: GiftCard | null;
   trust: { official_distributor: boolean; expiry: Record<string, string> };
   price_history: Record<string, PriceHistory>;
   watching: string[];
@@ -45,7 +67,7 @@ export interface ProductQuestions {
   mine: { id: string; question: string; asked_at: string }[];
 }
 
-const EMPTY_EXTRAS: ProductExtras = { bundle: null, trust: { official_distributor: false, expiry: {} }, price_history: {}, watching: [] };
+const EMPTY_EXTRAS: ProductExtras = { bundle: null, gift: null, trust: { official_distributor: false, expiry: {} }, price_history: {}, watching: [] };
 
 async function get<T>(path: string, accessToken?: string | null): Promise<T | null> {
   try {

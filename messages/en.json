@@ -3939,5 +3939,21 @@
     "previewCaption": "This is how the app looks",
     "headerInstall": "Install on this computer",
     "desktopInstalledHint": "{brand} is now on your desktop, Start menu or Dock — it opens in its own window."
+  },
+  "gift": {
+    "pdpTitle": "Get it with a shaker",
+    "pdpWhy": "Mixes protein smoothly every time — no lumps.",
+    "pdpFree": "Order <b>{amount}</b> or more and this shaker is <b>a gift</b> — added for free!",
+    "addShaker": "Add the shaker to cart",
+    "added": "Added to cart",
+    "goCart": "Go to cart",
+    "addError": "Couldn't add it — please try again.",
+    "earnedTitle": "A gift for you!",
+    "earnedText": "{name} will be added to your order for free.",
+    "missingText": "Add <b>{amount}</b> more — and get {name} as a gift!",
+    "som": "UZS",
+    "badge": "Gift",
+    "lineFree": "Free",
+    "orderNote": "A gift with your purchase — 0 UZS"
   }
 }

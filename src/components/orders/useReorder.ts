@@ -17,7 +17,7 @@ export function useReorder() {
     if (pendingOrderId) return;
     setPendingOrderId(order.id);
     setResult(null);
-    const lines = order.lines.filter((l) => l.status === "active");
+    const lines = order.lines.filter((l) => l.status === "active" && !l.is_gift); // a free gift is never re-bought
     let failed = 0;
     // Sequential on purpose: the cart API serializes writes per cart anyway.
     for (const line of lines) {

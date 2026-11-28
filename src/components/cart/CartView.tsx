@@ -13,6 +13,7 @@ import { emitCartUpdated } from "@/lib/cart-events";
 import { priceLine, queueCartTask } from "@/lib/cart-client";
 import CartCrossSell from "@/components/cart/CartCrossSell";
 import DeliveryRatesNote from "@/components/checkout/DeliveryRatesNote";
+import GiftProgress from "@/components/gift/GiftProgress";
 import { cartActionNeedsLogin } from "@/lib/cart-errors";
 
 /** The cart itself (client: live quantities, removal, coupon). `emptyRecommendations` is server-rendered by the route and shown under an empty cart. */
@@ -395,6 +396,7 @@ export default function CartView({ emptyRecommendations }: { emptyRecommendation
             {authenticated && total !== null && <OrderCoinEarn amount={total} currency={currency} />}
             {!authenticated && estimatedTotal !== null && <OrderCoinEarn amount={estimatedTotal} currency={estimateCurrency} />}
             <DeliveryRatesNote className="mt-3" goodsTotal={authenticated ? total : estimatedTotal} />
+            <GiftProgress status={cart?.gift} currency={currency ?? estimateCurrency} className="mt-3" />
 
             {hasShortage ? (
               <p role="alert" className="mt-5 rounded-xl border border-red-300 bg-red-50 p-3 text-sm font-medium text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">

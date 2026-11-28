@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { AlertTriangle, ArrowLeft, Check, ChevronRight, Copy, LifeBuoy, LoaderCircle, MapPin, Package, PartyPopper, Phone, RotateCcw, ShoppingBag, User, Store as StoreIcon, Clock, Landmark } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Check, Gift, ChevronRight, Copy, LifeBuoy, LoaderCircle, MapPin, Package, PartyPopper, Phone, RotateCcw, ShoppingBag, User, Store as StoreIcon, Clock, Landmark } from "lucide-react";
 import Link from "next/link";
 import MapLinks from "@/components/MapLinks";
 import { useLocale, useTranslations } from "next-intl";
@@ -26,6 +26,7 @@ import { useVariantDisplays, type VariantDisplay } from "@/lib/variant-display";
 
 function OrderLineRow({ line, display }: { line: OrderLine; display: VariantDisplay | undefined }) {
   const t = useTranslations("orders.detail");
+  const tg = useTranslations("gift");
   const unit = Number(line.unit_price.amount);
   const discount = Number(line.discount_amount.amount);
   const name = display?.productName || t("variant", { id: line.product_variant_id.slice(0, 8), qty: line.quantity });
@@ -54,12 +55,22 @@ function OrderLineRow({ line, display }: { line: OrderLine; display: VariantDisp
         )}
         <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-soft">
           {display?.variantLabel && <span className="rounded-md bg-surface-2 px-1.5 py-0.5 font-medium text-ink-muted">{display.variantLabel}</span>}
-          <span className="tabular-nums">{t("unitTimes", { qty: line.quantity, price: formatMoney(unit, line.unit_price.currency) })}</span>
+          {line.is_gift ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 font-bold text-amber-700 dark:text-amber-300">
+              <Gift className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" /> {tg("orderNote")}
+            </span>
+          ) : (
+            <span className="tabular-nums">{t("unitTimes", { qty: line.quantity, price: formatMoney(unit, line.unit_price.currency) })}</span>
+          )}
           {display && !display.linkable && <span className="text-warning">{t("unavailable")}</span>}
         </div>
       </div>
       <div className="shrink-0 text-right">
-        <p className="text-sm font-bold tabular-nums text-ink">{formatMoney(Number(line.line_total.amount), line.line_total.currency)}</p>
+        {line.is_gift ? (
+          <p className="text-sm font-bold text-amber-600 dark:text-amber-400">{tg("lineFree")}</p>
+        ) : (
+          <p className="text-sm font-bold tabular-nums text-ink">{formatMoney(Number(line.line_total.amount), line.line_total.currency)}</p>
+        )}
         {discount > 0 && <p className="text-xs tabular-nums text-ink-soft line-through">{formatMoney(unit * line.quantity, line.unit_price.currency)}</p>}
       </div>
     </li>
